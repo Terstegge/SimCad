@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+#include <cassert>
 
 #include "_74LS283.h"
 #include "AND2.h"
@@ -40,11 +41,26 @@ int main()
     C0.connect_to( add.p[7] ); 
     C4.connect_to( add.p[9] ); 
 
+    C0 = false;
+    for(int i = 0; i < 16; ++i) {
+        for(int j = 0; j < 16; ++j) {
+            A  = i;
+            B  = j;
+            cout << i << " " << j << " " << S << " " << C4 << endl;
+            assert(S == ((i+j) % 16));
+        }
+    }
+
     C0 = true;
-    A  = 10;
-    B  = 10;
+    for(int i = 0; i < 16; ++i) {
+        for(int j = 0; j < 16; ++j) {
+            A  = i;
+            B  = j;
+            cout << i << " " << j << " " << S << " " << C4 << endl;
+            assert(S == ((i+j+1) % 16));
+        }
+    }
     
-    cout << S << " " << C4 << endl;
     
 }
 
