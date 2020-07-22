@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/andreas/github/DIGISIM/kicad/_74LS283/_74LS283.sch)
-    (date "So 19 Jul 2020 21:51:18 CEST")
+    (date "Mi 22 Jul 2020 22:25:19 CEST")
     (tool "Eeschema 5.1.6-c6e7f7d~86~ubuntu16.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
