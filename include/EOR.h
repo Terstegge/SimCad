@@ -8,10 +8,11 @@
 template<int N>
 class EOR : public Named {
 public:
-    Bus<N+4> p;
+    Bus<N+3> p;
+    Pin &    VCC;
+    Pin &    GND;
 
-    EOR(const string & name="")
-        : Named(name), NAME(p)
+    EOR(const string & name=""): Named(name), NAME(p), GND(p[0]), VCC(p[N+2])
     {
         for(int i=1; i <= N; ++i) {
             p[i].attach( [this](NetSet * nets) {
@@ -21,7 +22,7 @@ public:
         p[N+1] = calculate(p);
     }
 
-    bool calculate(Bus<N+4> & p)
+    bool calculate(Bus<N+3> & p)
     {
         bool res = false;
         for(int i=1; i <= N; ++i) {

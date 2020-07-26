@@ -9,9 +9,11 @@ using namespace std;
 
 class BUF : public Named {
 public:
-    Bus<5> p;
+    Bus<4> p;
+    Pin &    VCC;
+    Pin &    GND;
 
-    BUF(const string & name="") : Named(name), NAME(p)
+    BUF(const string & name="") : Named(name), NAME(p), GND(p[0]), VCC(p[3])
     {
         p[1].attach([this](NetSet * nets) {
             p[2].setDrvState( (bool)p[1], nets );
