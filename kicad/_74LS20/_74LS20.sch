@@ -17,17 +17,17 @@ Text Label 5950 3550 2    50   ~ 0
 p5
 Text Label 6650 3350 0    50   ~ 0
 p6
-Text Label 5950 4300 2    50   ~ 0
+Text Label 5950 3900 2    50   ~ 0
 p9
 Text Label 6650 4100 0    50   ~ 0
 p8
-Text Label 5950 3900 2    50   ~ 0
+Text Label 5950 4300 2    50   ~ 0
 p13
-Text Label 5950 4000 2    50   ~ 0
+Text Label 5950 4200 2    50   ~ 0
 p12
 Text Label 5950 4100 2    50   ~ 0
 p11
-Text Label 5950 4200 2    50   ~ 0
+Text Label 5950 4000 2    50   ~ 0
 p10
 Text Label 5950 3150 2    50   ~ 0
 p1
@@ -146,7 +146,7 @@ $Comp
 L DIGISIM:NAND5 U1
 U 1 1 5F1B2484
 P 6200 3350
-F 0 "U1" H 6050 3700 50  0001 C CNN
+F 0 "U1" H 6050 3700 50  0000 C CNN
 F 1 "NAND5" H 6400 3700 50  0001 C CNN
 F 2 "" H 5650 3800 50  0001 C CNN
 F 3 "" H 5650 3800 50  0001 C CNN
@@ -157,7 +157,7 @@ $Comp
 L DIGISIM:NAND5 U2
 U 1 1 5F1B2CD7
 P 6200 4100
-F 0 "U2" H 6050 4450 50  0001 C CNN
+F 0 "U2" H 6050 4450 50  0000 C CNN
 F 1 "NAND5" H 6400 4450 50  0001 C CNN
 F 2 "" H 5650 4550 50  0001 C CNN
 F 3 "" H 5650 4550 50  0001 C CNN
