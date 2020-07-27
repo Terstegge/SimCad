@@ -36,15 +36,17 @@ int Net2Sim::main(int argc, char* argv[])
     bool   read_net_file = false;
     bool   read_out_file = false;
     bool   read_subsheet = false;
+    bool   verbose       = false;
 
     for (int i=1; i < argc; ++i) {
         if (read_net_file)    { net_file = argv[i]; read_net_file = false; continue; }
         if (read_out_file)    { out_file = argv[i]; read_out_file = false; continue; }
         if (read_subsheet)    { subsheet = argv[i]; read_subsheet = false; continue; }
         string arg = argv[i];
-        if      (arg == "-i") { read_net_file = true; continue; }
-        else if (arg == "-o") { read_out_file = true; continue; }
-        else if (arg == "-s") { read_subsheet = true; continue; }
+        if      (arg == "-i") { read_net_file = true; }
+        else if (arg == "-o") { read_out_file = true; }
+        else if (arg == "-s") { read_subsheet = true; }
+        else if (arg == "-v") { verbose       = true; }
         else {
             cerr << "Unknown command line option: " << arg << " -> Exit!" << endl;
             exit(1);
@@ -75,7 +77,7 @@ int Net2Sim::main(int argc, char* argv[])
     ///////////////////////
     Node      tree;
     NetParser parser;
-    cout << "Parsing file " << net_file << endl;
+    if (verbose) cout << "Parsing file " << net_file << endl;
     try {
         parser.parse(net_file, tree);
     } catch(ParseException & ex) {
@@ -86,7 +88,7 @@ int Net2Sim::main(int argc, char* argv[])
     ////////////////
     // Find subsheet
     ////////////////
-    cout << "Locating subsheet " << subsheet << endl;
+    if (verbose) cout << "Locating subsheet " << subsheet << endl;
     string classname;
     Node * design = tree.find_Node("design");
     for (Node & sheet : design->_children) {
@@ -151,7 +153,7 @@ int Net2Sim::main(int argc, char* argv[])
     /////////////////////////////////////////////////////
     // Output include guards, components and class header
     /////////////////////////////////////////////////////
-    cout << "Generating file " << out_file << endl;
+    if (verbose) cout << "Generating file " << out_file << endl;
     _out << "//" << endl;
     _out << "// This file was generated with ** Net2Sim **!" << endl;
     _out << "// DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
@@ -159,6 +161,7 @@ int Net2Sim::main(int argc, char* argv[])
     _out << "#ifndef _" << classname << "_H_" << endl;
     _out << "#define _" << classname << "_H_" << endl;
     _out << endl;
+    _out << "#include <string>"  << endl;
     _out << "#include \"Pin.h\"" << endl;
     _out << "#include \"Bus.h\"" << endl;
     for (auto comp : included_components) {
@@ -279,7 +282,7 @@ int Net2Sim::main(int argc, char* argv[])
     ///////////////////////////////////////////
     // Generate CTOR calls with component names
     ///////////////////////////////////////////
-    _out << endl << "    " << classname << "() :" <<endl;
+    _out << endl << "    " << classname << "(std::string n) :" <<endl;
     for (size_t i = 0; i < needed_components.size(); ++i) {
         string ref = needed_components[i].ref + needed_components[i].idx;
         _out << "        " << ref << "(\"" << ref << "\")";
