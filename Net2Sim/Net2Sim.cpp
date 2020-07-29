@@ -222,11 +222,12 @@ int Net2Sim::main(int argc, char* argv[])
         string c = comp.first;
         name2var(c);
         _out << "#include \"" << c << ".h\"";
+        if (c.size() < 3) _out << "\t";
         _out << "\t" << "// " << comp.second << " parts" << endl;
     }
     _out << endl
         << "class " << classname << " " << "{" << endl
-        << "private:" << endl;
+        << "public:" << endl;
 
     ///////////////////////////////////////////
     // Generate private attributes (components)
@@ -247,6 +248,7 @@ int Net2Sim::main(int argc, char* argv[])
         if (ce.part_arg == "") {
             // Standard part without template argument
             _out << "    " << ce.part;
+            if (ce.part.size() < 4) _out << "\t";
         } else {
             // Build-in part with template argument
             _out << "    " << ce.part << "<" << ce.part_arg << ">";

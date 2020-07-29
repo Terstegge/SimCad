@@ -1,26 +1,18 @@
-#ifndef _BUFFER_G_H_
-#define _BUFFER_G_H_
+#ifndef _BUF_H_
+#define _BUF_H_
 
-#include "Named.h"
-#include "Bus.h"
+#include "GATE.h"
 
-#include <iostream>
-using namespace std;
-
-class BUF : public Named {
+class BUF : public GATE<1> {
 public:
-    Bus<4> p;
-    Pin &    VCC;
-    Pin &    GND;
 
-    BUF(const string & _name="") : Named(_name), NAME(p), GND(p[0]), VCC(p[3])
+    BUF(const string & name) : GATE<1>(name) { }
+
+    State calculate() override
     {
-        p[1].attach([this](NetSet * nets) {
-            p[2].setDrvState( (bool)p[1], nets );
-        });
-        p[2].setDrvState( (bool)p[1], nullptr );
+        return this->p[1];
     }
 
 };
 
-#endif // _BUFFER_G_H_
+#endif // _BUF_H_

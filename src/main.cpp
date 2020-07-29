@@ -13,7 +13,7 @@ int main()
 
     t.GND   = 0;
     t.VCC   = 1;
-
+    
     t.CLK   = 0;
     t.D     = 0;
     t.EP    = 1;
@@ -40,6 +40,8 @@ int main()
         cout << t.Q << " " << t.RCO << endl;
         t.CLK   = 0;
     }
+
+    cout << t.U1.U6 << endl;
 
     } catch(short_circuit_exception & e) {
         cerr << e << endl;

@@ -1,24 +1,16 @@
 #ifndef _INV_H_
 #define _INV_H_
 
-#include "Named.h"
-#include "Bus.h"
+#include "GATE.h"
 
-#include <iostream>
-using namespace std;
-
-class INV : public Named {
+class INV : public GATE<1> {
 public:
-    Bus<4> p;
-    Pin &    VCC;
-    Pin &    GND;
 
-    INV(const string & _name="") : Named(_name), NAME(p), GND(p[0]), VCC(p[3])
+    INV(const string & name) : GATE<1>(name) { }
+
+    State calculate() override
     {
-        p[1].attach([this](NetSet * nets) {
-            p[2].setDrvState( !(bool)p[1], nets );
-        });
-        p[2].setDrvState( !(bool)p[1], nullptr );
+        return toState(!(bool)this->p[1]);
     }
 
 };
