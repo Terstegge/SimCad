@@ -12,7 +12,7 @@ public:
     Pin &    VCC;
     Pin &    GND;
 
-    EOR(const string & name=""): Named(name), NAME(p), GND(p[0]), VCC(p[N+2])
+    EOR(const string & _name=""): Named(name), NAME(p), GND(p[0]), VCC(p[N+2])
     {
         for(int i=1; i <= N; ++i) {
             p[i].attach( [this](NetSet * nets) {

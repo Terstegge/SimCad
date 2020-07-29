@@ -43,13 +43,13 @@ F 3 "" H 8150 1800 50  0001 C CNN
 	1    8450 1550
 	0    1    1    0   
 $EndComp
-Text Label 8250 1550 3    50   ~ 0
+Text Label 8250 1550 2    50   ~ 0
 p8
-Text Label 8950 1550 3    50   ~ 0
+Text Label 8950 1550 2    50   ~ 0
 p8
-Text Label 9350 1550 3    50   ~ 0
+Text Label 9350 1550 0    50   ~ 0
 p16
-Text Label 8650 1550 3    50   ~ 0
+Text Label 8650 1550 0    50   ~ 0
 p16
 $Bitmap
 Pos 3900 6100

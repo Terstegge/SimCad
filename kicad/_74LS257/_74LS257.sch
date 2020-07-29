@@ -1845,9 +1845,9 @@ Wire Wire Line
 Wire Wire Line
 	8000 4450 7750 4450
 Connection ~ 6600 4000
-Text Label 1900 1300 2    50   ~ 0
+Text Label 1900 1100 2    50   ~ 0
 p8
-Text Label 2300 1300 0    50   ~ 0
+Text Label 2300 1100 0    50   ~ 0
 p16
 Wire Wire Line
 	2100 1500 2100 4000

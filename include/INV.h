@@ -13,7 +13,7 @@ public:
     Pin &    VCC;
     Pin &    GND;
 
-    INV(const string & name="") : Named(name), NAME(p), GND(p[0]), VCC(p[3])
+    INV(const string & _name="") : Named(_name), NAME(p), GND(p[0]), VCC(p[3])
     {
         p[1].attach([this](NetSet * nets) {
             p[2].setDrvState( !(bool)p[1], nets );

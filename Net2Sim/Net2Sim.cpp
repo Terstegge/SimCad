@@ -27,7 +27,10 @@ int Net2Sim::main(int argc, char* argv[])
     /////////////////////////////////////
     if (argc <= 1) {
         cout << "Usage:" << endl;
-        cout << argv[0] << " -i <net-file> [-o <out-file>] [-s <subsheet>]" << endl;
+        cout << argv[0] << " -i <net-file> [-o <out-file>] [-s <subsheet>] [-v]" << endl;
+        cout << " -i <net-file>  :  The KiCad Net-file to parse" << endl;
+        cout << " -o <out-file>  :  Name of generated .h-file (default <netfile-basename>.h)" << endl;
+        cout << " -v             :  Verbose output" << endl;
         exit(1);
     }
     string net_file;
@@ -93,8 +96,12 @@ int Net2Sim::main(int argc, char* argv[])
     Node * design = tree.find_Node("design");
     for (Node & sheet : design->_children) {
         if (sheet._name == "sheet") {
+            // Get the path name of the sheet
             string name = sheet.get_attr("name");
             if (name == subsheet) {
+                // Found it! Get the source name,
+                // remove the .sch ending and set
+                // the remainder as the class name
                 classname = sheet.find_Node("source")->_value;
                 size_t pos = classname.find(".sch");
                 classname.erase(pos);
@@ -104,6 +111,8 @@ int Net2Sim::main(int argc, char* argv[])
         }
     }
     if (classname.empty()) {
+        // We did not find the subsheet and did not set a class name.
+        // Show all available subsheets and exit.
         cerr << "Subsheet '" << subsheet << "' not found!" << endl;
         cerr << "Available subsheets are:" << endl;
         for (Node & sheet : design->_children) {
@@ -114,22 +123,67 @@ int Net2Sim::main(int argc, char* argv[])
         exit(1);
     }
 
-    /////////////////////////////////
-    // Delete all unneeded components
-    /////////////////////////////////
-    map<string, int> needed_refs;
-    map<string, int> included_components;
+    ///////////////////////////////////////////////////////
+    // Delete all unneeded components and store needed ones
+    ///////////////////////////////////////////////////////
+    struct component_entry {
+        string ref_base;
+        string ref_idx;
+        string part;
+        string part_arg;
+    };
+
+    vector<component_entry> used_components;
+    map<string, int>        needed_refs;
+    // Loop over all components
     Node * components = tree.find_Node("components");
     for(auto comp = components->_children.begin(); comp != components->_children.end();) {
+        // Get the sheet path and the part name
         string path = comp->find_Node("sheetpath")->get_attr("names");
         string part = comp->find_Node("libsource")->get_attr("part");
         if (path.find(subsheet) != 0) {
+            // Delete the component because it is not needed
             comp = components->_children.erase(comp);
         } else {
-            needed_refs[ comp->get_attr("ref") ]++;
-            included_components[ part ]++;
+            // The entry to store
+            component_entry ce;
+
+            // Compute reference base name and index
+            ce.ref_base = comp->get_attr("ref");
+            // Store the full reference as a needed one
+            needed_refs[ ce.ref_base ]++;
+            // Split reference in base and index
+            split_name_index(ce.ref_base, ce.ref_idx);
+
+            // Compute part and possible argument
+            ce.part = part;
+            split_name_index(ce.part, ce.part_arg);
+            
+            // Check if part is a build-in gate
+            if ( (ce.part == "AND")  ||
+                 (ce.part == "NAND") ||
+                 (ce.part == "OR")   ||
+                 (ce.part == "NOR")  ||
+                 (ce.part == "EOR")  ||
+                 (ce.part == "INH") ) {
+                // Leave the part arg entry as it is...
+            } else {
+                // Part was not a build-in part. Reset the part
+                // name to the original value
+                ce.part     = part;
+                ce.part_arg = "";
+            }
+            
+            // Store the entry
+            used_components.push_back(ce);
             ++comp;
         }
+    }
+
+    // Calculate all include files
+    map<string, int> included_components;
+    for (component_entry & ce: used_components) {
+        included_components[ ce.part ]++;
     }
 
     ////////////////////////////////////////
@@ -177,29 +231,27 @@ int Net2Sim::main(int argc, char* argv[])
     ///////////////////////////////////////////
     // Generate private attributes (components)
     ///////////////////////////////////////////
-    struct foo { string part; string ref; string idx; };
-    vector< foo > needed_components;
-    for (Node & component : components->_children) {
-        string ref  = component.get_attr("ref");
-        string part = component.find_Node("libsource")->get_attr("part");
-        string path = component.find_Node("sheetpath")->get_attr("names");
-        if (path.find(subsheet) == 0) {
-            string idx;
-            split_name_index(ref, idx);
-            foo bar = {part, ref, idx};
-            needed_components.push_back(bar);
-        }
-    }
-    std::sort(needed_components.begin(), needed_components.end(),
-            [] (foo & lhs, foo & rhs) {
-        if (lhs.ref == rhs.ref)
-            return stoi(lhs.idx) < stoi(rhs.idx);
+
+    // Sort the components by reference
+    std::sort(used_components.begin(), used_components.end(),
+            [] (component_entry & lhs, component_entry & rhs) {
+        if (lhs.ref_base == rhs.ref_base)
+            return stoi(lhs.ref_idx) < stoi(rhs.ref_idx);
         else
-            return lhs.ref < rhs.ref;
+            return lhs.ref_base < rhs.ref_base;
     });
-    for (auto a : needed_components) {
-        name2var(a.part);
-        _out << "    " << a.part << "\t" << a.ref << a.idx << ";" << endl;
+
+    // Output part attributes
+    for (component_entry & ce : used_components) {
+        name2var(ce.part);
+        if (ce.part_arg == "") {
+            // Standard part without template argument
+            _out << "    " << ce.part;
+        } else {
+            // Build-in part with template argument
+            _out << "    " << ce.part << "<" << ce.part_arg << ">";
+        }
+        _out << "\t" << ce.ref_base << ce.ref_idx << ";" << endl;
     }
 
     ///////////////
@@ -258,6 +310,7 @@ int Net2Sim::main(int argc, char* argv[])
     // Find busses in the sorted nets.
     // Generate Pins and Busses
     //////////////////////////////////
+    vector<string> base_names;
     auto it     = found_nets.begin();
     auto first  = *it;
     bool isBus  = false;
@@ -274,19 +327,26 @@ int Net2Sim::main(int argc, char* argv[])
             continue;
         }
         define_bus(first.base, first.index, isBus);
+        base_names.push_back(first.base);
         first = next;
         isBus = false;
     }
     define_bus(first.base, first.index, isBus);
+    base_names.push_back(first.base);
 
     ///////////////////////////////////////////
     // Generate CTOR calls with component names
     ///////////////////////////////////////////
-    _out << endl << "    " << classname << "(std::string n) :" <<endl;
-    for (size_t i = 0; i < needed_components.size(); ++i) {
-        string ref = needed_components[i].ref + needed_components[i].idx;
-        _out << "        " << ref << "(\"" << ref << "\")";
-        if (i+1 !=needed_components.size()) _out << ",";
+    _out << endl << "    " << classname << "(std::string _name) :" <<endl;
+    for (size_t i = 0; i < used_components.size(); ++i) {
+        string ref = used_components[i].ref_base + used_components[i].ref_idx;
+        _out << "        NAME(" << ref << ")";
+        if ((i+1 != used_components.size()) || base_names.size()) _out << ",";
+        _out << endl;
+    }
+    for (size_t i = 0; i < base_names.size(); ++i) {
+        _out << "        NAME(" << base_names[i] << ")";
+        if (i+1 != base_names.size()) _out << ",";
         _out << endl;
     }
 

@@ -2,11 +2,14 @@
 using namespace std;
 #include <cassert>
 
+#include "ShortCircuitEx.h"
 #include "test.h"
 
 int main()
 {
     test t("test");
+
+    try {
 
     t.GND   = 0;
     t.VCC   = 1;
@@ -19,7 +22,7 @@ int main()
     t.nLOAD = 1;    
 
     // Load 10
-    t.D     = 10;
+    t.D     = 01234;
     t.nLOAD = 0;
     t.CLK   = 1;
     t.CLK   = 0;
@@ -31,11 +34,14 @@ int main()
     t.nCLR  = 1;
     cout << t.Q << " " << t.RCO << endl;
 
-    for (int i = 0; i < 100000; ++i) {
+    for (int i = 0; i < 4096; ++i) {
         // Count
         t.CLK   = 1;
         cout << t.Q << " " << t.RCO << endl;
         t.CLK   = 0;
     }
 
+    } catch(short_circuit_exception & e) {
+        cerr << e << endl;
+    }
 }
