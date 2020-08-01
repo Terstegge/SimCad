@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/andreas/github/DIGISIM/kicad/J2K2_FF/J2K2_FF.sch)
-    (date "Di 28 Jul 2020 14:16:46 CEST")
+    (date "Sa 01 Aug 2020 10:30:30 CEST")
     (tool "Eeschema 5.1.6-c6e7f7d~86~ubuntu16.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block

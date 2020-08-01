@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/andreas/github/DIGISIM/kicad/_74LS74/_74LS74.sch)
-    (date "So 26 Jul 2020 14:13:57 CEST")
+    (date "Sa 01 Aug 2020 10:27:39 CEST")
     (tool "Eeschema 5.1.6-c6e7f7d~86~ubuntu16.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -16,20 +16,20 @@
         (comment (number 4) (value "")))))
   (components
     (comp (ref U1)
-      (value D-LATCH)
-      (libsource (lib DIGISIM) (part D-LATCH) (description ""))
+      (value D_LATCH)
+      (libsource (lib DIGISIM) (part D_LATCH) (description ""))
       (sheetpath (names /) (tstamps /))
       (tstamp 5F153A9B))
     (comp (ref U2)
-      (value D-LATCH)
-      (libsource (lib DIGISIM) (part D-LATCH) (description ""))
+      (value D_LATCH)
+      (libsource (lib DIGISIM) (part D_LATCH) (description ""))
       (sheetpath (names /) (tstamps /))
       (tstamp 5F155571)))
   (libparts
-    (libpart (lib DIGISIM) (part D-LATCH)
+    (libpart (lib DIGISIM) (part D_LATCH)
       (fields
         (field (name Reference) U)
-        (field (name Value) D-LATCH))
+        (field (name Value) D_LATCH))
       (pins
         (pin (num 0) (name GND) (type input))
         (pin (num 1) (name D) (type input))

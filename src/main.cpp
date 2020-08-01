@@ -9,41 +9,30 @@ int main()
 {
     test t("test");
 
-    try {
-
-    t.GND   = 0;
-    t.VCC   = 1;
+    t.GND    = 0;
+    t.VCC    = 1;
     
-    t.CLK   = 0;
-    t.D     = 0;
-    t.EP    = 1;
-    t.ET    = 1;
-    t.nCLR  = 1;
-    t.nLOAD = 1;    
+    t.D      = 0;
+    t.SRCLK  = 0;
+    t.nSRCLR = 1;
+    
+    t.RCLK   = 0;
+    t.nOE    = 1;
 
-    // Load 10
-    t.D     = 01234;
-    t.nLOAD = 0;
-    t.CLK   = 1;
-    t.CLK   = 0;
-    t.nLOAD = 1;
-    cout << t.Q << " " << t.RCO << endl;
-
-    // CLR
-    t.nCLR  = 0;
-    t.nCLR  = 1;
-    cout << t.Q << " " << t.RCO << endl;
-
-    for (int i = 0; i < 4096; ++i) {
-        // Count
-        t.CLK   = 1;
-        cout << t.Q << " " << t.RCO << endl;
-        t.CLK   = 0;
+    // Load 0x1234
+    int val = 0x1111;
+    for (int i=15; i >= 0; --i) {
+        t.D = (val & (1<<i)) != 0;
+        t.SRCLK = 1;
+        t.SRCLK = 0;
     }
 
-    cout << t.U1.U6 << endl;
-
-    } catch(short_circuit_exception & e) {
-        cerr << e << endl;
-    }
+    // Load output register
+    t.RCLK = 1;
+    t.RCLK = 0;
+    
+    // Enable output
+    t.nOE  = 0;
+    
+    cout << hex << t.Q << " " << endl;
 }
