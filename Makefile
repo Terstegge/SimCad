@@ -1,7 +1,7 @@
 
 # Compiler options
 CXX        =  g++  # oder clang++
-CXXFLAGS   = -std=c++17 -g -I include
+CXXFLAGS   = -std=c++17 -g -Iinclude -Ikicad/include
 
 # Net2Sim variables
 NET2SIM_DIR      = Net2Sim
@@ -12,7 +12,7 @@ NET2SIM_BIN      = $(NET2SIM_DIR)/Net2Sim
 # KiCad model variables
 KICAD_NET_FILES  = $(wildcard kicad/*/*.net)
 KICAD_MODELS     = $(notdir $(KICAD_NET_FILES:.net=))
-KICAD_H_FILES    = $(addsuffix .h, $(addprefix include/, $(KICAD_MODELS)))
+KICAD_H_FILES    = $(addsuffix .h, $(addprefix kicad/include/, $(KICAD_MODELS)))
 
 # DigiSim variables
 DIGISIM_DIR   = src
@@ -32,7 +32,7 @@ $(DIGISIM_BIN):$(DIGISIM_OBJS)
 
 # Build rules for kicad models
 define modelBuildRule
-include/%.h : $(1)/%.net
+kicad/include/%.h : $(1)/%.net
 	$(NET2SIM_BIN) -i $$^ -o $$@
 endef
 $(foreach model, $(KICAD_MODELS), $(eval $(call modelBuildRule, kicad/$(model))))

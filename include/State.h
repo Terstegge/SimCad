@@ -8,6 +8,8 @@
  * state of a single pin:
  * LOW:   The pin is tied to GND -> logic LOW
  * HIGH:  The pin is tied to VCC -> logic HIGH
+ * PD:    The pin is Pulled Down by a resistor
+ * PU:    The pin is Pulled Up by a resistor
  * NC:    The pin is not connected -> high Z state
  *
  */
@@ -18,7 +20,12 @@
 #include <iostream>
 using namespace std;
 
-enum State { LOW=0, HIGH=1, NC=2 };
+// The State enum. We do not use C++11 enums classes,
+// because we need easy conversion to integers in
+// various places. The integer values are chooses so
+// that the LSB will reflect the input interpretation
+// of every State (NC will be seen as logic '1').
+enum State { LOW=0, HIGH=1, PD=2, PU=3, NC=5 };
 
 // Convert a State to a boolean. This is
 // needed when a State is used as an input.
