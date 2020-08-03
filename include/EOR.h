@@ -15,7 +15,7 @@ public:
         for(int i=1; i <= N; ++i) {
             res ^= (bool)this->p[i];
         }
-        return res;
+        return toState(res);
     }
 
 };

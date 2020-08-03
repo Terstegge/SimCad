@@ -10,33 +10,36 @@ public:
     Bus<N+3> p;
     Pin &    VCC;
     Pin &    GND;
+    Pin &    OUT;
     bool     on;
 
     GATE(const string & _name)
-     : Named(_name), NAME(p), GND(p[0]), VCC(p[N+2]), on(false)
+     : Named(_name), NAME(p), VCC(p[N+2]), GND(p[0]), OUT(p[N+1]), on(false)
     {
         // Attach power signals
         VCC.attach( [this](NetSet * nets) {
-            power_change();
+            on = (VCC == HIGH) && (GND == LOW);
+            if (on) {
+                OUT.setDrvState( on ? this->calculate() : NC, nets);
+            }
         });
         GND.attach( [this](NetSet * nets) {
-            power_change();
+            on = (VCC == HIGH) && (GND == LOW);
+            if (on) {
+                OUT.setDrvState( on ? this->calculate() : NC, nets);
+            }
         });
         // Attach input signals
         for(int i=1; i <= N; ++i) {
             p[i].attach( [this](NetSet * nets) {
-                if (on) p[N+1].setDrvState( this->calculate(), nets );
-            } );
+                if (on) {
+                    OUT.setDrvState( this->calculate(), nets );
+                }
+            });
         }
     }
 
     virtual State calculate() = 0;
-
-    void power_change()
-    {
-        on = (VCC == HIGH) && (GND == LOW);
-        p[N+1] = on ? calculate() : NC;
-    }
 
     friend ostream & operator << (ostream & os, const GATE<N> & rhs)
     {

@@ -11,15 +11,13 @@ public:
 
     State calculate() override
     {
-        bool res = true;
+        bool res = !(bool)this->p[N];
         for(int i=1; i < N; ++i) {
             res &= (bool)this->p[i];
             if (!res) break;
         }
-        res &= !(bool)this->p[N];
-        return res;
+        return toState(res);
     }
-
 };
 
 #endif // _NOR_H_
