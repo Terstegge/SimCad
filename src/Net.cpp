@@ -85,10 +85,10 @@ State Net::calculate_state() const {
     if (state_count[ HIGH ] && state_count[ LOW ]) {
         Pin * low = nullptr, * high = nullptr;
         for (Pin * p : _pins) {
-            if ((p->getDrvState() == LOW)  && !low ) low  = p;
+            if ((p->getDrvState() == LOW)  && !low)  low  = p;
             if ((p->getDrvState() == HIGH) && !high) high = p;
-            throw short_circuit_exception(low, high);
         }
+        throw short_circuit_exception(low, high);
     }
     // Pin(s) pulling down        
     if (state_count[ PD ] && !state_count[ PU ]) {
@@ -104,8 +104,8 @@ State Net::calculate_state() const {
         for (Pin * p : _pins) {
             if ((p->getDrvState() == PD) && !pd) pd = p;
             if ((p->getDrvState() == PU) && !pu) pu = p;
-            throw short_circuit_exception(pd, pu);
         }
+        throw short_circuit_exception(pd, pu);
     }
     // No driving Pins
     return NC;

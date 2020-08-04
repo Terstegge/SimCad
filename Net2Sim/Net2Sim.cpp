@@ -150,6 +150,7 @@ int Net2Sim::main(int argc, char* argv[])
 
             // Compute reference base name and index
             ce.ref_base = comp->get_attr("ref");
+            name2var(ce.ref_base);
             // Store the full reference as a needed one
             needed_refs[ ce.ref_base ]++;
             // Split reference in base and index
@@ -196,7 +197,9 @@ int Net2Sim::main(int argc, char* argv[])
                 ++node;
                 continue;
             }
-            if(needed_refs.count( node->get_attr("ref") ) == 0) {
+            string ref = node->get_attr("ref");
+            name2var( ref );
+            if(needed_refs.count( ref ) == 0) {
                 node = net->_children.erase(node);
             } else {
                 ++node;
@@ -364,6 +367,7 @@ int Net2Sim::main(int argc, char* argv[])
         for(Node & n : net._children) {
             if (n._name == "node") {
                 string ref = n.get_attr("ref");
+                name2var( ref );
                 string pin = n.get_attr("pin");
                 change_to_bus(name, found_nets);
                 string s = "        ";

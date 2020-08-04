@@ -27,6 +27,10 @@ using namespace std;
 // of every State (NC will be seen as logic '1').
 enum State { LOW=0, HIGH=1, PD=2, PU=3, NC=5 };
 
+// Method to check if the State is LOW or HIGH
+// (strong).
+bool isStrong(State s);
+
 // Convert a State to a boolean. This is
 // needed when a State is used as an input.
 // NC Pins (not connected) are treated as

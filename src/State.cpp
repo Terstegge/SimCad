@@ -7,9 +7,13 @@
 
 #include "State.h"
 
+bool isStrong(State s) {
+    return !(s & 0x06);
+}
+
 bool toBool(State s) {
     // LSB of State reflects the boolean state
-    return s & 1;
+    return s & 0x01;
 }
 
 State toState(bool s) {
