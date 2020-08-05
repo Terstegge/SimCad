@@ -13,47 +13,44 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-$Comp
-L DIGISIM:SRAM_32kb_DIP28 U1
-U 1 1 5F57D4B8
-P 6350 3400
-F 0 "U1" H 6000 4250 50  0000 C CNN
-F 1 "SRAM_32kb_DIP28" H 6750 4300 50  0000 C CNN
-F 2 "" H 7150 4450 50  0001 C CNN
-F 3 "" H 7150 4450 50  0001 C CNN
-	1    6350 3400
-	1    0    0    -1  
-$EndComp
-Text Label 5550 2700 0    50   ~ 0
+Text Label 5550 2300 0    50   ~ 0
 A0
-Text Label 5550 2800 0    50   ~ 0
+Text Label 5550 2400 0    50   ~ 0
 A1
-Text Label 5550 2900 0    50   ~ 0
+Text Label 5550 2500 0    50   ~ 0
 A2
-Text Label 5550 3000 0    50   ~ 0
+Text Label 5550 2600 0    50   ~ 0
 A3
-Text Label 5550 3100 0    50   ~ 0
+Text Label 5550 2700 0    50   ~ 0
 A4
-Text Label 5550 3200 0    50   ~ 0
+Text Label 5550 2800 0    50   ~ 0
 A5
-Text Label 5550 3300 0    50   ~ 0
+Text Label 5550 2900 0    50   ~ 0
 A6
-Text Label 5550 3400 0    50   ~ 0
+Text Label 5550 3000 0    50   ~ 0
 A7
-Text Label 5550 3500 0    50   ~ 0
+Text Label 5550 3100 0    50   ~ 0
 A8
-Text Label 5550 3600 0    50   ~ 0
+Text Label 5550 3200 0    50   ~ 0
 A9
-Text Label 5550 3700 0    50   ~ 0
+Text Label 5550 3300 0    50   ~ 0
 A10
-Text Label 5550 3800 0    50   ~ 0
+Text Label 5550 3400 0    50   ~ 0
 A11
-Text Label 5550 3900 0    50   ~ 0
+Text Label 5550 3500 0    50   ~ 0
 A12
-Text Label 5550 4000 0    50   ~ 0
+Text Label 5550 3600 0    50   ~ 0
 A13
-Text Label 5550 4100 0    50   ~ 0
+Text Label 5550 3700 0    50   ~ 0
 A14
+Wire Wire Line
+	5550 2300 5850 2300
+Wire Wire Line
+	5550 2400 5850 2400
+Wire Wire Line
+	5550 2500 5850 2500
+Wire Wire Line
+	5550 2600 5850 2600
 Wire Wire Line
 	5550 2700 5850 2700
 Wire Wire Line
@@ -76,28 +73,28 @@ Wire Wire Line
 	5550 3600 5850 3600
 Wire Wire Line
 	5550 3700 5850 3700
-Wire Wire Line
-	5550 3800 5850 3800
-Wire Wire Line
-	5550 3900 5850 3900
-Wire Wire Line
-	5550 4000 5850 4000
-Wire Wire Line
-	5550 4100 5850 4100
-Text Label 7200 2700 2    50   ~ 0
+Text Label 7200 2300 2    50   ~ 0
 Q0
-Text Label 7200 2800 2    50   ~ 0
+Text Label 7200 2400 2    50   ~ 0
 Q1
-Text Label 7200 2900 2    50   ~ 0
+Text Label 7200 2500 2    50   ~ 0
 Q2
-Text Label 7200 3000 2    50   ~ 0
+Text Label 7200 2600 2    50   ~ 0
 Q3
-Text Label 7200 3100 2    50   ~ 0
+Text Label 7200 2700 2    50   ~ 0
 Q4
-Text Label 7200 3200 2    50   ~ 0
+Text Label 7200 2800 2    50   ~ 0
 Q5
-Text Label 7200 3300 2    50   ~ 0
+Text Label 7200 2900 2    50   ~ 0
 Q6
+Wire Wire Line
+	6850 2300 7200 2300
+Wire Wire Line
+	6850 2400 7200 2400
+Wire Wire Line
+	6850 2500 7200 2500
+Wire Wire Line
+	6850 2600 7200 2600
 Wire Wire Line
 	6850 2700 7200 2700
 Wire Wire Line
@@ -106,14 +103,6 @@ Wire Wire Line
 	6850 2900 7200 2900
 Wire Wire Line
 	6850 3000 7200 3000
-Wire Wire Line
-	6850 3100 7200 3100
-Wire Wire Line
-	6850 3200 7200 3200
-Wire Wire Line
-	6850 3300 7200 3300
-Wire Wire Line
-	6850 3400 7200 3400
 $Comp
 L power:GND #PWR02
 U 1 1 5F5AD1B4
@@ -128,15 +117,15 @@ $EndComp
 $Comp
 L power:VCC #PWR01
 U 1 1 5F5AD7A7
-P 6350 2500
-F 0 "#PWR01" H 6350 2350 50  0001 C CNN
-F 1 "VCC" H 6350 2650 50  0000 C CNN
-F 2 "" H 6350 2500 50  0001 C CNN
-F 3 "" H 6350 2500 50  0001 C CNN
-	1    6350 2500
+P 6350 2100
+F 0 "#PWR01" H 6350 1950 50  0001 C CNN
+F 1 "VCC" H 6350 2250 50  0000 C CNN
+F 2 "" H 6350 2100 50  0001 C CNN
+F 3 "" H 6350 2100 50  0001 C CNN
+	1    6350 2100
 	1    0    0    -1  
 $EndComp
-Text Label 7200 3400 2    50   ~ 0
+Text Label 7200 3000 2    50   ~ 0
 Q7
 $Comp
 L Device:R R1
@@ -150,10 +139,10 @@ F 3 "~" H 7450 3400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Switch:SW_SPST CS1
+L Switch:SW_SPST ~CS1
 U 1 1 5F290DD7
 P 8400 3700
-F 0 "CS1" H 8400 3800 50  0000 C CNN
+F 0 "~CS1" H 8400 3800 50  0000 C CNN
 F 1 "SW_SPST" H 8400 3850 50  0001 C CNN
 F 2 "" H 8400 3700 50  0001 C CNN
 F 3 "~" H 8400 3700 50  0001 C CNN
@@ -183,10 +172,10 @@ F 3 "~" H 7950 3400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Switch:SW_Push OE1
+L Switch:SW_Push ~OE1
 U 1 1 5F292BF5
 P 8900 3900
-F 0 "OE1" H 8900 4093 50  0000 C CNN
+F 0 "~OE1" H 8900 4100 50  0000 C CNN
 F 1 "SW_Push" H 8900 4093 50  0001 C CNN
 F 2 "" H 8900 4100 50  0001 C CNN
 F 3 "~" H 8900 4100 50  0001 C CNN
@@ -194,10 +183,10 @@ F 3 "~" H 8900 4100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Switch:SW_Push WE1
+L Switch:SW_Push ~WE1
 U 1 1 5F2934AB
 P 9350 4100
-F 0 "WE1" H 9350 4293 50  0000 C CNN
+F 0 "~WE1" H 9350 4300 50  0000 C CNN
 F 1 "SW_Push" H 9350 4293 50  0001 C CNN
 F 2 "" H 9350 4300 50  0001 C CNN
 F 3 "~" H 9350 4300 50  0001 C CNN
@@ -263,4 +252,31 @@ F 3 "" H 9100 4450 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	9100 3900 9100 4450
+$Comp
+L DIGISIM:SST39SF040 U1
+U 1 1 5F339B0F
+P 6350 3200
+F 0 "U1" H 6050 4250 50  0000 C CNN
+F 1 "SST39SF040" H 6650 4250 50  0000 C CNN
+F 2 "" H 6000 4350 50  0001 C CNN
+F 3 "" H 6000 4350 50  0001 C CNN
+	1    6350 3200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5850 3800 5550 3800
+Wire Wire Line
+	5850 3900 5550 3900
+Wire Wire Line
+	5850 4000 5550 4000
+Wire Wire Line
+	5850 4100 5550 4100
+Text Label 5550 3800 0    50   ~ 0
+A15
+Text Label 5550 3900 0    50   ~ 0
+A16
+Text Label 5550 4000 0    50   ~ 0
+A17
+Text Label 5550 4100 0    50   ~ 0
+A18
 $EndSCHEMATC

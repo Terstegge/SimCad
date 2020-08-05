@@ -10,7 +10,8 @@ public:
 
     State calculate() override
     {
-        return toState(!(bool)this->p[1]);
+        bool res = !(bool)this->p[1];
+        return toState(res);
     }
 
 };

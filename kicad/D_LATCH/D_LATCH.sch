@@ -38,15 +38,7 @@ $EndComp
 Wire Wire Line
 	5500 3400 5500 3200
 Wire Wire Line
-	5500 3200 6100 3200
-Wire Wire Line
-	6100 3200 6100 2850
-Wire Wire Line
 	5500 2950 5500 3100
-Wire Wire Line
-	5500 3100 6200 3100
-Wire Wire Line
-	6200 3100 6200 3500
 Wire Wire Line
 	6200 3500 6100 3500
 $Comp
@@ -74,17 +66,7 @@ $EndComp
 Wire Wire Line
 	6450 4050 6450 3850
 Wire Wire Line
-	6450 3850 7050 3850
-Wire Wire Line
-	7050 3850 7050 3500
-Wire Wire Line
 	6450 3600 6450 3750
-Wire Wire Line
-	6450 3750 7150 3750
-Wire Wire Line
-	7150 3750 7150 4150
-Wire Wire Line
-	7150 4150 7050 4150
 $Comp
 L DIGISIM:NAND3 U3
 U 1 1 5F148412
@@ -110,19 +92,11 @@ $EndComp
 Wire Wire Line
 	5500 4800 5500 4600
 Wire Wire Line
-	5500 4600 6100 4600
-Wire Wire Line
-	6100 4600 6100 4250
-Wire Wire Line
 	5500 4350 5500 4500
-Wire Wire Line
-	5500 4500 6200 4500
-Wire Wire Line
-	6200 4500 6200 4900
 Wire Wire Line
 	6200 4900 6100 4900
 Wire Wire Line
-	6450 4250 6100 4250
+	6450 4250 6200 4250
 Wire Wire Line
 	6450 3500 6200 3500
 Connection ~ 6200 3500
@@ -187,12 +161,9 @@ Connection ~ 5200 3950
 Wire Wire Line
 	5200 3950 5200 4900
 Wire Wire Line
-	7050 3500 7450 3500
+	7050 3500 7150 3500
 Text Label 7450 3500 2    50   ~ 0
 p5
-Wire Wire Line
-	7150 4150 7450 4150
-Connection ~ 7150 4150
 Text Label 7450 4150 2    50   ~ 0
 p6
 Text Label 5950 4700 2    50   ~ 0
@@ -243,9 +214,7 @@ Wire Wire Line
 	5750 2650 5950 2650
 Wire Wire Line
 	5750 3050 5950 3050
-Connection ~ 7050 3500
 Connection ~ 5500 4350
-Connection ~ 6100 4250
 $Bitmap
 Pos 3800 3150
 Scale 1.000000
@@ -606,4 +575,41 @@ A6 B7 9A F5 10 86 B5 21 03 09 41 3F 9E EF 0D 63 D1 CB 04 40 4C 0D 41 27 AB 9F 0F
 82 
 EndData
 $EndBitmap
+Wire Wire Line
+	5500 3100 6200 3200
+Wire Wire Line
+	6200 3200 6200 3500
+Wire Wire Line
+	5500 3200 6200 3100
+Wire Wire Line
+	6200 3100 6200 2850
+Wire Wire Line
+	6200 2850 6100 2850
+Wire Wire Line
+	5500 4500 6200 4600
+Wire Wire Line
+	6200 4600 6200 4900
+Wire Wire Line
+	5500 4600 6200 4500
+Wire Wire Line
+	6200 4500 6200 4250
+Connection ~ 6200 4250
+Wire Wire Line
+	6200 4250 6100 4250
+Wire Wire Line
+	7050 4150 7150 4150
+Wire Wire Line
+	6450 3850 7150 3750
+Wire Wire Line
+	7150 3750 7150 3500
+Connection ~ 7150 3500
+Wire Wire Line
+	7150 3500 7450 3500
+Wire Wire Line
+	6450 3750 7150 3850
+Wire Wire Line
+	7150 3850 7150 4150
+Connection ~ 7150 4150
+Wire Wire Line
+	7150 4150 7450 4150
 $EndSCHEMATC

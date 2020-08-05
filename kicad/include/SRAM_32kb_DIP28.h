@@ -16,9 +16,9 @@ public:
             DATA_OUT = _mem[ A ];
         });
     
-        // Write memory at falling edge
-        U25.p[3].attach([this](NetSet * nets) {
-            if (U25.p[3].getDrvState() == LOW) {
+        // Write memory at end of write cycle
+        WRITE.attach([this](NetSet * nets) {
+            if ((State)WRITE == LOW) {
                 _mem[ A ] = DATA_IN;
                 DATA_OUT  = DATA_IN;
             }

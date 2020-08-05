@@ -1570,4 +1570,6 @@ Wire Wire Line
 	2450 6850 2700 6850
 Wire Wire Line
 	2100 7300 2700 7300
+Text Label 6300 6550 1    50   ~ 0
+WRITE
 $EndSCHEMATC

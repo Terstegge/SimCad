@@ -12,7 +12,8 @@ public:
 
     State calculate() override
     {
-        return G ? toState(!(bool)this->p[1]) : NC;
+        bool res = !(bool)this->p[1]; 
+        return G ? toState(res) : NC;
     }
 
 };
