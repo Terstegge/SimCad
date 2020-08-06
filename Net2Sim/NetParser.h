@@ -30,12 +30,12 @@ class NetParser {
 public:
 
     // Parse a Eeschema *.net file.
-	// The first parameter is file name.
+	// The first parameter is the input file stream.
 	// The second parameter is the root of the result tree.
 	// The top-level elements in the *.net file will be
 	// stored as children of the root node.
 	// Throws an exception if e.g. file not found.
-    void parse(std::string file, Node & tree);
+    void parse(ifstream & fs, Node & tree);
 
 private:
     // Recursive method to parse all Nodes in the file

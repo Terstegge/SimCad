@@ -26,15 +26,23 @@ using std::string;
 using std::ofstream;
 using std::vector;
 
+// Struct to hold component data
+struct component_entry {
+    string ref_base;
+    string ref_idx;
+    string part;
+    string part_arg;
+};
+
 // This struct is needed to store a
 // single net entry from the Eeschema file
-struct NetEntry {
-    NetEntry(string n, string i, bool b)
-    : base(n), index(i), isBus(b) { }
+struct net_entry {
+    net_entry(string n, string i, bool b) : base(n), index(i), isBus(b) { }
     string  base;   // base name of net
     string  index;  // index or empty if no index
     bool    isBus;  // belongs to a bus
 };
+
 
 
 class Net2Sim {
@@ -53,10 +61,9 @@ private:
     bool split_name_index(string & name, string & idx);
 
     void define_bus(string base, string index, bool isBus);
-    void change_to_bus(string & net, vector<NetEntry> & found_nets);
+    void change_to_bus(string & net, vector<net_entry> & found_nets);
 
-
-    ofstream _out;
+    ofstream h_ofs, c_ofs;
 };
 
 #endif // _NET2SIM_H_

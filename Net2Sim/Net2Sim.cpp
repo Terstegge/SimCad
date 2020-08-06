@@ -27,51 +27,83 @@ int Net2Sim::main(int argc, char* argv[])
     /////////////////////////////////////
     if (argc <= 1) {
         cout << "Usage:" << endl;
-        cout << argv[0] << " -i <net-file> [-o <out-file>] [-s <subsheet>] [-v]" << endl;
-        cout << " -i <net-file>  :  The KiCad Net-file to parse" << endl;
-        cout << " -o <out-file>  :  Name of generated .h-file (default <netfile-basename>.h)" << endl;
-        cout << " -v             :  Verbose output" << endl;
+        cout << argv[0] << " <options> kicad-netfile" << endl;
+        cout << " -c filename  :  Name of generated  .cpp-file (default netfile.cpp)" << endl;
+        cout << " -h filename  :  Name of generated  .h-file (default netfile.h)"     << endl;
+        cout << " -s subsheet  :  Generate code for specific subsheet (default /)   " << endl;
+        cout << " -v           :  Verbose output" << endl;
         exit(1);
     }
     string net_file;
-    string out_file;
+    string c_file;
+    string h_file;
     string subsheet = "/";
-    bool   read_net_file = false;
-    bool   read_out_file = false;
+    bool   read_c_file   = false;
+    bool   read_h_file   = false;
     bool   read_subsheet = false;
     bool   verbose       = false;
 
     for (int i=1; i < argc; ++i) {
-        if (read_net_file)    { net_file = argv[i]; read_net_file = false; continue; }
-        if (read_out_file)    { out_file = argv[i]; read_out_file = false; continue; }
+        if (read_c_file)      { c_file   = argv[i]; read_c_file   = false; continue; }
+        if (read_h_file)      { h_file   = argv[i]; read_h_file   = false; continue; }
         if (read_subsheet)    { subsheet = argv[i]; read_subsheet = false; continue; }
         string arg = argv[i];
-        if      (arg == "-i") { read_net_file = true; }
-        else if (arg == "-o") { read_out_file = true; }
+        if      (arg == "-c") { read_c_file   = true; }
+        else if (arg == "-h") { read_h_file   = true; }
         else if (arg == "-s") { read_subsheet = true; }
         else if (arg == "-v") { verbose       = true; }
         else {
-            cerr << "Unknown command line option: " << arg << " -> Exit!" << endl;
-            exit(1);
+            net_file = argv[i];
+            if ((i+1) != argc) {
+                cerr << "Too many arguments: " << argv[i+1] << " -> Exit!" << endl;
+                exit(1);
+            }
         }
     }
     if (net_file.empty()) {
         cerr << "No input filename given. Exit!" << endl;
         exit(1);
     }
-    if (out_file.empty()) {
-        size_t pos = net_file.find('.');
-        if (pos != string::npos) {
-            out_file = net_file.substr(0, pos) + ".h";
+
+    /////////////////////////////////////
+    // Fill filenames with default values
+    /////////////////////////////////////
+    size_t colon_pos = net_file.find('.');
+    if (h_file.empty()) {
+        if (colon_pos != string::npos) {
+            h_file = net_file.substr(0, colon_pos) + ".h";
+        } else {
+            h_file = net_file + ".h";
+        }
+    }
+    if (c_file.empty()) {
+        if (colon_pos != string::npos) {
+            c_file = net_file.substr(0, colon_pos) + ".cpp";
+        } else {
+            c_file = net_file + ".cpp";
         }
     }
 
-    ///////////////////////
-    // Open the output file
-    ///////////////////////
-    _out.open(out_file);
-    if (!_out.good()) {
-        cerr << "Can not open output file " << out_file << " -> Exit!" << endl;
+    //////////////////////
+    // Open the input file
+    //////////////////////
+    ifstream net_ifs(net_file);
+    if (!net_ifs.good()) {
+        cerr << "Could not open input file " << net_file << " -> Exit!" << endl;
+        exit(1);
+    }
+
+    ////////////////////////
+    // Open the output files
+    ////////////////////////
+    h_ofs.open(h_file);
+    if (!h_ofs.good()) {
+        cerr << "Could not open output file " << h_file << " -> Exit!" << endl;
+        exit(1);
+    }
+    c_ofs.open(c_file);
+    if (!c_ofs.good()) {
+        cerr << "Could not open output file " << c_file << " -> Exit!" << endl;
         exit(1);
     }
 
@@ -82,7 +114,7 @@ int Net2Sim::main(int argc, char* argv[])
     NetParser parser;
     if (verbose) cout << "Parsing file " << net_file << endl;
     try {
-        parser.parse(net_file, tree);
+        parser.parse(net_ifs, tree);
     } catch(ParseException & ex) {
         cerr << "Error: " << ex.info << " -> Exit!" << endl;
         exit(1);
@@ -123,16 +155,9 @@ int Net2Sim::main(int argc, char* argv[])
         exit(1);
     }
 
-    ///////////////////////////////////////////////////////
-    // Delete all unneeded components and store needed ones
-    ///////////////////////////////////////////////////////
-    struct component_entry {
-        string ref_base;
-        string ref_idx;
-        string part;
-        string part_arg;
-    };
-
+    //////////////////////////////
+    // Store all needed components
+    //////////////////////////////
     vector<component_entry> used_components;
     map<string, int>        needed_refs;
     // Loop over all components
@@ -147,7 +172,6 @@ int Net2Sim::main(int argc, char* argv[])
         } else {
             // The entry to store
             component_entry ce;
-
             // Compute reference base name and index
             ce.ref_base = comp->get_attr("ref");
             name2var(ce.ref_base);
@@ -155,11 +179,9 @@ int Net2Sim::main(int argc, char* argv[])
             needed_refs[ ce.ref_base ]++;
             // Split reference in base and index
             split_name_index(ce.ref_base, ce.ref_idx);
-
             // Compute part and possible argument
             ce.part = part;
             split_name_index(ce.part, ce.part_arg);
-            
             // Check if part is a build-in gate
             if ( (ce.part == "AND")  ||
                  (ce.part == "NAND") ||
@@ -167,21 +189,23 @@ int Net2Sim::main(int argc, char* argv[])
                  (ce.part == "NOR")  ||
                  (ce.part == "EOR")  ||
                  (ce.part == "INH") ) {
-                // Leave the part arg entry as it is...
+                // Leave the part arg entry as it is.
+                // The part argument will be the template parameter.
             } else {
                 // Part was not a build-in part. Reset the part
-                // name to the original value
+                // name to the original value (no template type!)
                 ce.part     = part;
                 ce.part_arg = "";
             }
-            
             // Store the entry
             used_components.push_back(ce);
             ++comp;
         }
     }
 
+    //////////////////////////////
     // Calculate all include files
+    //////////////////////////////
     map<string, int> included_components;
     for (component_entry & ce: used_components) {
         included_components[ ce.part ]++;
@@ -210,26 +234,26 @@ int Net2Sim::main(int argc, char* argv[])
     /////////////////////////////////////////////////////
     // Output include guards, components and class header
     /////////////////////////////////////////////////////
-    if (verbose) cout << "Generating file " << out_file << endl;
-    _out << "//" << endl;
-    _out << "// This file was generated with ** Net2Sim **!" << endl;
-    _out << "// DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
-    _out << "//" << endl;
-    _out << "#ifndef _" << classname << "_H_" << endl;
-    _out << "#define _" << classname << "_H_" << endl;
-    _out << endl;
-    _out << "#include <string>"  << endl;
-    _out << "#include \"Pin.h\"" << endl;
-    _out << "#include \"Bus.h\"" << endl;
+    if (verbose) cout << "Generating file " << h_file << endl;
+    h_ofs << "//" << endl;
+    h_ofs << "// This file was generated with ** Net2Sim **!" << endl;
+    h_ofs << "// DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
+    h_ofs << "//" << endl;
+    h_ofs << "#ifndef _" << classname << "_H_" << endl;
+    h_ofs << "#define _" << classname << "_H_" << endl;
+    h_ofs << endl;
+    h_ofs << "#include <string>"  << endl;
+    h_ofs << "#include \"Pin.h\"" << endl;
+    h_ofs << "#include \"Bus.h\"" << endl;
     for (auto comp : included_components) {
         string c = comp.first;
         name2var(c);
-        _out << "#include \"" << c << ".h\"";
-        if (c.size() < 3) _out << "\t";
-        _out << "\t" << "// " << comp.second << " parts" << endl;
+        h_ofs << "#include \"" << c << ".h\"";
+        if (c.size() < 3) h_ofs << "\t";
+        h_ofs << "\t" << "// " << comp.second << " parts" << endl;
     }
-    _out << endl
-        << "class " << classname << " " << "{" << endl
+    h_ofs << endl
+        << "class "  << classname << " " << "{" << endl
         << "public:" << endl;
 
     ///////////////////////////////////////////
@@ -246,23 +270,24 @@ int Net2Sim::main(int argc, char* argv[])
     });
 
     // Output part attributes
+    h_ofs << "    // Components" << endl;
     for (component_entry & ce : used_components) {
         name2var(ce.part);
         if (ce.part_arg == "") {
             // Standard part without template argument
-            _out << "    " << ce.part;
-            if (ce.part.size() < 4) _out << "\t";
+            h_ofs << "    " << ce.part;
+            if (ce.part.size() < 4) h_ofs << "\t";
         } else {
             // Build-in part with template argument
-            _out << "    " << ce.part << "<" << ce.part_arg << ">";
+            h_ofs << "    " << ce.part << "<" << ce.part_arg << ">";
         }
-        _out << "\t" << ce.ref_base << ce.ref_idx << ";" << endl;
+        h_ofs << "\t" << ce.ref_base << ce.ref_idx << ";" << endl;
     }
 
     ///////////////
     // Prepare Nets
     ///////////////
-    vector<NetEntry> found_nets;
+    vector<net_entry> found_nets;
     nets = tree.find_Node("nets");
     for (Node & net : nets->_children) {
         string name = net.get_attr("name");
@@ -302,14 +327,14 @@ int Net2Sim::main(int argc, char* argv[])
     }
 
     std::sort(found_nets.begin(), found_nets.end(),
-            [] (NetEntry & lhs, NetEntry & rhs) {
+            [] (net_entry & lhs, net_entry & rhs) {
         if (lhs.base == rhs.base)
             return stoi(lhs.index) < stoi(rhs.index);
         else
             return lhs.base < rhs.base;
     });
 
-    _out << endl << "public:" << endl;
+    h_ofs << "    // Nets" << endl;
 
     //////////////////////////////////
     // Find busses in the sorted nets.
@@ -339,26 +364,50 @@ int Net2Sim::main(int argc, char* argv[])
     define_bus(first.base, first.index, isBus);
     base_names.push_back(first.base);
 
-    ///////////////////////////////////////////
-    // Generate CTOR calls with component names
-    ///////////////////////////////////////////
-    _out << endl << "    " << classname << "(std::string _name) :" <<endl;
+    ////////////////////////////
+    // Generate CTOR declaration
+    ////////////////////////////
+    h_ofs << endl << "public:" << endl;
+    h_ofs << "    " << classname << "(std::string _name);" <<endl;
+    h_ofs << "};" << endl;
+
+    /////////////////////
+    // Output final endif
+    /////////////////////
+    h_ofs << endl;
+    h_ofs << "#endif\t// _" << classname << "_H_" << endl;
+    h_ofs.close();
+
+    /////////////////////////////////////////////////////
+    // Output include guards, components and class header
+    /////////////////////////////////////////////////////
+    if (verbose) cout << "Generating file " << c_file << endl;
+    c_ofs << "//" << endl;
+    c_ofs << "// This file was generated with ** Net2Sim **!" << endl;
+    c_ofs << "// DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
+    c_ofs << "//" << endl;
+    c_ofs << "#include \"" << classname << ".h\"" << endl;
+
+    ///////////////////////////
+    // Generate CTOR definition
+    ///////////////////////////
+    c_ofs << endl << classname << "::" << classname << "(std::string _name) :" <<endl;
     for (size_t i = 0; i < used_components.size(); ++i) {
         string ref = used_components[i].ref_base + used_components[i].ref_idx;
-        _out << "        NAME(" << ref << ")";
-        if ((i+1 != used_components.size()) || base_names.size()) _out << ",";
-        _out << endl;
+        c_ofs << "    NAME(" << ref << ")";
+        if ((i+1 != used_components.size()) || base_names.size()) c_ofs << ",";
+        c_ofs << endl;
     }
     for (size_t i = 0; i < base_names.size(); ++i) {
-        _out << "        NAME(" << base_names[i] << ")";
-        if (i+1 != base_names.size()) _out << ",";
-        _out << endl;
+        c_ofs << "    NAME(" << base_names[i] << ")";
+        if (i+1 != base_names.size()) c_ofs << ",";
+        c_ofs << endl;
     }
 
     ///////////////////////
     // Generate connections
     ///////////////////////
-    _out << "    {" << endl;
+    c_ofs << "{" << endl;
     vector<string> net_output;
     for (Node & net : nets->_children) {
         string name = net.get_attr("name");
@@ -370,7 +419,7 @@ int Net2Sim::main(int argc, char* argv[])
                 name2var( ref );
                 string pin = n.get_attr("pin");
                 change_to_bus(name, found_nets);
-                string s = "        ";
+                string s = "    ";
                 s += name;
                 s += ".connect_to(";
                 s += ref + ".";
@@ -382,15 +431,10 @@ int Net2Sim::main(int argc, char* argv[])
         }
     }
     std::sort(net_output.begin(), net_output.end());
-    for (string s : net_output) _out << s;
-    _out << "    }" << endl
-         << "};" << endl;
+    for (string s : net_output) c_ofs << s;
+    c_ofs << "}" << endl;
+    c_ofs.close();
 
-    /////////////////////
-    // Output final endif
-    /////////////////////
-    _out << endl;
-    _out << "#endif\t// _" << classname << "_H_" << endl;
     return 0;
 }
 
@@ -423,17 +467,17 @@ bool Net2Sim::split_name_index(string & name, string & idx) {
 
 void Net2Sim::define_bus(string base, string index, bool isBus) {
     if (isBus) {
-        _out << "    Bus<" << stoi(index)+1 << ">\t"
+        h_ofs << "    Bus<" << stoi(index)+1 << ">\t"
              << base << ";" << endl;
     } else {
-        _out << "    Pin  \t" << base;
-        if (!index.empty()) _out << index;
-        _out << ";" << endl;
+        h_ofs << "    Pin  \t" << base;
+        if (!index.empty()) h_ofs << index;
+        h_ofs << ";" << endl;
     }
 }
 
 
-void Net2Sim::change_to_bus(string & net, vector<NetEntry> & found_nets) {
+void Net2Sim::change_to_bus(string & net, vector<net_entry> & found_nets) {
     for(auto entry : found_nets) {
         if (net == (entry.base + entry.index)) {
             if (entry.isBus) {

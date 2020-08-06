@@ -12,14 +12,9 @@
 //
 #include "NetParser.h"
 
-void NetParser::parse(std::string file, Node & tree)
+void NetParser::parse(ifstream & fs, Node & tree)
 {
-    ifstream ifs(file);
-    if (!ifs.good()) {
-        throw ParseException("Could not open file " + file);
-        return;
-    }
-    parse_node(tree._children, ifs);
+    parse_node(tree._children, fs);
 }
 
 
