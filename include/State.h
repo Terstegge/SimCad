@@ -31,6 +31,13 @@ enum State { LOW=0, HIGH=1, PD=2, PU=3, NC=5 };
 // (strong).
 bool isStrong(State s);
 
+// Method to check if the State is PD or PU
+// (weak).
+bool isWeak(State s);
+
+// Method to convert a strong into a weak State
+State toWeak(State s);
+
 // Convert a State to a boolean. This is
 // needed when a State is used as an input.
 // NC Pins (not connected) are treated as

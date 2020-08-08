@@ -78,6 +78,10 @@ public:
         return _state;
     }
 
+    inline bool getCurrent() {
+        return _current_flow;
+    }
+
     // Get the Net name
     string getName() const  {
         return _name;
@@ -92,11 +96,12 @@ private:
     // and calculates the resulting State. If a
     // short circuit is detected, a exception is
     // thrown.
-    State calculate_state() const;
+    State calculate_state();
 
     vector<Pin *>   _pins;
     State           _state;
     bool            _short_circuit;
+    bool	    _current_flow;
 };
 
 #endif // _NET_H_

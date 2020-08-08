@@ -65,7 +65,9 @@ bool Net::update(NetSet * nets) {
     return false;
 }
 
-State Net::calculate_state() const {
+State Net::calculate_state() {
+    // Default: No current flowing
+    _current_flow = false;
     // Sum the States of all connected Pins
     int state_count[6] = { 0 };
     int total_count    =   0;
@@ -73,15 +75,7 @@ State Net::calculate_state() const {
         state_count[ p->getDrvState() ]++;
         total_count++;
     }
-    // Pin(s) driving LOW
-    if (state_count[ LOW ] && !state_count[ HIGH ]) {
-        return LOW;
-    } 
-    // Pin(s) driving HIGH
-    if (state_count[ HIGH ] && !state_count[ LOW ]) {
-        return HIGH;
-    } 
-    // Short circuit
+    // HIGH and LOW: Short circuit
     if (state_count[ HIGH ] && state_count[ LOW ]) {
         Pin * low = nullptr, * high = nullptr;
         for (Pin * p : _pins) {
@@ -90,33 +84,40 @@ State Net::calculate_state() const {
         }
         throw short_circuit_exception(low, high);
     }
+    // Pin(s) driving LOW
+    if (state_count[ LOW ]) {
+        _current_flow = state_count[ PU ];
+        return LOW;
+    }
+    // Pin(s) driving HIGH
+    if (state_count[ HIGH ]) {
+        _current_flow = state_count[ PD ];
+        return HIGH;
+    }
+    // Both pulls at the same time...
+    if (state_count[ PD ] && state_count[ PU ]) {
+        _current_flow = true;
+        return state_count[ PU ] >= state_count[ PD ] ? PU : PD;
+    }
     // Pin(s) pulling down        
-    if (state_count[ PD ] && !state_count[ PU ]) {
+    if (state_count[ PD ]) {
         return PD;
     } 
     // Pin(s) pulling up
-    if (state_count[ PU ] && !state_count[ PD ]) {
+    if (state_count[ PU ]) {
         return PU;
     } 
-    // Both pulls at the same time...
-    if (state_count[ PD ] && state_count[ PU ]) {
-        Pin * pd = nullptr, * pu = nullptr;
-        for (Pin * p : _pins) {
-            if ((p->getDrvState() == PD) && !pd) pd = p;
-            if ((p->getDrvState() == PU) && !pu) pu = p;
-        }
-        throw short_circuit_exception(pd, pu);
-    }
     // No driving Pins
     return NC;
 }
 
 ostream & operator << (ostream & os, const NetPtr net)
 {
-    os << net->_name << ": "  << endl;
+    os << net->_name << ": (generating input state " << net->getState() << ")"  << endl;
     for (Pin * p : net->_pins) {
         os << *p << " (driving " << (*p).getDrvState() << ")" << ", " << endl;
     }
+    os << "Current :" << net->_current_flow << endl;
     return os;
 }
 

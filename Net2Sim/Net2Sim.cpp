@@ -386,7 +386,11 @@ int Net2Sim::main(int argc, char* argv[])
     c_ofs << "// This file was generated with ** Net2Sim **!" << endl;
     c_ofs << "// DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
     c_ofs << "//" << endl;
-    c_ofs << "#include \"" << classname << ".h\"" << endl;
+
+    string hfile = h_file;
+    const size_t last_slash_idx = hfile.find_last_of("/");
+    if (string::npos != last_slash_idx)  hfile.erase(0, last_slash_idx + 1);
+    c_ofs << "#include \"" << hfile << "\""<< endl;
 
     ///////////////////////////
     // Generate CTOR definition

@@ -11,6 +11,19 @@ bool isStrong(State s) {
     return !(s & 0x06);
 }
 
+bool isWeak(State s) {
+    return (s & 0x2);
+}
+
+State toWeak(State s) {
+    switch(s) {
+        case LOW:  return PD;
+        case HIGH: return PU;
+        default: break;
+    }
+    return s;
+}
+
 bool toBool(State s) {
     // LSB of State reflects the boolean state
     return s & 0x01;

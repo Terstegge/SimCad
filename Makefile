@@ -71,8 +71,7 @@ all: build_dir $(NET2SIM_BIN) $(KICAD_H_FILES) $(KICAD_SRC_FILES) $(DIGISIM_LIB)
 # Rule to create build directory
 .PHONY: build_dir
 build_dir :
-	@echo "MKD  $(BUILD_DIR)"
-	@mkdir -p $(BUILD_DIR)
+	$(HIDE) mkdir -p $(BUILD_DIR)
 
 # Compile rules
 define compileRules
