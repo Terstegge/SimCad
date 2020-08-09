@@ -51,7 +51,7 @@ public:
     }
 
     Net(const string & name) : Named(name),
-        _state(NC), _short_circuit(false) {
+        _state(NC), _short_circuit(false), _current_flow(false) {
         ++_no_nets;
     }
 
@@ -101,7 +101,7 @@ private:
     vector<Pin *>   _pins;
     State           _state;
     bool            _short_circuit;
-    bool	    _current_flow;
+    bool	        _current_flow;
 };
 
 #endif // _NET_H_

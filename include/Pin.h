@@ -1,17 +1,24 @@
-/*
- * This file is part of the DigiSim Software -
- * a simulation package for digital circuits.
- *
- * (c) 2020 A. Terstegge
- *
- * The class 'Pin' models a single pin (either as part
- * of a circuit or stand-alone). It has a driving state,
- * and is associated to a Net (a set of Pins which are
- * connected to each other).
- * A Pin can have a update function, which is called
- * whenever the associated Net changes its value.
- */
-
+///////////////////////////////////////////////
+//
+//  This file is part of
+//   ____  ____  ___  ____  ___  ____  __  __
+//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
+//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
+//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//
+//  A simulation package for digital circuits
+//
+//  (c) 2020  A. Terstegge
+//
+///////////////////////////////////////////////
+//
+// The class 'Pin' models a single pin (either as part
+// of a circuit or stand-alone). It has a driving state,
+// and is associated to a Net (a set of Pins which are
+// connected to each other).
+// A Pin can have a update function, which is called
+// whenever the associated Net changes its value.
+//
 #ifndef _PIN_H_
 #define _PIN_H_
 
@@ -31,7 +38,7 @@ using std::string;
 class Pin : public Named {
 public:
 
-    // class Net may access e.g. out _net-pointer
+    // class Net may access e.g. our _net-pointer
     friend class Net;
 
     // Pin constructor. A name and a driving state can
@@ -124,7 +131,7 @@ public:
     // driving state of the Pin, because normally only one Pin
     // is driving a Net.
     friend ostream & operator << (ostream & os, const Pin & p) {
-        os << p.getName() << ":" <<= (State)p;
+        os << p.getName() << ":" << (State)p;
         return os;
     }
 

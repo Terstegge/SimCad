@@ -1,5 +1,8 @@
 #include "SST39SF040.h"
 
+#include <iostream>
+using namespace std;
+
 SST39SF040::cmd_state SST39SF040::_state = wait1;
 
 SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(name) {

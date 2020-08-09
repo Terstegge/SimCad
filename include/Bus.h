@@ -15,6 +15,7 @@
 #include <iomanip>
 using std::setw;
 using std::setfill;
+using std::oct;
 
 #include <sstream>
 using std::ostringstream;

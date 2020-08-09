@@ -1,10 +1,17 @@
-/*
- * This file is part of the DigiSim Software -
- * a simulation package for digital circuits.
- *
- * (c) 2020 A. Terstegge
- */
-
+///////////////////////////////////////////////
+//
+//  This file is part of
+//   ____  ____  ___  ____  ___  ____  __  __
+//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
+//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
+//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//
+//  A simulation package for digital circuits
+//
+//  (c) 2020  A. Terstegge
+//
+///////////////////////////////////////////////
+//
 #include "State.h"
 
 bool isStrong(State s) {
@@ -16,16 +23,15 @@ bool isWeak(State s) {
 }
 
 State toWeak(State s) {
-    switch(s) {
-        case LOW:  return PD;
-        case HIGH: return PU;
-        default: break;
-    }
-    return s;
+    if (s == LOW)
+        return PD;
+    else if (s == HIGH)
+        return PU;
+    else
+        return s;
 }
 
 bool toBool(State s) {
-    // LSB of State reflects the boolean state
     return s & 0x01;
 }
 
@@ -34,24 +40,14 @@ State toState(bool s) {
 }
 
 // Output operator
-ostream & operator << (ostream & os, const State s) {
+ostream & operator << (ostream & os, const State & s)  {
     switch (s) {
-        case LOW:  os << "LOW";  break;
-        case HIGH: os << "HIGH"; break;
-        case PD:   os << "PD";   break;
-        case PU:   os << "PU";   break;
-        case NC:   os << "NC";   break;
-    }
-    return os;
-}
-
-ostream & operator <<= (ostream & os, const State s)  {
-    switch (s) {
-        case LOW:  os << "0"; break;
-        case HIGH: os << "1"; break;
+        case LOW:  os << "L"; break;
+        case HIGH: os << "H"; break;
         case PD:   os << "d"; break;
         case PU:   os << "u"; break;
         case NC:   os << "x"; break;
+        default:   os << "?"; break;
     }
     return os;
 }

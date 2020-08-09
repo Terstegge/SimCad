@@ -1,6 +1,9 @@
 #include "RS-flipflop.h"
 #include "ShortCircuitEx.h"
 
+#include <iostream>
+using namespace std;
+
 int main() {
 
     RS_flipflop ff("RS-FF");

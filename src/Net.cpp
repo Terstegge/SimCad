@@ -5,6 +5,10 @@
 int Net::_no_nets = 0;
 int Net::_short_circuit_count = 0;
 
+#include <iostream>
+using std::ostream;
+using std::cout;
+using std::endl;
 
 void Net::merge_net(NetPtr n, NetPtr o) {
     // Insert the Pin pointers to our vector. The
@@ -38,7 +42,7 @@ bool Net::update(NetSet * nets) {
                 throw ex;
             } else {
                 // Mark this Net as SC
-                cout << "new SC" << endl;
+                cout << "new SC" << std::endl;
                 _short_circuit = true;
                 ++_short_circuit_count;
                 return false;
@@ -115,9 +119,9 @@ ostream & operator << (ostream & os, const NetPtr net)
 {
     os << net->_name << ": (generating input state " << net->getState() << ")"  << endl;
     for (Pin * p : net->_pins) {
-        os << *p << " (driving " << (*p).getDrvState() << ")" << ", " << endl;
+        os << *p << " (driving " << (*p).getDrvState() << ")" << ", " << std::endl;
     }
-    os << "Current :" << net->_current_flow << endl;
+    os << "Current :" << net->_current_flow << std::endl;
     return os;
 }
 

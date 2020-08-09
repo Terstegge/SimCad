@@ -7,7 +7,7 @@ class SST39SF040 : public SST39SF040_skel {
 public:
     enum cmd_state { wait1, wait2, wait3, wait4, wait5, byte_prgm, erase };
 
-    uint8_t  _mem[524288] = { 0 };
+    uint8_t  _mem[524288] = { 0xff };
     bool _id_mode = false;
     int  _addr;
     int  _data;
