@@ -1,3 +1,25 @@
+///////////////////////////////////////////////
+//
+//  This file is part of
+//   ____  ____  ___  ____  ___  ____  __  __
+//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
+//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
+//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//
+//  A simulation package for digital circuits
+//
+//  (c) 2020  A. Terstegge
+//
+///////////////////////////////////////////////
+//
+// Implementation of a 32kB RAM.
+// When the Address Bus changes, data on the
+// output Bus (DATA_OUT) is updated.
+// Data is written at the end of a write cycle.
+// For simplicity, the Address bus is not latched
+// at the beginning of the write cycle, but instead
+// read out at the same time as the data (DATA_IN).
+//
 #include "SRAM_32kb_DIP28.h"
 
 SRAM_32kb_DIP28::SRAM_32kb_DIP28(std::string name) 

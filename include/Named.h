@@ -20,7 +20,7 @@
 #include <string>
 using std::string;
 
-#define NAME(var) var(_name + "." + #var)
+#define NAME(var) var(name + "." + #var)
 
 class Named {
 public:

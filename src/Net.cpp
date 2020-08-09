@@ -1,3 +1,17 @@
+///////////////////////////////////////////////
+//
+//  This file is part of
+//   ____  ____  ___  ____  ___  ____  __  __
+//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
+//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
+//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//
+//  A simulation package for digital circuits
+//
+//  (c) 2020  A. Terstegge
+//
+///////////////////////////////////////////////
+//
 #include <ShortCircuitEx.h>
 #include "Net.h"
 #include "Pin.h"
@@ -16,7 +30,7 @@ void Net::merge_net(NetPtr n, NetPtr o) {
     _pins.insert(_pins.end(), o->_pins.begin(), o->_pins.end() );
     // Set the Net pointers in the new entries
     for (Pin * p : o->_pins) {
-        p->_net = n;
+        p->setNet(n);
     }
     if (!update(nullptr)) {
         // If no update was needed, update at least the new Pins

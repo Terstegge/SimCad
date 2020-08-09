@@ -370,7 +370,7 @@ int Net2Sim::main(int argc, char* argv[])
     // Generate CTOR declaration
     ////////////////////////////
     h_ofs << endl << "public:" << endl;
-    h_ofs << "    " << classname << "(std::string _name);" <<endl;
+    h_ofs << "    " << classname << "(std::string name);" <<endl;
     h_ofs << "};" << endl;
 
     /////////////////////
@@ -397,7 +397,7 @@ int Net2Sim::main(int argc, char* argv[])
     ///////////////////////////
     // Generate CTOR definition
     ///////////////////////////
-    c_ofs << endl << classname << "::" << classname << "(std::string _name) :" <<endl;
+    c_ofs << endl << classname << "::" << classname << "(std::string name) :" <<endl;
     for (size_t i = 0; i < used_components.size(); ++i) {
         string ref = used_components[i].ref_base + used_components[i].ref_idx;
         c_ofs << "    NAME(" << ref << ")";

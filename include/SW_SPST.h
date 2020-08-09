@@ -12,7 +12,7 @@ public:
     bool  is_on    = false;
     Pin * weak_pin = nullptr;
 
-    SW_SPST(const string & _name) : Named(_name), NAME(p)
+    SW_SPST(const string & name) : Named(name), NAME(p)
     {
     }
 

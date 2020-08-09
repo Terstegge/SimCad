@@ -68,8 +68,9 @@ string NetParser::get_word(ifstream & fs)
     } else {
         c = fs.peek();
         while(fs.good() &&
-        		c != '('  && c != ')'  && c != ' ' &&
-                c != '\n' && c != '\r' && c != '\t') {
+              c != '('  && c != ')'  && c != ' ' &&
+              c != '\n' && c != '\r' && c != '\t')
+        {
             fs >> c;
             result += c;
             c = fs.peek();

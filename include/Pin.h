@@ -38,13 +38,10 @@ using std::string;
 class Pin : public Named {
 public:
 
-    // class Net may access e.g. our _net-pointer
-    friend class Net;
-
-    // Pin constructor. A name and a driving state can
-    // be specified optionally
-    Pin(const string & name="", State s = NC) : Named(name),
-            _drv_state(s), _net(Net::create_net(name, this))  { }
+    // Pin constructor.
+    Pin(const string & name="", State s = NC)
+    : Named(name), _drv_state(NC),
+      _net(Net::create_net(name, this))  { }
 
     // No assignment, no copy
     Pin & operator = (const Pin & p) = delete;
@@ -122,6 +119,11 @@ public:
     // Return the Net pointer
     inline NetPtr getNet() {
         return _net;
+    }
+
+    // Set the Net pointer
+    inline void setNet(NetPtr p) {
+        _net = p;
     }
 
     // The stream output operator will insert the input state
