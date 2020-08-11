@@ -57,6 +57,9 @@ public:
     // Global counter for the number of Nets
     static int _no_nets;
 
+    // Global transaction ID
+    static int _id;
+
     // Factory method: Create a new Net and add a first Pin
     static shared_ptr<Net> create_net(string n, Pin * p) {
         Net * net = new Net(n);

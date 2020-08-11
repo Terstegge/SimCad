@@ -46,7 +46,7 @@ public:
             on = (VCC == HIGH) && (GND == LOW);
             OUT.setDrvState( on ? this->calculate() : NC, nets);
         });
-        // Attach input signals
+        // Attach input signal handlers
         for(int i=1; i <= N; ++i) {
             p[i].attach( [this](NetSet * nets) {
                 OUT.setDrvState( on ? this->calculate() : NC, nets );

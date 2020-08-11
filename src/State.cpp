@@ -15,10 +15,17 @@
 #include "State.h"
 
 bool isStrong(State s) {
+    // Mask away the LSB bit (LOW/HIGH) 
+    // The remainder has to be 0:
+    // --> weak bit not set
+    // --> NC bit not set
     return !(s & 0x06);
 }
 
 bool isWeak(State s) {
+    // Mask away the LSB bit (LOW/HIGH) and
+    // the NC-bit. The result has to be != 0:
+    // --> weak bit set
     return (s & 0x2);
 }
 
@@ -31,6 +38,9 @@ State toWeak(State s) {
         return s;
 }
 
+// Mask away the weak bit and the NC bit.
+// The remainder is the resulting boolean
+// value (NC is interpreted as HIGH).
 bool toBool(State s) {
     return s & 0x01;
 }

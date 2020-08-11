@@ -27,6 +27,7 @@ void Pin::connect_to(Pin & p) {
 }
 
 void Pin::operator = (State s) {
+    Net::_id++;
     NetSet net1;
     setDrvState(s, &net1);
     while (net1.size()) {

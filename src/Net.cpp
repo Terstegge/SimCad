@@ -18,6 +18,7 @@
 
 int Net::_no_nets = 0;
 int Net::_short_circuit_count = 0;
+int Net::_id = 0;
 
 #include <iostream>
 using std::ostream;
@@ -88,10 +89,8 @@ State Net::calculate_state() {
     _current_flow = false;
     // Sum the States of all connected Pins
     int state_count[6] = { 0 };
-    int total_count    =   0;
     for (Pin * p : _pins) {
         state_count[ p->getDrvState() ]++;
-        total_count++;
     }
     // HIGH and LOW: Short circuit
     if (state_count[ HIGH ] && state_count[ LOW ]) {
@@ -132,7 +131,12 @@ State Net::calculate_state() {
 ostream & operator << (ostream & os, const NetPtr net)
 {
     os << net->_name << ": (generating input state " << net->getState() << ")"  << endl;
+    bool first = true;
     for (Pin * p : net->_pins) {
+        if (first) {
+            first = false;
+            continue;
+        }
         os << *p << " (driving " << (*p).getDrvState() << ")" << ", " << std::endl;
     }
     os << "Current :" << net->_current_flow << std::endl;
