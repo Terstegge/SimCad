@@ -46,6 +46,9 @@ bool isStrong(State s);
 // Method to check if the State is PD or PU (weak).
 bool isWeak(State s);
 
+// Method to convert a State into a strong one
+State toStrong(State s);
+
 // Method to convert a State into a weak one
 State toWeak(State s);
 

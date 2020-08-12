@@ -27,8 +27,9 @@ public:
     LED(const string & name="") : _1N4148(name) { }
     
     bool on() {
-        return A.getNet()->getCurrent() ||
-               K.getNet()->getCurrent();
+        return (A.getNet()->getCurrent() ||
+                K.getNet()->getCurrent()) &&
+                (toStrong(K) == LOW);
     }
 
 };

@@ -33,9 +33,11 @@ void Net::merge_net(NetPtr n, NetPtr o) {
     for (Pin * p : o->_pins) {
         p->setNet(n);
     }
+    _id++;
     if (!update(nullptr)) {
         // If no update was needed, update at least the new Pins
         for (Pin * p : o->_pins) {
+            _id++;
             p->update(nullptr);
         }
     }
@@ -76,7 +78,9 @@ bool Net::update(NetSet * nets) {
     if (s != _state) {
         // Set the State and call update on every Pin
         _state = s;
+        _id++;
         for (Pin * p : _pins) {
+            _id++;
             p->update(nets);
         }
         return true;

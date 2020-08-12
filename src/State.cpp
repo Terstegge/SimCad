@@ -29,13 +29,15 @@ bool isWeak(State s) {
     return (s & 0x2);
 }
 
+State toStrong(State s) {
+    // Mask away the weak bit
+    // --> state will be strong or NC
+    return State(s & 0x5);
+}
+
 State toWeak(State s) {
-    if (s == LOW)
-        return PD;
-    else if (s == HIGH)
-        return PU;
-    else
-        return s;
+    // Add weak bit if not NC
+    return State(s != NC ? s | 0x2 : NC);
 }
 
 // Mask away the weak bit and the NC bit.
