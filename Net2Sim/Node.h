@@ -19,7 +19,7 @@
 #ifndef _NODE_H_
 #define _NODE_H_
 
-#include "ParseException.h"
+#include "Net2SimException.h"
 #include <string>
 #include <vector>
 using std::string;

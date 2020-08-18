@@ -23,6 +23,7 @@
 #define _PIN_H_
 
 #include "Named.h"
+#include "Part.h"
 #include "State.h"
 #include "Net.h"
 
@@ -41,7 +42,7 @@ public:
     // Pin constructor.
     Pin(const string & name="", State s = NC)
     : Named(name), _drv_state(NC),
-      _net(Net::create_net(name, this))  { }
+      _net(Net::create_net(name, this)),_partPtr(nullptr)  { }
 
     // No assignment, no copy
     Pin & operator = (const Pin & p) = delete;
@@ -74,7 +75,7 @@ public:
     // iteratively, and every iteration reports a
     // new set of Nets which need to be updated.
     inline void operator = (bool val) {
-        (*this) = toState(val);
+        (*this) = State(val);
     }
     void operator = (State s);
 
@@ -87,7 +88,7 @@ public:
     // When nets is a nullptr, the method will
     // recursively update the whole circuit.
     inline void setDrvState(bool val, NetSet * nets) {
-        (*this).setDrvState( toState(val), nets );
+        (*this).setDrvState( State(val), nets );
     }
     void setDrvState(State s, NetSet * nets);
 
@@ -106,7 +107,7 @@ public:
     // mostly used for input pins without a
     // three-state mode.
     inline operator bool () const {
-        return toBool(getInpState());
+        return getInpState();
     }
 
     // Get input state as State. This is
@@ -126,6 +127,16 @@ public:
         _net = p;
     }
 
+    // Return the Net pointer
+    inline Part * getPartPtr() {
+        return _partPtr;
+    }
+
+    // Set the Net pointer
+    inline void setPartPtr(Part * p) {
+        _partPtr = p;
+    }
+
     // The stream output operator will insert the input state
     // of the Pin to the ostream. This is what is most often
     // interesting for the user in case of input Pins.
@@ -133,7 +144,7 @@ public:
     // driving state of the Pin, because normally only one Pin
     // is driving a Net.
     friend ostream & operator << (ostream & os, const Pin & p) {
-        os << p.getName() << ":" << (State)p;
+        os << p.getName() << ":" << p.getInpState();
         return os;
     }
 
@@ -142,6 +153,7 @@ private:
     State   _drv_state;                 // The driving state of this Pin
     NetPtr  _net;                       // The associated Net
     function<void(NetSet *)> _update;   // The associated update function
+    Part *  _partPtr;                   // Pointer to the related Part
 };
 
 #endif // _PIN_H_

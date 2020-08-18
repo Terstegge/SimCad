@@ -32,7 +32,7 @@ SRAM_32kb_DIP28::SRAM_32kb_DIP28(std::string name)
 
     // Write memory at end of write cycle
     WRITE.attach([this](NetSet * nets) {
-        if ((State)WRITE == LOW) {
+        if (WRITE.getInpState() == LOW) {
             _mem[ A ] = DATA_IN;
             DATA_OUT  = DATA_IN;
         }

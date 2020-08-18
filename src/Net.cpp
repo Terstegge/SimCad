@@ -15,6 +15,7 @@
 #include <ShortCircuitEx.h>
 #include "Net.h"
 #include "Pin.h"
+#include "TwoPole.h"
 
 int Net::_no_nets = 0;
 int Net::_short_circuit_count = 0;
@@ -33,17 +34,17 @@ void Net::merge_net(NetPtr n, NetPtr o) {
     for (Pin * p : o->_pins) {
         p->setNet(n);
     }
-    _id++;
-    if (!update(nullptr)) {
+//    _id++;
+    if (!update(nullptr, nullptr)) {
         // If no update was needed, update at least the new Pins
         for (Pin * p : o->_pins) {
-            _id++;
+//            _id++;
             p->update(nullptr);
         }
     }
 }
 
-bool Net::update(NetSet * nets) {
+bool Net::update(Pin * src, NetSet * nets) {
     State s;
     try {
         // Calculate the State of the Net
@@ -77,20 +78,78 @@ bool Net::update(NetSet * nets) {
     // Check if the State of the Net has changed
     if (s != _state) {
         // Set the State and call update on every Pin
+
+//        cout << _name << ": " << s << " not " << _state << endl;
+
         _state = s;
-        _id++;
-        for (Pin * p : _pins) {
-            _id++;
-            p->update(nets);
-        }
+//        _id++;
+            for (Pin * p : _pins) {
+//                _id++;
+                p->update(nets);
+            }
         return true;
     }
     return false;
 }
 
+
 State Net::calculate_state() {
-    // Default: No current flowing
-    _current_flow = false;
+
+//    cout << "Calculate " << _name << endl;
+
+    // Default NC
+    State res  = NC;
+    Pin * last = nullptr;
+    bool  sum  = true;
+    bool  summed = false;
+
+    float Gi = 0;
+    float Ik = 0;
+    
+    // Loop over all Pins
+    for (Pin * p : _pins) {
+        // Get the driving state
+        State s = p->getDrvState();
+        // Ignore NC
+        if (s == NC) continue;
+        // Check for strong pins
+        if (s.isStrong()) {
+            // Check for short circuit
+            if (res.isStrong() && (s != res)) {
+                throw short_circuit_exception(last, p);
+            }
+            res = s;
+            sum = false;
+            summed = false;
+        } else {
+            // Check if we need to sum
+            if (sum) {
+                TwoPole * tp = dynamic_cast<TwoPole*>(p->getPartPtr());
+                if (!tp) {
+                //                cout << "Not a R :( " << endl;
+                    continue;
+                }
+
+
+                float G = 1 / tp->TP_R; // s.getR();
+                Gi += G;
+                Ik += s.getU() * G;
+                summed = true;
+            }
+        }
+    }
+    // Set the result
+    if (summed) {
+        res.setNC(false);
+        res.setU (Ik  / Gi);
+        if (res.getU() < 1e-6) res.setU(0);
+        res.setR (1.0 / Gi);
+    }
+
+    return res;
+
+
+#if 0
     // Sum the States of all connected Pins
     int state_count[6] = { 0 };
     for (Pin * p : _pins) {
@@ -130,20 +189,20 @@ State Net::calculate_state() {
     } 
     // No driving Pins
     return NC;
+#endif
 }
 
 ostream & operator << (ostream & os, const NetPtr net)
 {
     os << net->_name << ": (generating input state " << net->getState() << ")"  << endl;
-    bool first = true;
+//    bool first = true;
     for (Pin * p : net->_pins) {
-        if (first) {
-            first = false;
-            continue;
-        }
+//        if (first) {
+//            first = false;
+//            continue;
+//        }
         os << *p << " (driving " << (*p).getDrvState() << ")" << ", " << std::endl;
     }
-    os << "Current :" << net->_current_flow << std::endl;
     return os;
 }
 

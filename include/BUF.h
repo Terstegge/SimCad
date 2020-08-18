@@ -18,17 +18,17 @@
 #ifndef _BUF_H_
 #define _BUF_H_
 
-#include "GATE.h"
+#include "Gate.h"
 
-class BUF : public GATE<1> {
+class BUF : public Gate<1> {
 public:
 
-    BUF(const string & name) : GATE<1>(name) { }
+    BUF(const string & name) : Gate<1>(name) { }
 
     State calculate() override
     {
         bool res = (bool)this->p[1];
-        return toState(res);
+        return res;
     }
 
 };

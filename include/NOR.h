@@ -18,13 +18,13 @@
 #ifndef _NOR_H_
 #define _NOR_H_
 
-#include "GATE.h"
+#include "Gate.h"
 
 template<int N>
-class NOR : public GATE<N> {
+class NOR : public Gate<N> {
 public:
 
-    NOR(const string & name) : GATE<N>(name) { }
+    NOR(const string & name) : Gate<N>(name) { }
 
     State calculate() override
     {
@@ -33,7 +33,7 @@ public:
             res |= (bool)this->p[i];
             if (res) break;
         }
-        return toState(!res);
+        return !res;
     }
 
 };

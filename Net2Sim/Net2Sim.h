@@ -34,6 +34,7 @@ struct component_entry {
     string ref_idx;
     string part;
     string part_arg;
+    string value;
 };
 
 // This struct is needed to store a
@@ -64,6 +65,10 @@ private:
 
     void define_bus(string base, string index, bool isBus);
     void change_to_bus(string & net, vector<net_entry> & found_nets);
+
+    // Read a resistor value (e.g. 1k, 4k7, 100, 1.4) and
+    // convert it to a float value
+    float readR(string s);
 
     ofstream h_ofs, c_ofs;
 };

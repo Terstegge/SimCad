@@ -19,13 +19,13 @@
 #ifndef _INH_H_
 #define _INH_H_
 
-#include "GATE.h"
+#include "Gate.h"
 
 template<int N>
-class INH : public GATE<N> {
+class INH : public Gate<N> {
 public:
 
-    INH(const string & name) : GATE<N>(name) { }
+    INH(const string & name) : Gate<N>(name) { }
 
     State calculate() override
     {
@@ -34,7 +34,7 @@ public:
             res &= (bool)this->p[i];
             if (!res) break;
         }
-        return toState(res);
+        return res;
     }
 };
 

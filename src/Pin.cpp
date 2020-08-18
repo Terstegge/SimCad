@@ -33,7 +33,7 @@ void Pin::operator = (State s) {
     while (net1.size()) {
         NetSet net2;
         for (shared_ptr<Net> n : net1) {
-            n->update(&net2);
+            n->update(nullptr, &net2);
         }
         net1 = net2;
     }
@@ -53,7 +53,7 @@ void Pin::setDrvState(State s, NetSet * nets) {
             } else {
                 // No NetSet is provided -> update Net
                 // recursively
-                _net->update(nets);
+                _net->update(this, nullptr);
             }
         }
     }

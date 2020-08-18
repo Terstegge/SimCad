@@ -18,7 +18,7 @@
 #ifndef _NET_PARSER_H_
 #define _NET_PARSER_H_
 
-#include "ParseException.h"
+#include "Net2SimException.h"
 #include "Node.h"
 #include <fstream>
 #include <iostream>

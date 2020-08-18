@@ -18,13 +18,13 @@
 #ifndef _NAND_H_
 #define _NAND_H_
 
-#include "GATE.h"
+#include "Gate.h"
 
 template<int N>
-class NAND : public GATE<N> {
+class NAND : public Gate<N> {
 public:
 
-    NAND(const string & name) : GATE<N>(name) { }
+    NAND(const string & name) : Gate<N>(name) { }
 
     State calculate() override
     {
@@ -33,7 +33,7 @@ public:
             res &= (bool)this->p[i];
             if (!res) break;
         }
-        return toState(!res);
+        return !res;
     }
 
 };

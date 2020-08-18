@@ -68,7 +68,7 @@ public:
     }
 
     Net(const string & name) : Named(name),
-        _state(NC), _short_circuit(false), _current_flow(false) {
+        _state(NC), _short_circuit(false) {
         ++_no_nets;
     }
 
@@ -87,16 +87,12 @@ public:
     // the Net. If it changed, update() is called on every
     // Pin in the Net. The method will return true if the
     // state has changed.
-    bool update(NetSet * nets);
+    bool update(Pin * p, NetSet * nets);
 
 
     // Return the current State of this Net.
     inline State getState() {
         return _state;
-    }
-
-    inline bool getCurrent() {
-        return _current_flow;
     }
 
     // Get the Net name
@@ -107,7 +103,7 @@ public:
     // Output operator for a Net
     friend ostream & operator << (ostream & os, const NetPtr net);
 
-private:
+//private:
 
     // This method scans through all Pins in the Net
     // and calculates the resulting State. If a
@@ -118,7 +114,6 @@ private:
     vector<Pin *>   _pins;
     State           _state;
     bool            _short_circuit;
-    bool	        _current_flow;
 };
 
 #endif // _NET_H_

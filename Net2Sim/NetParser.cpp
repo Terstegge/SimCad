@@ -32,7 +32,7 @@ void NetParser::parse_node(std::vector<Node> & nodes,
         // Get next character
         fs >> std::ws >> c;
         if (c != '(') {
-            throw ParseException("Expected '('");
+            throw Net2SimException("Expected '('");
             return;
         }
         // Get Name
@@ -45,7 +45,7 @@ void NetParser::parse_node(std::vector<Node> & nodes,
         n._value = get_word(fs);
         fs >> c;
         if (c != ')') {
-            throw ParseException("Expected ')'");
+            throw Net2SimException("Expected ')'");
             return;
         }
         // Check next char

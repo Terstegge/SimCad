@@ -12,19 +12,19 @@
 //
 ///////////////////////////////////////////////
 //
-// Low-level implementation of a OR gate
+// Low-level implementation of an OR gate
 // with N inputs (p[1]...p[N]).
 //
 #ifndef _OR_H_
 #define _OR_H_
 
-#include "GATE.h"
+#include "Gate.h"
 
 template<int N>
-class OR : public GATE<N> {
+class OR : public Gate<N> {
 public:
 
-    OR(const string & name) : GATE<N>(name) { }
+    OR(const string & name) : Gate<N>(name) { }
 
     State calculate() override
     {
@@ -33,7 +33,7 @@ public:
             res |= (bool)this->p[i];
             if (res) break;
         }
-        return toState(res);
+        return res;
     }
 
 };

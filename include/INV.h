@@ -18,17 +18,17 @@
 #ifndef _INV_H_
 #define _INV_H_
 
-#include "GATE.h"
+#include "Gate.h"
 
-class INV : public GATE<1> {
+class INV : public Gate<1> {
 public:
 
-    INV(const string & name) : GATE<1>(name) { }
+    INV(const string & name) : Gate<1>(name) { }
 
     State calculate() override
     {
         bool res = !(bool)this->p[1];
-        return toState(res);
+        return res;
     }
 
 };

@@ -14,6 +14,14 @@
 //
 #include "State.h"
 
+State LOW  (false, 0.0, 0.0);
+State HIGH (false, 5.0, 0.0);
+//State PD   (false, 0.0, 470.0);
+//State PU   (false, 5.0, 470.0);
+State NC   (true,  0.0, 0.0);
+
+
+#if 0
 bool isStrong(State s) {
     // Mask away the LSB bit (LOW/HIGH) 
     // The remainder has to be 0:
@@ -51,15 +59,36 @@ State toState(bool s) {
     return s ? HIGH : LOW;
 }
 
+#endif
+
 // Output operator
 ostream & operator << (ostream & os, const State & s)  {
-    switch (s) {
-        case LOW:  os << "L"; break;
-        case HIGH: os << "H"; break;
-        case PD:   os << "d"; break;
-        case PU:   os << "u"; break;
-        case NC:   os << "x"; break;
-        default:   os << "?"; break;
+#if 0
+    os << "[";
+    if (s.getNC()) os << "NC";
+    else {
+      os << s.getU() << " ";
+      os << s.getR();
+    }
+    os << "]";
+#endif
+    if (s.getNC()) {
+        os << "x";
+    }
+    else if (s.isStrong()) {
+        if (s._U == 5.0) {
+            os << "H";
+        } else
+        if (s._U == 0.0) {
+            os << "L";
+        } else
+            os << "M";
+    }
+    else {
+        os << "[";
+        os << s.getU() << " ";
+        os << s.getR();
+        os << "]";
     }
     return os;
 }

@@ -14,11 +14,11 @@ SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(name) {
         // Latch address at start of write cycle
         // and latch data at falling edge
         WRITE.attach([this](NetSet * nets) {
-            if ((State)WRITE == HIGH) {
+            if (WRITE.getInpState() == HIGH) {
                 // Latch address
                 _addr = A;
             }
-            if ((State)WRITE == LOW) {
+            if (WRITE.getInpState() == LOW) {
                 // Latch data and process
                 _data    = DATA_IN;
                 DATA_OUT = DATA_IN;

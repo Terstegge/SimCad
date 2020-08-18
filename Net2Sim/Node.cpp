@@ -37,7 +37,7 @@ string Node::get_attr(const char * name)
             return child._value;
         }
     }
-    throw ParseException(string(name) + " not found!");
+    throw Net2SimException(string(name) + " not found!");
 }
 
 
@@ -49,7 +49,7 @@ void Node::set_attr(const char * name, const char * value)
             return;
         }
     }
-    throw ParseException(string(name) + " not found!");
+    throw Net2SimException(string(name) + " not found!");
 }
 
 

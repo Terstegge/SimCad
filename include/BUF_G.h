@@ -13,25 +13,26 @@
 ///////////////////////////////////////////////
 //
 // Low-level implementation of a non-inverting
-// Buffer with enable input (active HIGH).
+// three-state Buffer with enable input.
+//
 // p[1] is signal input
-// p[2] is enable input
+// p[2] is enable input (active high).
 //
 #ifndef _BUF_G_H_
 #define _BUF_G_H_
 
-#include "GATE.h"
+#include "Gate.h"
 
-class BUF_G : public GATE<2> {
+class BUF_G : public Gate<2> {
 public:
     Pin & G;
 
-    BUF_G(const string & name) : GATE<2>(name), G(this->p[2]) { }
+    BUF_G(const string & name) : Gate<2>(name), G(this->p[2]) { }
 
     State calculate() override
     {
         bool res = (bool)this->p[1];
-        return G ? toState(res) : NC;
+        return G ? State(res) : NC;
     }
 
 };

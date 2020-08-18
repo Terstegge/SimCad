@@ -12,29 +12,25 @@
 //
 ///////////////////////////////////////////////
 //
-// Low-level implementation of a EOR (XOR) gate
-// with N inputs (p[1]...p[N]).
+// Virtual base class for all kinds of parts.
+// A part has a name, which is set in the part
+// constructor.
 //
-#ifndef _EOR_H_
-#define _EOR_H_
+#ifndef INCLUDE_PART_H_
+#define INCLUDE_PART_H_
 
-#include "Gate.h"
+#include "Named.h"
 
-template<int N>
-class EOR : public Gate<N> {
-public:
+struct Part : Named {
 
-    EOR(const string & name) : Gate<N>(name) { }
-
-    State calculate() override
+    Part(const string & name) : Named(name)
     {
-        bool res = false;
-        for(int i=1; i <= N; ++i) {
-            res ^= (bool)this->p[i];
-        }
-        return res;
+    }
+
+    virtual ~Part()
+    {
     }
 
 };
 
-#endif // _EOR_H_
+#endif /* INCLUDE_PART_H_ */

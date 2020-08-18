@@ -1,0 +1,17 @@
+- Pins durch Nets ersetzen?
+
+- Test-Framework integrieren und erste Tests schreiben
+
+- Mehr examples (ben eater/ALU)
+
+- GUI mit Generierung von LED Switches?
+  +- Re-use von Eeschema von KiCad mit entsprechenden Animationen?
+
+- Lösen der R/1N4148 Problematik !
+
+- Mehr ICs unterstützen?
+
+- github mit Text und Video aktualisieren!
+
+- LEDs mit gemeinsamem Vorwiderstand: alle 'on' ????
+

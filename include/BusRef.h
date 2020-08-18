@@ -63,7 +63,7 @@ public:
         NetSet net1;
         // Set new drv state on all pins
         for (size_t i=0; i < this->size(); ++i) {
-            (*this)[i]->setDrvState((State)(*rhs[i]), &net1);
+            (*this)[i]->setDrvState((*rhs[i]).getInpState(), &net1);
         }
         // Iterate until no updates are necessary
         while (net1.size()) {
@@ -87,7 +87,7 @@ public:
     string drv_state() const {
         ostringstream oss;
         for (size_t i=0; i < this->size(); ++i) {
-            oss << (State)(*(*this)[i]);
+            oss << (*(*this)[i]).getInpState();
         }
         return oss.str();
     }

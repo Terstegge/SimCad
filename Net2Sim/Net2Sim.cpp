@@ -24,6 +24,8 @@ using std::map;
 
 int Net2Sim::main(int argc, char* argv[])
 {
+    try {
+
     /////////////////////////////////////
     // Evaluate command line arguments //
     /////////////////////////////////////
@@ -115,12 +117,7 @@ int Net2Sim::main(int argc, char* argv[])
     Node      tree;
     NetParser parser;
     if (verbose) cout << "Parsing file " << net_file << endl;
-    try {
-        parser.parse(net_ifs, tree);
-    } catch(ParseException & ex) {
-        cerr << "Error: " << ex.info << " -> Exit!" << endl;
-        exit(1);
-    }
+    parser.parse(net_ifs, tree);
 
     ////////////////
     // Find subsheet
@@ -174,6 +171,8 @@ int Net2Sim::main(int argc, char* argv[])
         } else {
             // The entry to store
             component_entry ce;
+            // Compute component value
+            ce.value = comp->get_attr("value");
             // Compute reference base name and index
             ce.ref_base = comp->get_attr("ref");
             name2var(ce.ref_base);
@@ -400,7 +399,12 @@ int Net2Sim::main(int argc, char* argv[])
     c_ofs << endl << classname << "::" << classname << "(std::string name) :" <<endl;
     for (size_t i = 0; i < used_components.size(); ++i) {
         string ref = used_components[i].ref_base + used_components[i].ref_idx;
-        c_ofs << "    NAME(" << ref << ")";
+        if (used_components[i].ref_base == "R") {
+            c_ofs << "    NAME(" << ref << ", "
+                  << readR(used_components[i].value) << ")";
+        } else {
+            c_ofs << "    NAME(" << ref << ")";
+        }
         if ((i+1 != used_components.size()) || base_names.size()) c_ofs << ",";
         c_ofs << endl;
     }
@@ -440,6 +444,11 @@ int Net2Sim::main(int argc, char* argv[])
     for (string s : net_output) c_ofs << s;
     c_ofs << "}" << endl;
     c_ofs.close();
+
+    } catch(Net2SimException & ex) {
+        cerr << "Error: " << ex.info << " -> Exit!" << endl;
+        exit(1);
+    }
 
     return 0;
 }
@@ -491,5 +500,44 @@ void Net2Sim::change_to_bus(string & net, vector<net_entry> & found_nets) {
             }
         }
     }
+}
+
+float Net2Sim::readR(string s) {
+    bool  shift_mode = true;
+    float res;
+    float factor;
+
+    for(int i=0; i < s.size(); ++i) {
+        if (shift_mode) {
+            // Shift mode
+            if (isdigit(s[i])) {
+                res *= 10.0;
+                res += (s[i]-'0');
+            } else {
+                switch(s[i]) {
+                    case '.': { res *= 1e0;  factor = 1e-1; break; }
+                    case 'k':
+                    case 'K': { res *= 1e3;  factor = 1e2;  break; }
+                    case 'M': { res *= 1e6;  factor = 1e5;  break; }
+                    case 'G': { res *= 1e9;  factor = 1e8;  break; }
+                    case 'm': { res *= 1e-3; factor = 1e-4; break; }
+                    case 'u': { res *= 1e-6; factor = 1e-7; break; }
+                    // Unnamed resistors have 1k default...
+                    case 'R': { res  = 1e3;  factor = 1e2;  break; }
+                    default: throw Net2SimException("Wrong R value format: " + s);
+                }
+                shift_mode = false;  
+            }            
+        } else {
+            // Factor mode
+            if (isdigit(s[i])) {
+                res += (s[i]-'0') * factor;
+                factor /= 10;
+            } else {
+                throw Net2SimException("Wrong R value format: " + s);
+            }
+        }
+    }
+    return res;
 }
 

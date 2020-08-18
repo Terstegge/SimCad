@@ -12,7 +12,10 @@
 //
 ///////////////////////////////////////////////
 //
-// Simple base class to provide a name to a object.
+// Simple class to provide a name to an object.
+// The name will be set in the CTOR and should
+// not be modified afterwards. So there is only
+// a getter for the name!
 //
 #ifndef _NAMED_H_
 #define _NAMED_H_
@@ -20,7 +23,7 @@
 #include <string>
 using std::string;
 
-#define NAME(var) var(name + "." + #var)
+#define NAME(var, ...)  var(name + "." + #var, ##__VA_ARGS__)
 
 class Named {
 public:

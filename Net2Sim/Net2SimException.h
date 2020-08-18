@@ -14,15 +14,15 @@
 //
 // A simple exception with a std::string info
 //
-#ifndef _PARSE_EXCEPTION_H_
-#define _PARSE_EXCEPTION_H_
+#ifndef _NET2SIM_EXCEPTION_H_
+#define _NET2SIM_EXCEPTION_H_
 
 #include <string>
 using std::string;
 
-struct ParseException {
+struct Net2SimException {
     std::string info;
-    ParseException(string s) : info(s) { }
+    Net2SimException(string s) : info(s) { }
 };
 
-#endif // _PARSE_EXCEPTION_H_
+#endif // _NET2SIM_EXCEPTION_H_

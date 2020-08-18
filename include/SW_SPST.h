@@ -31,20 +31,20 @@ public:
     bool _on;
 
     SW_SPST(const string & name)
-    : Named(name), NAME(p), _on(false) {
+    : Named(name), p(name+".p"), _on(false) {
         p[1].attach([this](NetSet * nets) {
-//            if (_on) p[2].setDrvState((State)p[1], nets);
+//            if (_on) p[2].setDrvState( p[1].getInpState(), nets);
         });
         p[2].attach([this](NetSet * nets) {
-//            if (_on) p[1].setDrvState((State)p[2], nets );
+//            if (_on) p[1].setDrvState( p[2].getInpState(), nets );
         });
     }
 
     void on() {
         if (_on) return;
         _on = true;
-    	p[1] = (State)p[2];
-    	p[2] = (State)p[1];
+    	p[1] = p[2].getInpState();
+    	p[2] = p[1].getInpState();
     }
 
     void off() {

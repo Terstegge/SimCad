@@ -22,36 +22,133 @@
 #ifndef _1N4148_H_
 #define _1N4148_H_
 
-#include "Pin.h"
-#include "Narray.h"
-#include "Named.h"
+#include "TwoPole.h"
+#include "R.h"
 
-class _1N4148 : public Named {
+#include <iostream>
+using namespace std;
+
+class _1N4148 : public TwoPole {
 public:
-    Narray<Pin, 3> p;
     Pin & K, & A;
-    int id = 0;
     
-    _1N4148(const string & name="") :
-        Named(name), NAME(p), K(p[1]), A(p[2])
+    _1N4148(const string & name="") : TwoPole(name, R1), K(p[1]), A(p[2])
     {
-        K.attach([this](NetSet * nets){
-            // Make sure the update is always only in
-            // one direction during one transaction.
-            if (Net::_id == id) return;
-            id = Net::_id;
-            State k = (State)K;
-            A.setDrvState( (k==LOW || k==PD) ? k : NC, nets);
+        // Attach handlers
+        K.attach([this](NetSet * nets) {
+            k = K.getInpState();
+            a = A.getInpState();
+            cout << endl;
+            cout << _name << " K handler ";
+            cout << "A: " << a << " (EVS " << R::getEVS(&A) << ") ";
+            cout << "K: " << k << " (EVS " << R::getEVS(&K) << ")";
+            cout << endl;
+
+            if (k == NC) return;
+
+            if (a == NC)
+            {
+                k.setR( TP_R );
+                A.setDrvState( k, nets);
+                return;
+            }
+
+            if (calculate()) {
+                if (k != NC) k.setR( TP_R );
+                cout << "Setting A to " << k << endl;
+                A.setDrvState( k, nets);
+
+                if (K.getDrvState() == NC) {
+                    if (a != NC) a.setR( TP_R );
+                    K.setDrvState(a, nets);
+                }
+
+            } else {
+                A.setDrvState( NC, nets);
+            }            
         });
-        A.attach([this](NetSet * nets){
-            // Make sure the update is always only in
-            // one direction during one transaction.
-            if (Net::_id == id) return;
-            id = Net::_id;
-            State a = (State)A;
-            K.setDrvState( (a==HIGH || a==PU) ? a : NC, nets);
+        A.attach([this](NetSet * nets) {
+            k = K.getInpState();
+            a = A.getInpState();
+            cout << endl;
+            cout << _name << " A handler ";
+            cout << "A: " << a << " (EVS " << R::getEVS(&A) << ") ";
+            cout << "K: " << k << " (EVS " << R::getEVS(&K) << ")";
+            cout << endl;
+
+            if (a == NC) return;
+
+            if (k == NC)
+            {
+                a.setR( TP_R );
+                K.setDrvState( a, nets);
+                return;
+            }
+
+
+
+            if (calculate()) {
+                if (a != NC) a.setR( TP_R );
+                cout << "Setting K to " << a << endl;
+                K.setDrvState( a, nets);
+
+                if (A.getDrvState() == NC) {
+                    if (k != NC) k.setR( TP_R );
+                    A.setDrvState(k, nets);
+                }
+
+            } else {
+                K.setDrvState( NC, nets);
+            }
         });
     }
+
+    bool calculate() {
+
+        if (_name == "CNT.D1") cout << "CALC: " << a << " " << k << endl;
+
+        State EVS_A = R::getEVS(&A);
+        State EVS_K = R::getEVS(&K);
+
+        float Ri = EVS_A.getR() + EVS_K.getR();
+        float Ul = EVS_A.getU() - EVS_K.getU();
+
+//        cout << "EVS A:" << R::getEVS(&A) << " EVS K:" <<  R::getEVS(&K) << endl;
+
+        if (Ul < 0.0) return false;
+        float Ik = Ul / Ri;
+        
+        // Check which resistance to use
+        float Ir = Ik * (1 - Us/Ul);
+        float Is = Us / R1;
+
+//        cout << "Ir: " << Ir << " Is: " << Is << endl;
+
+        if (Ir <= Is) {
+            // Use R1 for voltages up to Us
+            TP_R = R1;
+            cout << "nonconductive R:" << TP_R << endl;
+            return true;
+        }
+        
+        float t = Us * (R2 - R1);
+        TP_R  = R1 * R2 * Ik - t;
+        TP_R /= R1 * Ri * Ik + t;
+        TP_R *= Ri;
+
+        cout << "normal! R:" << TP_R << endl;
+
+        return true;
+    }
+
+private:
+    State k;
+    State a;
+    // Diode configuration
+    float R1 = 280;	// Resistance up to Us
+    float R2 = 1;	// Resistance from Us on
+    float Us = 0.7;	// Forward voltage
 };
 
 #endif // _1N4148_H_
+

@@ -41,7 +41,7 @@ public:
         while (net1.size()) {
             NetSet net2;
             for (shared_ptr<Net> n : net1) {
-                n->update(&net2);
+                n->update(nullptr, &net2);
             }
             net1 = net2;
         }
@@ -57,7 +57,7 @@ public:
         while (net1.size()) {
             NetSet net2;
             for (shared_ptr<Net> n : net1) {
-                n->update(&net2);
+                n->update(nullptr, &net2);
             }
             net1 = net2;
         }
@@ -67,13 +67,13 @@ public:
         NetSet net1;
         // Set new drv state on all pins
         for (size_t i=0; i < this->size(); ++i) {
-            (*this)[i].setDrvState((State)rhs[i], &net1);
+            (*this)[i].setDrvState(rhs[i].getInpState(), &net1);
         }
         // Iterate until no updates are necessary
         while (net1.size()) {
             NetSet net2;
             for (shared_ptr<Net> n : net1) {
-                n->update(&net2);
+                n->update(nullptr, &net2);
             }
             net1 = net2;
         }
@@ -91,7 +91,7 @@ public:
     string drv_state() const {
         ostringstream oss;
         for (size_t i=0; i < this->size(); ++i) {
-            oss << (State)(*this)[i];
+            oss << (*this)[i].getInpState();
         }
         return oss.str();
     }

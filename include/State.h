@@ -38,6 +38,104 @@
 #include <iostream>
 using std::ostream;
 
+#include <cmath>
+
+class State {
+public:
+    State() : _NC(true), _U(0.0), _R(0.0) { }
+
+    State(bool nc, float u, float r) : _NC(nc), _U(u), _R(r) { }
+
+    State(bool b) {
+        _NC = false;
+        _U  = b ? 5.0 : 0.0;
+        _R  = 0.0;
+    }
+
+    inline operator bool () const {
+        if (_NC) {
+            return true;
+        } else {
+            return (_U > 2.5) ? true : false;
+        }
+    }
+
+    bool operator == (const State & rhs) const {
+        return (_NC == rhs._NC) &&
+               (fabs(_U - rhs._U) < 1e-8) &&
+               (fabs(_R - rhs._R) < 1e-8);
+    }
+    
+    bool operator != (const State & rhs) const {
+        return !(*this == rhs);
+    }
+
+    bool getNC() const {
+        return _NC;
+    }
+
+    float getU() const {
+        return _U;
+    }
+
+    float getR() const {
+        return _R;
+    }
+
+    void setNC(bool b) {
+        _NC = b;
+   }
+
+    void setU(float f) {
+        _U = f;
+    }
+
+    void setR(float f) {
+        _R = f;
+    }
+
+    bool isStrong() const {
+        if (_NC) return false;
+        return (_R == 0.0);
+    }
+
+    State toWeak() const {
+        State s = *this;
+        if (!s._NC) s._R = 1000;
+        return s;
+    }
+
+    void add_R(float r) {
+        if (!_NC) _R += r;
+    }
+
+    void add_U(float r) {
+        if (!_NC) _U += r;
+    }
+
+    State toStrong() const {
+        State s = *this;
+        if (!s._NC) s._R = 0;
+        return s;
+    }
+
+    friend ostream & operator << (ostream & os, const State & s);
+
+private:
+    bool	_NC;
+    float	_U;
+    float 	_R;
+};
+
+
+extern State LOW;
+extern State HIGH;
+extern State PD;
+extern State PU;
+extern State NC;
+
+
+#if 0
 enum State { LOW=0, HIGH=1, PD=2, PU=3, NC=5 };
 
 // Method to check if the State is LOW or HIGH (strong).
@@ -65,7 +163,7 @@ bool toBool(State s);
 // possible result values.
 State toState(bool s);
 
-// Output operator
-ostream & operator << (ostream & os, const State & s);
+#endif
+
 
 #endif // _STATE_H_
