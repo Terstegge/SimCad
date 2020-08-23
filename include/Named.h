@@ -17,26 +17,30 @@
 // not be modified afterwards. So there is only
 // a getter for the name!
 //
-#ifndef _NAMED_H_
-#define _NAMED_H_
+#ifndef _INCLUDE_NAMED_H_
+#define _INCLUDE_NAMED_H_
 
 #include <string>
-using std::string;
 
+// Helper macro to call the CTOR of 'named' objects.
+// The macro expects the variable 'name' to contain
+// the name of the parent object, and adds the
+// variable name to it. Additional constructor
+// parameters are piped through.
 #define NAME(var, ...)  var(name + "." + #var, ##__VA_ARGS__)
 
 class Named {
 public:
-    Named(const string & n) {
+    Named(const std::string & n) {
         _name = n;
     }
 
-    const string & getName() const {
+    const std::string & getName() const {
         return _name;
     }
 
 protected:
-    string _name;
+    std::string _name;
 };
 
-#endif // _NAMED_H_
+#endif // _INCLUDE_NAMED_H_

@@ -19,12 +19,8 @@
 
 int Net::_no_nets = 0;
 int Net::_short_circuit_count = 0;
-int Net::_id = 0;
 
 #include <iostream>
-using std::ostream;
-using std::cout;
-using std::endl;
 
 void Net::merge_net(NetPtr n, NetPtr o) {
     // Insert the Pin pointers to our vector. The
@@ -32,19 +28,27 @@ void Net::merge_net(NetPtr n, NetPtr o) {
     _pins.insert(_pins.end(), o->_pins.begin(), o->_pins.end() );
     // Set the Net pointers in the new entries
     for (Pin * p : o->_pins) {
-        p->setNet(n);
+        p->setNetPtr(n);
     }
-//    _id++;
-    if (!update(nullptr, nullptr)) {
-        // If no update was needed, update at least the new Pins
+    // Update the Net
+    NetSet net1;
+    update(net1);
+    if (net1.size() == 0) {
+        // At least update the new Pins
         for (Pin * p : o->_pins) {
-//            _id++;
-            p->update(nullptr);
+            p->update(net1);
         }
+    }
+    while (net1.size()) {
+        NetSet net2;
+        for (std::shared_ptr<Net> n : net1) {
+            n->update(net2);
+        }
+        net1 = net2;
     }
 }
 
-bool Net::update(Pin * src, NetSet * nets) {
+bool Net::update(NetSet & nets) {
     State s;
     try {
         // Calculate the State of the Net
@@ -60,7 +64,7 @@ bool Net::update(Pin * src, NetSet * nets) {
                 throw ex;
             } else {
                 // Mark this Net as SC
-                cout << "new SC" << std::endl;
+                std::cout << "new SC" << std::endl;
                 _short_circuit = true;
                 ++_short_circuit_count;
                 return false;
@@ -70,7 +74,7 @@ bool Net::update(Pin * src, NetSet * nets) {
     }
 
     if (_short_circuit) {
-        cout << "clear SC" << endl;
+        std::cout << "clear SC" << std::endl;
         _short_circuit = false;
         --_short_circuit_count;
     }
@@ -78,15 +82,10 @@ bool Net::update(Pin * src, NetSet * nets) {
     // Check if the State of the Net has changed
     if (s != _state) {
         // Set the State and call update on every Pin
-
-//        cout << _name << ": " << s << " not " << _state << endl;
-
         _state = s;
-//        _id++;
-            for (Pin * p : _pins) {
-//                _id++;
-                p->update(nets);
-            }
+        for (Pin * p : _pins) {
+            p->update(nets);
+        }
         return true;
     }
     return false;
@@ -94,9 +93,7 @@ bool Net::update(Pin * src, NetSet * nets) {
 
 
 State Net::calculate_state() {
-
-//    cout << "Calculate " << _name << endl;
-
+//    cout << "Calculate net " << _name << endl;
     // Default NC
     State res  = NC;
     Pin * last = nullptr;
@@ -125,84 +122,27 @@ State Net::calculate_state() {
             // Check if we need to sum
             if (sum) {
                 TwoPole * tp = dynamic_cast<TwoPole*>(p->getPartPtr());
-                if (!tp) {
-                //                cout << "Not a R :( " << endl;
-                    continue;
-                }
-
-
-                float G = 1 / tp->TP_R; // s.getR();
-                Gi += G;
-                Ik += s.getU() * G;
+                if (!tp) continue;
+                float g = 1.0 / tp->_R;
+                Gi += g;
+                Ik += g * s._U;
                 summed = true;
             }
         }
     }
     // Set the result
     if (summed) {
-        res.setNC(false);
-        res.setU (Ik  / Gi);
-        if (res.getU() < 1e-6) res.setU(0);
-        res.setR (1.0 / Gi);
+        res._U = Ik / Gi;
+        res._R = 1. / Gi;
     }
-
     return res;
-
-
-#if 0
-    // Sum the States of all connected Pins
-    int state_count[6] = { 0 };
-    for (Pin * p : _pins) {
-        state_count[ p->getDrvState() ]++;
-    }
-    // HIGH and LOW: Short circuit
-    if (state_count[ HIGH ] && state_count[ LOW ]) {
-        Pin * low = nullptr, * high = nullptr;
-        for (Pin * p : _pins) {
-            if ((p->getDrvState() == LOW)  && !low)  low  = p;
-            if ((p->getDrvState() == HIGH) && !high) high = p;
-        }
-        throw short_circuit_exception(low, high);
-    }
-    // Pin(s) driving LOW
-    if (state_count[ LOW ]) {
-        _current_flow = state_count[ PU ];
-        return LOW;
-    }
-    // Pin(s) driving HIGH
-    if (state_count[ HIGH ]) {
-        _current_flow = state_count[ PD ];
-        return HIGH;
-    }
-    // Both pulls at the same time...
-    if (state_count[ PD ] && state_count[ PU ]) {
-        _current_flow = true;
-        return state_count[ PU ] >= state_count[ PD ] ? PU : PD;
-    }
-    // Pin(s) pulling down        
-    if (state_count[ PD ]) {
-        return PD;
-    } 
-    // Pin(s) pulling up
-    if (state_count[ PU ]) {
-        return PU;
-    } 
-    // No driving Pins
-    return NC;
-#endif
 }
 
 ostream & operator << (ostream & os, const NetPtr net)
 {
-    os << net->_name << ": (generating input state " << net->getState() << ")"  << endl;
-//    bool first = true;
+    os << "Net " << net->_name << ": " << net->getState() << std::endl;
     for (Pin * p : net->_pins) {
-//        if (first) {
-//            first = false;
-//            continue;
-//        }
-        os << *p << " (driving " << (*p).getDrvState() << ")" << ", " << std::endl;
+        os << " " << p->getName() << " driving " << p->getDrvState() << std::endl;
     }
     return os;
 }
-

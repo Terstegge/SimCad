@@ -15,8 +15,8 @@
 // Low-level implementation of an AND gate
 // with N inputs (p[1]...p[N]).
 //
-#ifndef _AND_H_
-#define _AND_H_
+#ifndef INCLUDE_AND_H_
+#define INCLUDE_AND_H_
 
 #include "Gate.h"
 
@@ -24,10 +24,10 @@ template<int N>
 class AND : public Gate<N> {
 public:
 
-    AND(const string & name) : Gate<N>(name) { }
+    AND(const std::string & name) : Gate<N>(name) {
+    }
 
-    State calculate() override
-    {
+    State calculate() override {
         bool res = true;
         for(int i=1; i <= N; ++i) {
             res &= (bool)this->p[i];
@@ -35,7 +35,6 @@ public:
         }
         return res;
     }
-
 };
 
-#endif // _AND_H_
+#endif // INCLUDE_AND_H_

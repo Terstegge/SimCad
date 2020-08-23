@@ -34,19 +34,15 @@
 using std::vector;
 
 #include <set>
-using std::set;
-
 #include <memory>
-using std::shared_ptr;
-
 #include <string>
-using std::string;
+#include <iostream>
 
 class Pin;
 class Net;
 
-typedef shared_ptr<Net> NetPtr;
-typedef set<NetPtr>     NetSet;
+typedef std::shared_ptr<Net> NetPtr;
+typedef std::set<NetPtr>     NetSet;
 
 class Net : public Named {
 public:
@@ -57,17 +53,14 @@ public:
     // Global counter for the number of Nets
     static int _no_nets;
 
-    // Global transaction ID
-    static int _id;
-
     // Factory method: Create a new Net and add a first Pin
-    static shared_ptr<Net> create_net(string n, Pin * p) {
+    static std::shared_ptr<Net> create_net(std::string n, Pin * p) {
         Net * net = new Net(n);
         net->_pins.push_back(p);
-        return shared_ptr<Net>(net);
+        return std::shared_ptr<Net>(net);
     }
 
-    Net(const string & name) : Named(name),
+    Net(const std::string & name) : Named(name),
         _state(NC), _short_circuit(false) {
         ++_no_nets;
     }
@@ -87,7 +80,7 @@ public:
     // the Net. If it changed, update() is called on every
     // Pin in the Net. The method will return true if the
     // state has changed.
-    bool update(Pin * p, NetSet * nets);
+    bool update(NetSet & nets);
 
 
     // Return the current State of this Net.
@@ -95,13 +88,8 @@ public:
         return _state;
     }
 
-    // Get the Net name
-    string getName() const  {
-        return _name;
-    }
-
     // Output operator for a Net
-    friend ostream & operator << (ostream & os, const NetPtr net);
+    friend std::ostream & operator << (std::ostream & os, const NetPtr net);
 
 //private:
 

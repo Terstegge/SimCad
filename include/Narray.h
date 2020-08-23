@@ -1,13 +1,26 @@
-/*
- *
- */
-
+///////////////////////////////////////////////
+//
+//  This file is part of
+//   ____  ____  ___  ____  ___  ____  __  __
+//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
+//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
+//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//
+//  A simulation package for digital circuits
+//
+//  (c) 2020  A. Terstegge
+//
+///////////////////////////////////////////////
+//
+// Implementation of a generic Named Array (Narray).
+// The array will automatically set the name of
+// all contained objects.
+//
 #ifndef _NARRAY_H_
 #define _NARRAY_H_
 
 #include "Named.h"
 #include <string>
-#include <iostream>
 
 template<typename T, size_t N>
 class Narray : public Named {
@@ -57,7 +70,7 @@ public:
     inline T &       operator[] (int i)         { return *_elements[i]; }
     inline const T & operator[] (int i) const   { return *_elements[i]; }
 
-    Narray(const string & n) : Named(n) {
+    Narray(const std::string & n) : Named(n) {
         for (size_t i=0; i < N; ++i) {
             _elements[i] = new T(n + "[" + std::to_string(i) + "]");
         }

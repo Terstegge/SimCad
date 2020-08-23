@@ -30,14 +30,14 @@ public:
         NetSet net1;
         unsigned int mask = 1;
         for (size_t i=0; i < this->size(); ++i) {
-            (*this)[i]->setDrvState((bool)(val & mask) , &net1);
+            (*this)[i]->setDrvState(State((val & mask) != 0) , net1);
             mask <<= 1;
         }
         // Iterate until no updates are necessary
         while (net1.size()) {
             NetSet net2;
-            for (shared_ptr<Net> n : net1) {
-                n->update(&net2);
+            for (std::shared_ptr<Net> n : net1) {
+                n->update(net2);
             }
             net1 = net2;
         }
@@ -47,13 +47,13 @@ public:
         NetSet net1;
         // Set new drv state on all pins
         for (size_t i=0; i < this->size(); ++i) {
-            (*this)[i]->setDrvState(s, &net1);
+            (*this)[i]->setDrvState(s, net1);
         }
         // Iterate until no updates are necessary
         while (net1.size()) {
             NetSet net2;
-            for (shared_ptr<Net> n : net1) {
-                n->update(&net2);
+            for (std::shared_ptr<Net> n : net1) {
+                n->update(net2);
             }
             net1 = net2;
         }
@@ -63,13 +63,13 @@ public:
         NetSet net1;
         // Set new drv state on all pins
         for (size_t i=0; i < this->size(); ++i) {
-            (*this)[i]->setDrvState((*rhs[i]).getInpState(), &net1);
+            (*this)[i]->setDrvState((*rhs[i]).getInpState(), net1);
         }
         // Iterate until no updates are necessary
         while (net1.size()) {
             NetSet net2;
-            for (shared_ptr<Net> n : net1) {
-                n->update(&net2);
+            for (std::shared_ptr<Net> n : net1) {
+                n->update(net2);
             }
             net1 = net2;
         }
@@ -84,7 +84,7 @@ public:
         return res;
     }
 
-    string drv_state() const {
+    std::string drv_state() const {
         ostringstream oss;
         for (size_t i=0; i < this->size(); ++i) {
             oss << (*(*this)[i]).getInpState();
@@ -105,13 +105,13 @@ public:
 //        }
 //    }
 
-    void attach(function<void(NetSet *)> u) {
+    void attach(std::function<void(NetSet &)> u) {
         for (size_t i=0; i < this->size(); ++i) {
             (*this)[i]->attach(u);
         }
     }
 
-    friend ostream & operator << (ostream & os, const BusRef & rhs) {
+    friend std::ostream & operator << (std::ostream & os, const BusRef & rhs) {
 //        os << rhs.getName() << ":";
         os << setw(4) << setfill('0') << oct << (unsigned int)rhs;
 //        os << "(" << rhs.drv_state() << ")";

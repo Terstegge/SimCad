@@ -12,158 +12,72 @@
 //
 ///////////////////////////////////////////////
 //
-// The enum 'State' reflects the driving (output)
-// state of a Pin or the resulting input state
-// of a Pin or Net. We do not use C++11 enums classes,
-// because we need easy conversion to integers in
-// various places. The integer values are chooses so
-// that the LSB will reflect the input interpretation
-// of every State (NC will be seen as logic '1'):
+// The struct 'State' represents the electrical
+// state of a Pin or Net. It is also used as
+// the result type for EVS (Equivalent Voltage
+// Source) computations.
+// The class contains a voltage U and an ohmic
+// conductance G.
 //
-// LOW  (0):  The Pin is tied to GND -> logic LOW
-// HIGH (1):  The Pin is tied to VCC -> logic HIGH
-// PD:  (2):  The Pin is Pulled Down by a resistor
-// PU:  (3):  The Pin is Pulled Up by a resistor
-// NC:  (5):  The Pin is not connected -> high Z state
-//
-//   +------------- NC if set
-//   |    +-------- weak if set (PD/PU)
-//   |    |    +--- overall state (LOW/HIGH) and input value
-//   |    |    |
-// Bit2 Bit1 Bit0
-//
-#ifndef _STATE_H_
-#define _STATE_H_
+#ifndef INCLUDE_STATE_H_
+#define INCLUDE_STATE_H_
 
+// Predefined States
+struct State;
+extern State LOW;
+extern State HIGH;
+extern State NC;
+
+#include <cmath>    // fabs()
+#include <limits>   // infinity
 #include <iostream>
-using std::ostream;
 
-#include <cmath>
+#define SUPPLY_VOLTAGE  5.0
+#define EPSILON         1e-8
+#define INF             std::numeric_limits<float>::infinity()
 
-class State {
-public:
-    State() : _NC(true), _U(0.0), _R(0.0) { }
+struct  State {
+    // Attributes
+    float   _U;
+    float   _R;
 
-    State(bool nc, float u, float r) : _NC(nc), _U(u), _R(r) { }
+    // Standard constructor
+    // A default new state is always NC
+    State(float u=0.0, float r=INF) : _U(u), _R(r) { }
 
+    // Type conversion for booleans
     State(bool b) {
-        _NC = false;
-        _U  = b ? 5.0 : 0.0;
+        _U  = b ? SUPPLY_VOLTAGE : 0.0;
         _R  = 0.0;
     }
-
     inline operator bool () const {
-        if (_NC) {
-            return true;
+        if (*this == NC) {
+             return true;
         } else {
-            return (_U > 2.5) ? true : false;
+            return ( _U > (SUPPLY_VOLTAGE/2) );
         }
     }
 
+    // Comparison operators
     bool operator == (const State & rhs) const {
-        return (_NC == rhs._NC) &&
-               (fabs(_U - rhs._U) < 1e-8) &&
-               (fabs(_R - rhs._R) < 1e-8);
+        if ((_U == rhs._U) && (_R== rhs._R)) {
+            return true;
+        } else {
+            return (fabs(_U - rhs._U) < EPSILON) &&
+                   (fabs(_R - rhs._R) < EPSILON);
+        }
     }
-    
     bool operator != (const State & rhs) const {
         return !(*this == rhs);
     }
 
-    bool getNC() const {
-        return _NC;
-    }
-
-    float getU() const {
-        return _U;
-    }
-
-    float getR() const {
-        return _R;
-    }
-
-    void setNC(bool b) {
-        _NC = b;
-   }
-
-    void setU(float f) {
-        _U = f;
-    }
-
-    void setR(float f) {
-        _R = f;
-    }
-
-    bool isStrong() const {
-        if (_NC) return false;
+    // Helper methods
+    bool isStrong() {
         return (_R == 0.0);
     }
 
-    State toWeak() const {
-        State s = *this;
-        if (!s._NC) s._R = 1000;
-        return s;
-    }
-
-    void add_R(float r) {
-        if (!_NC) _R += r;
-    }
-
-    void add_U(float r) {
-        if (!_NC) _U += r;
-    }
-
-    State toStrong() const {
-        State s = *this;
-        if (!s._NC) s._R = 0;
-        return s;
-    }
-
-    friend ostream & operator << (ostream & os, const State & s);
-
-private:
-    bool	_NC;
-    float	_U;
-    float 	_R;
+    // Stream output operator
+    friend std::ostream & operator << (std::ostream & os, const State & s);
 };
 
-
-extern State LOW;
-extern State HIGH;
-extern State PD;
-extern State PU;
-extern State NC;
-
-
-#if 0
-enum State { LOW=0, HIGH=1, PD=2, PU=3, NC=5 };
-
-// Method to check if the State is LOW or HIGH (strong).
-bool isStrong(State s);
-
-// Method to check if the State is PD or PU (weak).
-bool isWeak(State s);
-
-// Method to convert a State into a strong one
-State toStrong(State s);
-
-// Method to convert a State into a weak one
-State toWeak(State s);
-
-// Convert a State to a boolean. This is
-// needed when a State is used as an input.
-// NC Pins (not connected) are treated as
-// HIGH (true), which is the normal behavior
-// of TTL chips.
-bool toBool(State s);
-
-// Convert a boolean to a State. This is
-// needed when State has to be set in an
-// output Pin. Only LOW and HIGH are
-// possible result values.
-State toState(bool s);
-
-#endif
-
-
-#endif // _STATE_H_
+#endif // INCLUDE_STATE_H_

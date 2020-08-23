@@ -18,8 +18,8 @@
 // p[1] is signal input
 // p[2] is enable input (active high).
 //
-#ifndef _BUF_G_H_
-#define _BUF_G_H_
+#ifndef INCLUDE_BUF_G_H_
+#define INCLUDE_BUF_G_H_
 
 #include "Gate.h"
 
@@ -27,14 +27,13 @@ class BUF_G : public Gate<2> {
 public:
     Pin & G;
 
-    BUF_G(const string & name) : Gate<2>(name), G(this->p[2]) { }
+    BUF_G(const std::string & name) : Gate<2>(name), G(this->p[2]) {
+    }
 
-    State calculate() override
-    {
+    State calculate() override {
         bool res = (bool)this->p[1];
         return G ? State(res) : NC;
     }
-
 };
 
-#endif // _BUF_G_H_
+#endif // INCLUDE_BUF_G_H_

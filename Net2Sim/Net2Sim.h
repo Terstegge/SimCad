@@ -66,9 +66,14 @@ private:
     void define_bus(string base, string index, bool isBus);
     void change_to_bus(string & net, vector<net_entry> & found_nets);
 
-    // Read a resistor value (e.g. 1k, 4k7, 100, 1.4) and
-    // convert it to a float value
-    float readR(string s);
+    // Read a physical value (e.g. voltage, current, resistance) and
+    // convert it to a float number.
+    // Some examples:
+    // 10.7V -> 10.7
+    // 20mA  -> 0.02
+    // 4k7   -> 4700
+    // 2.4M  ->2400000
+    float readValue(string s);
 
     ofstream h_ofs, c_ofs;
 };

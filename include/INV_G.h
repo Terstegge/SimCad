@@ -18,8 +18,8 @@
 // p[1] is signal input
 // p[2] is enable input (active high)
 //
-#ifndef _INV_G_H_
-#define _INV_G_H_
+#ifndef INCLUDE_INV_G_H_
+#define INCLUDE_INV_G_H_
 
 #include "Gate.h"
 
@@ -28,14 +28,13 @@ public:
 
     Pin & G;
 
-    INV_G(const string & name) : Gate<2>(name), G(this->p[2]) { }
+    INV_G(const std::string & name) : Gate<2>(name), G(this->p[2]) {
+    }
 
-    State calculate() override
-    {
+    State calculate() override {
         bool res = !(bool)this->p[1]; 
         return G ? State(res) : NC;
     }
-
 };
 
-#endif // _INV_G_H_
+#endif // INCLUDE_INV_G_H_

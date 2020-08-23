@@ -399,9 +399,11 @@ int Net2Sim::main(int argc, char* argv[])
     c_ofs << endl << classname << "::" << classname << "(std::string name) :" <<endl;
     for (size_t i = 0; i < used_components.size(); ++i) {
         string ref = used_components[i].ref_base + used_components[i].ref_idx;
-        if (used_components[i].ref_base == "R") {
+        if (used_components[i].ref_base == "R" ||
+            used_components[i].ref_base == "V")
+        {
             c_ofs << "    NAME(" << ref << ", "
-                  << readR(used_components[i].value) << ")";
+                  << readValue(used_components[i].value) << ")";
         } else {
             c_ofs << "    NAME(" << ref << ")";
         }
@@ -502,7 +504,7 @@ void Net2Sim::change_to_bus(string & net, vector<net_entry> & found_nets) {
     }
 }
 
-float Net2Sim::readR(string s) {
+float Net2Sim::readValue(string s) {
     bool  shift_mode = true;
     float res;
     float factor;
@@ -515,16 +517,28 @@ float Net2Sim::readR(string s) {
                 res += (s[i]-'0');
             } else {
                 switch(s[i]) {
+                    // Skip physical units and symbols
+                    case 'A':
+                    case 'V':
+                    case 'R': { continue; }
+                    // Decimal point
                     case '.': { res *= 1e0;  factor = 1e-1; break; }
+                    // Kilo: Factor 10^3
                     case 'k':
                     case 'K': { res *= 1e3;  factor = 1e2;  break; }
+                    // Mega: Factor 10^6
                     case 'M': { res *= 1e6;  factor = 1e5;  break; }
+                    // Giga: Factor 10^9
                     case 'G': { res *= 1e9;  factor = 1e8;  break; }
+                    // Milli: Factor 10^-3
                     case 'm': { res *= 1e-3; factor = 1e-4; break; }
+                    // Micro: Factor 10^-6
                     case 'u': { res *= 1e-6; factor = 1e-7; break; }
+                    // Nano: Factor 10^-12Unnamed resistors have 1k default...
+                    case 'n': { res *= 1e-9; factor = 1e-10; break; }
                     // Unnamed resistors have 1k default...
-                    case 'R': { res  = 1e3;  factor = 1e2;  break; }
-                    default: throw Net2SimException("Wrong R value format: " + s);
+                    case 'p': { res *= 1e-12; factor = 1e-13; break; }
+                    default: throw Net2SimException("Wrong Value format: " + s);
                 }
                 shift_mode = false;  
             }            
@@ -534,7 +548,7 @@ float Net2Sim::readR(string s) {
                 res += (s[i]-'0') * factor;
                 factor /= 10;
             } else {
-                throw Net2SimException("Wrong R value format: " + s);
+                throw Net2SimException("Wrong Value format: " + s);
             }
         }
     }

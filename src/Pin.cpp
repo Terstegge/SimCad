@@ -14,48 +14,78 @@
 //
 #include "ShortCircuitEx.h"
 #include "Pin.h"
-
-#include <iostream>
-using std::cout;
-using std::endl;
+#include "TwoPole.h"
 
 void Pin::connect_to(Pin & p) {
-    if (this->_net != p._net) {
+    // Check if both Pins are in the same Net already
+    if (this->_netPtr != p._netPtr) {
         // Merge the Pins into one Net
-        this->_net->merge_net(this->_net, p._net);
+        this->_netPtr->merge_net(this->_netPtr, p._netPtr);
+    }
+}
+
+// Get Equivalent Voltage Source (EVS)
+State Pin::getEVS() {
+    float G  = 0.0;
+    float Ik = 0.0;
+    bool summed = false;
+
+    // Step into the net
+    for (Pin * pp : _netPtr->_pins) {
+        // Skip over entry Pin
+        if (pp == this) continue;
+        // Immediately return strong Pins
+        State s = pp->getDrvState();
+        if (s.isStrong()) return s;
+        // Only process TwoPoles
+        TwoPole * tp = dynamic_cast<TwoPole*>(pp->getPartPtr());
+        if (!tp) continue;
+        // Get other side of TwoPole
+        Pin * other = tp->other(pp);
+        // Skip TwoPols which are not driven remotely
+        State other_s = other->getInpState();
+        if (other_s == NC) continue;
+        // Check if remote side is strong
+        if (other_s.isStrong()) {
+            float g = 1.0/tp->_R;
+            G  += g;
+            Ik += g * other_s._U;
+            summed = true;
+        } else {
+            // Recurse
+            State evs = other->getEVS();
+            float g = 1.0 / (tp->_R + evs._R);
+            G  += g;
+            Ik += g * evs._U;
+            summed = true;
+        }
+    }
+    State result = NC;
+    if (summed) {
+        result._R =  1.0/G;
+        result._U = (Ik == 0.0 & G == 0.0) ? 0.0 : (Ik / G);
+    }
+    return result;
+}
+
+
+void Pin::setDrvState(State s, NetSet & nets) {
+    // Only change the driving state when a change is detected
+    if (_drvState != s) {
+        _drvState  = s;
+        nets.insert(_netPtr);
     }
 }
 
 void Pin::operator = (State s) {
-    Net::_id++;
     NetSet net1;
-    setDrvState(s, &net1);
+    setDrvState(s, net1);
     while (net1.size()) {
         NetSet net2;
-        for (shared_ptr<Net> n : net1) {
-            n->update(nullptr, &net2);
+        for (std::shared_ptr<Net> n : net1) {
+            n->update(net2);
         }
         net1 = net2;
-    }
-}
-
-void Pin::setDrvState(State s, NetSet * nets) {
-    if (_drv_state != s) {
-        // Only change the driving state when a change is detected
-        _drv_state  = s;
-//        (*nets).insert(_net);
-        if (_net) {
-            if (nets) {
-                // A NetSet is provided -> do not walk down
-                // the whole circuit, but report the Net to
-                // be updated instead.
-                (*nets).insert(_net); //.push_back(_net);
-            } else {
-                // No NetSet is provided -> update Net
-                // recursively
-                _net->update(this, nullptr);
-            }
-        }
     }
 }
 

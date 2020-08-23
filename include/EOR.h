@@ -15,8 +15,8 @@
 // Low-level implementation of a EOR (XOR) gate
 // with N inputs (p[1]...p[N]).
 //
-#ifndef _EOR_H_
-#define _EOR_H_
+#ifndef INCLUDE_EOR_H_
+#define INCLUDE_EOR_H_
 
 #include "Gate.h"
 
@@ -24,17 +24,16 @@ template<int N>
 class EOR : public Gate<N> {
 public:
 
-    EOR(const string & name) : Gate<N>(name) { }
+    EOR(const std::string & name) : Gate<N>(name) {
+    }
 
-    State calculate() override
-    {
+    State calculate() override {
         bool res = false;
         for(int i=1; i <= N; ++i) {
             res ^= (bool)this->p[i];
         }
         return res;
     }
-
 };
 
-#endif // _EOR_H_
+#endif // INCLUDE_EOR_H_

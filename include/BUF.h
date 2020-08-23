@@ -15,22 +15,21 @@
 // Low-level implementation of a non-inverting
 // Buffer.
 //
-#ifndef _BUF_H_
-#define _BUF_H_
+#ifndef INCLUDE_BUF_H_
+#define INCLUDE_BUF_H_
 
 #include "Gate.h"
 
 class BUF : public Gate<1> {
 public:
 
-    BUF(const string & name) : Gate<1>(name) { }
+    BUF(const std::string & name) : Gate<1>(name) {
+    }
 
-    State calculate() override
-    {
+    State calculate() override {
         bool res = (bool)this->p[1];
         return res;
     }
-
 };
 
-#endif // _BUF_H_
+#endif // INCLUDE_BUF_H_

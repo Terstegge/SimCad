@@ -22,17 +22,28 @@
 
 #include "_1N4148.h"
 
+#include <iostream>
+using namespace std;
+
 class LED : public _1N4148 {
 public:
-    LED(const string & name="") : _1N4148(name) { }
+    LED(const std::string & name="") : _1N4148(name) {
+    }
     
     bool on() {
-        return true;
-        //(A.getNet()->getCurrent() ||
-        //        K.getNet()->getCurrent()) &&
-        //        (K.getInpState().toStrong() == LOW);
-    }
+        // Check if both sides are driven.
+        // If not the LED is off!
+        if (this->EVS_A == NC || this->EVS_C == NC) {
+            return false;
+        }
+        float U = this->EVS_A._U - this->EVS_C._U;
+        float R = this->EVS_A._R + this->EVS_C._R + _R;
+        // Diode is on if voltage is 5mA at least;
 
+        cout << (U/R) << endl;
+
+        return (U / R) >= 0.005;
+    }
 };
 
 #endif // _LED_H_

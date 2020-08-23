@@ -15,22 +15,21 @@
 // Low-level implementation of a inverting
 // Buffer.
 //
-#ifndef _INV_H_
-#define _INV_H_
+#ifndef INCLUDE_INV_H_
+#define INCLUDE_INV_H_
 
 #include "Gate.h"
 
 class INV : public Gate<1> {
 public:
 
-    INV(const string & name) : Gate<1>(name) { }
+    INV(const std::string & name) : Gate<1>(name) {
+    }
 
-    State calculate() override
-    {
+    State calculate() override {
         bool res = !(bool)this->p[1];
         return res;
     }
-
 };
 
-#endif // _EOR_H_
+#endif // INCLUDE_INV_H_

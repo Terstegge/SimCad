@@ -13,22 +13,20 @@
 ///////////////////////////////////////////////
 //
 // Virtual base class for all kinds of parts.
-// A part has a name, which is set in the part
-// constructor.
+// A part is 'Named'.
 //
 #ifndef INCLUDE_PART_H_
 #define INCLUDE_PART_H_
 
 #include "Named.h"
+#include <string>
 
 struct Part : Named {
 
-    Part(const string & name) : Named(name)
-    {
+    Part(const std::string & name) : Named(name) {
     }
 
-    virtual ~Part()
-    {
+    virtual ~Part() {
     }
 
 };

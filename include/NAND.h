@@ -15,8 +15,8 @@
 // Low-level implementation of a NAND gate
 // with N inputs (p[1]...p[N]).
 //
-#ifndef _NAND_H_
-#define _NAND_H_
+#ifndef INCLUDE_NAND_H_
+#define INCLUDE_NAND_H_
 
 #include "Gate.h"
 
@@ -24,10 +24,10 @@ template<int N>
 class NAND : public Gate<N> {
 public:
 
-    NAND(const string & name) : Gate<N>(name) { }
+    NAND(const std::string & name) : Gate<N>(name) {
+    }
 
-    State calculate() override
-    {
+    State calculate() override {
         bool res = true;
         for(int i=1; i <= N; ++i) {
             res &= (bool)this->p[i];
@@ -35,7 +35,6 @@ public:
         }
         return !res;
     }
-
 };
 
-#endif // _NAND_H_
+#endif // INCLUDE_NAND_H_

@@ -16,8 +16,8 @@
 // p[1]...p[N-1] are signal inputs (AND gate).
 // p[N] is enable (active low).
 //
-#ifndef _INH_H_
-#define _INH_H_
+#ifndef INCLUDE_INH_H_
+#define INCLUDE_INH_H_
 
 #include "Gate.h"
 
@@ -25,10 +25,10 @@ template<int N>
 class INH : public Gate<N> {
 public:
 
-    INH(const string & name) : Gate<N>(name) { }
+    INH(const std::string & name) : Gate<N>(name) {
+    }
 
-    State calculate() override
-    {
+    State calculate() override {
         bool res = !(bool)this->p[N];
         for(int i=1; i < N; ++i) {
             res &= (bool)this->p[i];
@@ -38,4 +38,4 @@ public:
     }
 };
 
-#endif // _INH_H_
+#endif // INCLUDE_INH_H_

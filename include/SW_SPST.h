@@ -30,13 +30,13 @@ public:
     Pin * weak_pin = nullptr;
     bool _on;
 
-    SW_SPST(const string & name)
+    SW_SPST(const std::string & name)
     : Named(name), p(name+".p"), _on(false) {
-        p[1].attach([this](NetSet * nets) {
-//            if (_on) p[2].setDrvState( p[1].getInpState(), nets);
+        p[1].attach([this](NetSet & nets) {
+            if (_on) p[2].setDrvState( p[1].getInpState(), nets);
         });
-        p[2].attach([this](NetSet * nets) {
-//            if (_on) p[1].setDrvState( p[2].getInpState(), nets );
+        p[2].attach([this](NetSet & nets) {
+            if (_on) p[1].setDrvState( p[2].getInpState(), nets );
         });
     }
 

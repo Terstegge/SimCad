@@ -15,8 +15,8 @@
 // Low-level implementation of a NOR gate
 // with N inputs (p[1]...p[N]).
 //
-#ifndef _NOR_H_
-#define _NOR_H_
+#ifndef INCLUDE_NOR_H_
+#define INCLUDE_NOR_H_
 
 #include "Gate.h"
 
@@ -24,10 +24,10 @@ template<int N>
 class NOR : public Gate<N> {
 public:
 
-    NOR(const string & name) : Gate<N>(name) { }
+    NOR(const std::string & name) : Gate<N>(name) {
+    }
 
-    State calculate() override
-    {
+    State calculate() override {
         bool res = false;
         for(int i=1; i <= N; ++i) {
             res |= (bool)this->p[i];
@@ -35,7 +35,6 @@ public:
         }
         return !res;
     }
-
 };
 
-#endif // _NOR_H_
+#endif // INCLUDE_NOR_H_
