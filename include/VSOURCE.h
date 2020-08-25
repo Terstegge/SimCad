@@ -19,38 +19,21 @@
 #ifndef INCLUDE_VSOURCE_H_
 #define INCLUDE_VSOURCE_H_
 
-#include "Part.h"
-#include "Pin.h"
-#include "Narray.h"
+#include "TwoPole.h"
 
-#include <iostream>
-using namespace std;
-
-class VSOURCE : public Part {
+class VSOURCE : public TwoPole {
 public:
-    Narray<Pin, 3> p;
-    float         _U; // Voltage
-    bool          _on = false;
 
-    VSOURCE(const std::string & name, float u)
-    : Part(name), NAME(p), _U(u)
-    {
-        // Set the part pointers
-        p[1].setPartPtr(this);
-        p[2].setPartPtr(this);
-        // Attach handler for negative pin
-        p[1].attach([this](NetSet & nets) {
-            cout << p[1] << " " << p[2] << endl;
-            if (!_on) return;
-            // Let the positive pin follow the negative pin with
-            // the correct voltage difference (_U)
-            p[2].setDrvState( State(p[1].getInpState()._U + _U, 0.0), nets );
-        });
+    VSOURCE(const std::string & name, float u) : TwoPole(name) {
+        // Ideal voltage source with Ri=0
+        _R = 0.0;
+        _U = u;
     }
 
-    void on() {
-        _on = true;
-        p[2] = State(p[1].getInpState()._U + _U, 0.0);
+    bool calculate() override {
+        // The values are already set in the constructor,
+        // and will not change. So we have nothing to do here...
+        return false;
     }
 };
 

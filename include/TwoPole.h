@@ -14,7 +14,7 @@
 //
 // Base class for all kinds of two-poles (e.g.
 // resistors and diodes). Currently only the
-// DC resistance is stored.
+// DC resistance and voltage offset is stored.
 //
 #ifndef INCLUDE_TWOPOLE_H_
 #define INCLUDE_TWOPOLE_H_
@@ -26,67 +26,61 @@
 class TwoPole : public Part {
 public:
     Narray<Pin, 3> p;
-    float         _R; // TwoPole DC resistance
+    float         _R;  // TwoPole DC resistance
+    float         _U;  // TwoPole voltage offset
 
-    TwoPole(const std::string & name, float r)
-    : Part(name), NAME(p), _R(r)
+    TwoPole(const std::string & name)
+    : Part(name), NAME(p), _R(INF), _U(0.0)
     {
         // Set the part pointers
         p[1].setPartPtr(this);
         p[2].setPartPtr(this);
         // Attach handlers
-        p[1].attach([this](NetSet & nets) {
+        p[1].attach([this](NetSet * nets) {
             // Check for disconnect
-            if (p[1].getInpState() == NC) {
-                p[2].setDrvState(NC, nets);
+            if (p[1].getInpState().isNC()) {
+                p[2].setDrvState(State(), nets);
                 return;
             }
-            // Calculate the new R
-            float old_R = _R;
-            this->calculate();
-            // Set remote side
-            State remote(p[1].getInpState()._U, _R);
-            p[2].setDrvState( remote, nets);
-            // Set local side if R changed
-            if (old_R != _R) {
-                State local(p[2].getInpState()._U, _R);
-                p[1].setDrvState(local, nets);
-            }
+            update(p[1], p[2], calculate(), 1.0, nets);
         });
-        p[2].attach([this](NetSet & nets) {
+        p[2].attach([this](NetSet * nets) {
             // Check for disconnect
-            if (p[2].getInpState() == NC) {
-                p[1].setDrvState(NC, nets);
+            if (p[2].getInpState().isNC()) {
+                p[1].setDrvState(State(), nets);
                 return;
             }
-            // Calculate the new R
-            float old_R = _R;
-            this->calculate();
-            // Set remote side
-            State remote(p[2].getInpState()._U, _R);
-            p[1].setDrvState( remote, nets);
-            // Set local side if R changed
-            if (old_R != _R) {
-                State local(p[1].getInpState()._U, _R);
-                p[2].setDrvState(local, nets);
-            }
+            update(p[2], p[1], calculate(), -1.0, nets);
         });
     }
 
     virtual ~TwoPole() {
     }
 
-    // The method to calculate the new resistance
-    // of the TwoPole, which will be stored in _R.
-    // The method has access to the Pin members
-    // p[1] and p[2], if needed.
-    virtual void calculate() = 0;
+    // The method to calculate the new parameters
+    // (_R and _U) of the TwoPole. If the values
+    // have changed, the method returns true.
+    virtual bool calculate() = 0;
 
-    // Utility method to get the
-    // other side of the TwoPole
-    Pin * other(Pin * pin) {
-        return (pin == &p[1]) ? &p[2] : &p[1];
+    // Utility method to update the drive states
+    // of the TwoPole. If the parameter 'changed'
+    // is true, the change will also propagated
+    // to the local side.
+    void update(Pin & local, Pin & remote, bool changed,
+                float polarity=0.0,  NetSet * nets=nullptr)
+    {
+        State s = local.getInpState();
+        s._G  = 1.0 / ( 1.0/s._G + _R);
+        s._U += polarity * _U;
+        remote.setDrvState( s, nets);
+        if (changed) {
+            s = remote.getInpState();
+            s._G  = 1.0 / ( 1.0/s._G + _R);
+            s._U += -polarity * _U;
+            local.setDrvState( s, nets);
+        }
     }
+
 };
 
-#endif /* INCLUDE_TWOPOLE_H_ */
+#endif // INCLUDE_TWOPOLE_H_

@@ -26,7 +26,6 @@
 struct State;
 extern State LOW;
 extern State HIGH;
-extern State NC;
 
 #include <cmath>    // fabs()
 #include <limits>   // infinity
@@ -39,41 +38,42 @@ extern State NC;
 struct  State {
     // Attributes
     float   _U;
-    float   _R;
+    float   _G;
 
-    // Standard constructor
-    // A default new state is always NC
-    State(float u=0.0, float r=INF) : _U(u), _R(r) { }
+    // State constructor. Without parameters,
+    // a default State will be NC (Not Connected),
+    // meaning the conductivity _G is zero.
+    State(float u=0.0, float g=0.0) : _U(u), _G(g) { }
 
     // Type conversion for booleans
     State(bool b) {
-        _U  = b ? SUPPLY_VOLTAGE : 0.0;
-        _R  = 0.0;
+        _U = b ? SUPPLY_VOLTAGE : 0.0;
+        _G = INF;
     }
     inline operator bool () const {
-        if (*this == NC) {
-             return true;
-        } else {
-            return ( _U > (SUPPLY_VOLTAGE/2) );
-        }
+        return isNC() ? true : _U > (SUPPLY_VOLTAGE/2);
     }
 
     // Comparison operators
     bool operator == (const State & rhs) const {
-        if ((_U == rhs._U) && (_R== rhs._R)) {
+        if ((_U == rhs._U) && (_G== rhs._G)) {
             return true;
         } else {
             return (fabs(_U - rhs._U) < EPSILON) &&
-                   (fabs(_R - rhs._R) < EPSILON);
+                   (fabs(_G - rhs._G) < EPSILON);
         }
     }
-    bool operator != (const State & rhs) const {
+    inline bool operator != (const State & rhs) const {
         return !(*this == rhs);
     }
 
     // Helper methods
-    bool isStrong() {
-        return (_R == 0.0);
+    inline bool isStrong() const {
+        return (_G == INF);
+    }
+
+    inline bool isNC() const {
+        return (_G == 0.0);
     }
 
     // Stream output operator

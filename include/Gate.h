@@ -48,18 +48,18 @@ public:
             pin.setPartPtr(this);
         }
         // Attach power signals
-        VCC.attach( [this](NetSet & nets) {
+        VCC.attach( [this](NetSet * nets) {
             on = (VCC == HIGH) && (GND == LOW);
-            OUT.setDrvState( on ? this->calculate() : NC, nets);
+            OUT.setDrvState( on ? this->calculate() : State(), nets);
         });
-        GND.attach( [this](NetSet & nets) {
+        GND.attach( [this](NetSet * nets) {
             on = (VCC == HIGH) && (GND == LOW);
-            OUT.setDrvState( on ? this->calculate() : NC, nets);
+            OUT.setDrvState( on ? this->calculate() : State(), nets);
         });
         // Attach input signal handlers
         for(int i=1; i <= N; ++i) {
-            p[i].attach( [this](NetSet & nets) {
-                OUT.setDrvState( on ? this->calculate() : NC, nets );
+            p[i].attach( [this](NetSet * nets) {
+                OUT.setDrvState( on ? this->calculate() : State(), nets );
             });
         }
     }

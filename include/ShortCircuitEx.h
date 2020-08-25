@@ -30,8 +30,8 @@ public:
 
     friend ostream & operator << (ostream & os, const short_circuit_exception & rhs) {
         os << "** Short Circuit Exception **"   << std::endl;
-        os << rhs._p1->getName() << " driving " << rhs._p1->getDrvState() << std::endl;
-        os << rhs._p2->getName() << " driving " << rhs._p2->getDrvState() << std::endl;
+        if (rhs._p1) os << rhs._p1->getName() << " driving " << rhs._p1->getDrvState() << std::endl;
+        if (rhs._p2) os << rhs._p2->getName() << " driving " << rhs._p2->getDrvState() << std::endl;
         return os;
     }
 private:

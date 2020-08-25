@@ -33,7 +33,7 @@ public:
 
     State calculate() override {
         bool res = !(bool)this->p[1]; 
-        return G ? State(res) : NC;
+        return G ? State(res) : State();
     }
 };
 

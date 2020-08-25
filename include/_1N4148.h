@@ -13,11 +13,7 @@
 ///////////////////////////////////////////////
 //
 // Low-level implementation of a diode, which
-// is simulated without a voltage drop:
-// If current could flow (A is positive or K is
-// negative), the state change is propagated to
-// the respective 'other' side, setting both,
-// A and K, to the same state.
+// is simulated with a variable resistance.
 //
 #ifndef INCLUDE_1N4148_H_
 #define INCLUDE_1N4148_H_
@@ -44,27 +40,30 @@ protected:
 public:
     Pin & A, & C;   // References for Anode and Cathode
     
-    _1N4148(const string & name="") : TwoPole(name, R1), C(p[1]), A(p[2]) {
+    _1N4148(const string & name="") : TwoPole(name), C(p[1]), A(p[2]) {
+        // Set default resistance
+        _R = R1;
     }
 
-    void calculate() override {
+    bool calculate() override {
+        float old_R = _R;
+        State a = A.getInpState();
+        State c = C.getInpState();
+
         // Check that we have a driving state on both sides.
         // If not, set the resistance for free floating case.
-        if (A.getInpState() == NC || C.getInpState() == NC) {
+        if (a.isNC() || c.isNC()) {
             _R = R1;
-            return;
+            return (_R != old_R);
         }
-        // Calculate the EVS on both sides
-        EVS_A = A.getEVS();
-        EVS_C = C.getEVS();
         // Calculate internal resistance and no-load voltage
-        float Ri = EVS_A._R + EVS_C._R;
-        float Ul = EVS_A._U - EVS_C._U;
+        float Ri = 1.0/a._G + 1.0/c._G;
+        float Ul =     a._U -     c._U;
         // Check for negative or zero no-load voltage.
         // Set R1 in this case (diode non-conducting)
         if (Ul <= 0.0) {
             _R = R1;
-            return;
+            return (_R != old_R);
         }
         // Check which resistance to use
         float Ik = Ul / Ri;
@@ -81,6 +80,7 @@ public:
             _R /= R2 * Ri * Ik + t;
             _R *= Ri;
         }
+        return (_R != old_R);
     }
 };
 

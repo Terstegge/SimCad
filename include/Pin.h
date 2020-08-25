@@ -53,7 +53,7 @@ public:
 
     // Attach a processing function to this pin
     // (usually the input pins of a circuit).
-    inline void attach(std::function<void(NetSet &)> u) {
+    inline void attach(std::function<void(NetSet *)> u) {
         _update = u;
     }
 
@@ -61,18 +61,17 @@ public:
     // When the State of the connected Net changes, this
     // Net will call this method to trigger a new calculation
     // of some (logic) function.
-    inline void update(NetSet & nets) {
+    inline void update(NetSet * nets) {
         if (_update) _update(nets);
     }
 
     // Get the input state of a Pin
-    inline State getInpState() const {
+    State getInpState() const;
+
+    // Get the state of the related Net
+    inline State getNetState() const {
         return _netPtr->getState();
     }
-
-    // Get the Equivalent Voltage Source
-    // (EVS) as seen from this Pin
-    State getEVS();
 
     // Get the driving state of this Pin
     inline State getDrvState() const {
@@ -83,7 +82,7 @@ public:
     // report the next level of Nets to be
     // updated, which are stored in the
     // parameter 'nets'.
-    void setDrvState(State s, NetSet & nets);
+    void setDrvState(State s, NetSet *nets);
 
     // Getter/Setter for Net pointer
     inline NetPtr getNetPtr() {
@@ -104,7 +103,9 @@ public:
     // Operator support:
     // - The assignment operator modifies the driving state.
     // - The type conversion operators read out input state.
-    void operator = (State s);
+    inline void operator = (State s) {
+        setDrvState(s, nullptr);
+    }
 
     inline operator State () const {
         return getInpState();
@@ -120,7 +121,7 @@ public:
     }
 
 private:
-    std::function<void(NetSet &)> _update;  // The associated update function
+    std::function<void(NetSet *)> _update;  // The associated update function
     State   _drvState;                      // The driving state of this Pin
     NetPtr  _netPtr;                        // The associated Net
     Part *  _partPtr;                       // Pointer to the related Part

@@ -61,7 +61,8 @@ public:
     }
 
     Net(const std::string & name) : Named(name),
-        _state(NC), _short_circuit(false) {
+        _short_circuit(false), _Ik(0.0)
+    {
         ++_no_nets;
     }
 
@@ -80,7 +81,7 @@ public:
     // the Net. If it changed, update() is called on every
     // Pin in the Net. The method will return true if the
     // state has changed.
-    bool update(NetSet & nets);
+    bool update(NetSet * nets);
 
 
     // Return the current State of this Net.
@@ -102,6 +103,7 @@ public:
     vector<Pin *>   _pins;
     State           _state;
     bool            _short_circuit;
+    float           _Ik; // Short circuit current
 };
 
 #endif // _NET_H_

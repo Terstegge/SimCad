@@ -399,8 +399,9 @@ int Net2Sim::main(int argc, char* argv[])
     c_ofs << endl << classname << "::" << classname << "(std::string name) :" <<endl;
     for (size_t i = 0; i < used_components.size(); ++i) {
         string ref = used_components[i].ref_base + used_components[i].ref_idx;
-        if (used_components[i].ref_base == "R" ||
-            used_components[i].ref_base == "V")
+        if (used_components[i].part == "R" ||
+            used_components[i].part == "VSOURCE" ||
+            used_components[i].part == "ISOURCE")
         {
             c_ofs << "    NAME(" << ref << ", "
                   << readValue(used_components[i].value) << ")";
@@ -505,11 +506,16 @@ void Net2Sim::change_to_bus(string & net, vector<net_entry> & found_nets) {
 }
 
 float Net2Sim::readValue(string s) {
-    bool  shift_mode = true;
-    float res;
-    float factor;
+    bool    shift_mode = true;
+    float   res;
+    float   factor;
+    string  units = "AVRFH";
 
     for(int i=0; i < s.size(); ++i) {
+        // Skip physical units and symbols
+		if (units.find(s[i]) != string::npos) {
+            continue;
+        }
         if (shift_mode) {
             // Shift mode
             if (isdigit(s[i])) {
@@ -517,10 +523,6 @@ float Net2Sim::readValue(string s) {
                 res += (s[i]-'0');
             } else {
                 switch(s[i]) {
-                    // Skip physical units and symbols
-                    case 'A':
-                    case 'V':
-                    case 'R': { continue; }
                     // Decimal point
                     case '.': { res *= 1e0;  factor = 1e-1; break; }
                     // Kilo: Factor 10^3

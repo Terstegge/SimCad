@@ -15,15 +15,13 @@
 #include "State.h"
 
 // Strong LOW State
-State LOW  (0.0, 0.0);
+State LOW  (0.0, INF);
 // Strong HIGH State
-State HIGH (5.0, 0.0);
-// Not connected (NC), 'high Z'
-State NC   (0.0, INF);
+State HIGH (5.0, INF);
 
 // Output operator
 std::ostream & operator << (std::ostream & os, const State & s)  {
-    if (s == NC) {
+    if (s.isNC()) {
         os << "NC";
     } else if (s == HIGH) {
         os << "H";
@@ -32,7 +30,7 @@ std::ostream & operator << (std::ostream & os, const State & s)  {
     } else {
         os << "[";
         os << s._U << " V, ";
-        os << s._R;
+        os << 1.0 / s._G;
         os << " Ω]";
     }
     return os;

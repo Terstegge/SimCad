@@ -32,23 +32,23 @@ void Net::merge_net(NetPtr n, NetPtr o) {
     }
     // Update the Net
     NetSet net1;
-    update(net1);
+    update(&net1);
     if (net1.size() == 0) {
         // At least update the new Pins
         for (Pin * p : o->_pins) {
-            p->update(net1);
+            p->update(&net1);
         }
     }
     while (net1.size()) {
         NetSet net2;
         for (std::shared_ptr<Net> n : net1) {
-            n->update(net2);
+            n->update(&net2);
         }
         net1 = net2;
     }
 }
 
-bool Net::update(NetSet & nets) {
+bool Net::update(NetSet *nets) {
     State s;
     try {
         // Calculate the State of the Net
@@ -93,22 +93,21 @@ bool Net::update(NetSet & nets) {
 
 
 State Net::calculate_state() {
-//    cout << "Calculate net " << _name << endl;
     // Default NC
-    State res  = NC;
+    State res;
     Pin * last = nullptr;
     bool  sum  = true;
     bool  summed = false;
 
     float Gi = 0;
-    float Ik = 0;
+    _Ik = 0.0;
     
     // Loop over all Pins
     for (Pin * p : _pins) {
         // Get the driving state
         State s = p->getDrvState();
         // Ignore NC
-        if (s == NC) continue;
+        if (s.isNC()) continue;
         // Check for strong pins
         if (s.isStrong()) {
             // Check for short circuit
@@ -121,19 +120,16 @@ State Net::calculate_state() {
         } else {
             // Check if we need to sum
             if (sum) {
-                TwoPole * tp = dynamic_cast<TwoPole*>(p->getPartPtr());
-                if (!tp) continue;
-                float g = 1.0 / tp->_R;
-                Gi += g;
-                Ik += g * s._U;
+                Gi  += s._G;
+                _Ik += s._G * s._U;
                 summed = true;
             }
         }
     }
     // Set the result
     if (summed) {
-        res._U = Ik / Gi;
-        res._R = 1. / Gi;
+        res._U = _Ik / Gi;
+        res._G = Gi;
     }
     return res;
 }
