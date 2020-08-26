@@ -41,6 +41,7 @@ public:
     	press(true);
     	press(false);
     }
+
 };
 
 #endif // _SW_Push_H_

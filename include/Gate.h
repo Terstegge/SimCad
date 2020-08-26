@@ -39,9 +39,8 @@ public:
     Pin &    OUT;
     bool     on;    // true if power is switched on
 
-    Gate(const std::string & name)
-    : Part(name), NAME(p),
-      VCC(p[N+2]), GND(p[0]), OUT(p[N+1]), on(false)
+    Gate(const std::string & name) : Part(name),
+            NAME(p), VCC(p[N+2]), GND(p[0]), OUT(p[N+1]), on(false)
     {
         // Set the part pointers
         for (Pin & pin : p) {

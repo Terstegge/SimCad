@@ -15,9 +15,9 @@
 // The class 'Pin' models a single pin (either as part
 // of a circuit or stand-alone). It has a driving state,
 // and is associated to a Net (a set of Pins which are
-// connected to each other).
-// A Pin can have an update function, which is called
-// whenever the associated Net changes its value.
+// connected to each other). A Pin has an update function,
+// which is called whenever the associated Net changes its
+// value.
 //
 #ifndef INCLUDE_PIN_H_
 #define INCLUDE_PIN_H_

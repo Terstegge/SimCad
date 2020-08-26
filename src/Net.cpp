@@ -114,8 +114,9 @@ State Net::calculate_state() {
             if (res.isStrong() && (s != res)) {
                 throw short_circuit_exception(last, p);
             }
-            res = s;
-            sum = false;
+            last = p;
+            res  = s;
+            sum  = false;
             summed = false;
         } else {
             // Check if we need to sum
@@ -128,8 +129,8 @@ State Net::calculate_state() {
     }
     // Set the result
     if (summed) {
-        res._U = _Ik / Gi;
-        res._G = Gi;
+        res._U  = _Ik / Gi;
+        res._G  = Gi;
     }
     return res;
 }

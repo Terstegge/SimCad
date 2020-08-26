@@ -31,11 +31,12 @@ int Net2Sim::main(int argc, char* argv[])
     /////////////////////////////////////
     if (argc <= 1) {
         cout << "Usage:" << endl;
-        cout << argv[0] << " <options> kicad-netfile" << endl;
-        cout << " -c filename  :  Name of generated  .cpp-file (default netfile.cpp)" << endl;
-        cout << " -h filename  :  Name of generated  .h-file (default netfile.h)"     << endl;
-        cout << " -s subsheet  :  Generate code for specific subsheet (default /)   " << endl;
-        cout << " -v           :  Verbose output" << endl;
+        cout << argv[0] << " <options> netfile.net" << endl;
+        cout << "Options:" << endl;
+        cout << " -c <filename> : Name of generated .cpp-file (default netfile.cpp)" << endl;
+        cout << " -h <filename> : Name of generated .h-file   (default netfile.h)"   << endl;
+        cout << " -s <subsheet> : Generate code for specific subsheet (default /)"   << endl;
+        cout << " -v            : Verbose output" << endl;
         exit(1);
     }
     string net_file;
@@ -523,24 +524,25 @@ float Net2Sim::readValue(string s) {
                 res += (s[i]-'0');
             } else {
                 switch(s[i]) {
-                    // Decimal point
-                    case '.': { res *= 1e0;  factor = 1e-1; break; }
+                    // Giga: Factor 10^9
+                    case 'G': { res *= 1e9;  factor = 1e8;  break; }
+                    // Mega: Factor 10^6
+                    case 'M': { res *= 1e6;  factor = 1e5;  break; }
                     // Kilo: Factor 10^3
                     case 'k':
                     case 'K': { res *= 1e3;  factor = 1e2;  break; }
-                    // Mega: Factor 10^6
-                    case 'M': { res *= 1e6;  factor = 1e5;  break; }
-                    // Giga: Factor 10^9
-                    case 'G': { res *= 1e9;  factor = 1e8;  break; }
+                    // Decimal point
+                    case '.': { res *= 1e0;  factor = 1e-1; break; }
                     // Milli: Factor 10^-3
                     case 'm': { res *= 1e-3; factor = 1e-4; break; }
                     // Micro: Factor 10^-6
                     case 'u': { res *= 1e-6; factor = 1e-7; break; }
-                    // Nano: Factor 10^-12Unnamed resistors have 1k default...
+                    // Nano: Factor 10^-9
                     case 'n': { res *= 1e-9; factor = 1e-10; break; }
-                    // Unnamed resistors have 1k default...
+                    // Pico: Factor 10^-12
                     case 'p': { res *= 1e-12; factor = 1e-13; break; }
-                    default: throw Net2SimException("Wrong Value format: " + s);
+                    default:
+                        throw Net2SimException("Wrong Value format: " + s);
                 }
                 shift_mode = false;  
             }            

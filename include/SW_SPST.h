@@ -19,40 +19,24 @@
 #ifndef _SW_SPST_H_
 #define _SW_SPST_H_
 
-#include "Pin.h"
-#include "Narray.h"
-#include "Named.h"
+#include "TwoPole.h"
 
-class SW_SPST : public Named {
+class SW_SPST : public TwoPole {
 
 public:
-    Narray<Pin, 3> p;
-    Pin * weak_pin = nullptr;
-    bool _on;
 
-    SW_SPST(const std::string & name)
-    : Named(name), p(name+".p"), _on(false) {
-        p[1].attach([this](NetSet & nets) {
-            if (_on) p[2].setDrvState( p[1].getInpState(), nets);
-        });
-        p[2].attach([this](NetSet & nets) {
-            if (_on) p[1].setDrvState( p[2].getInpState(), nets );
-        });
+    SW_SPST(const std::string & name) : TwoPole(name) {
     }
 
-    void on() {
-        if (_on) return;
-        _on = true;
-    	p[1] = p[2].getInpState();
-    	p[2] = p[1].getInpState();
+    bool calculate() override {
+        return false;
     }
 
-    void off() {
-        if (!_on) return;
-        _on = false;
-    	p[1] = NC;
-    	p[2] = NC;
+    void switchOn(bool b) {
+        _R = b ? 0 : INF;
+        this->update(p[1], p[2], true);
     }
+
 };
 
 #endif // _SW_SPST_H_

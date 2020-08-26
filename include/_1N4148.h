@@ -34,9 +34,6 @@ protected:
     const float R2 = 280;     // Resistance up to Us
     const float R3 = 1;       // Resistance from Us on
 
-    State EVS_A;    // Equivalent Voltage Source for Anode
-    State EVS_C;    // Equivalent Voltage Source for Cathode
-
 public:
     Pin & A, & C;   // References for Anode and Cathode
     
