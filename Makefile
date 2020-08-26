@@ -19,7 +19,11 @@ LIB_DIR    = lib
 # Compiler options
 CXX        =  g++  # or clang++
 CXXFLAGS   = -std=c++17 -g
-INCLUDES   = -Iinclude -Ikicad/include
+INCLUDES   = -Ikicad/include
+INCLUDES  += -Iinclude/core
+INCLUDES  += -Iinclude/gates
+INCLUDES  += -Iinclude/twopoles
+INCLUDES  += -Iinclude/kicad
 
 # Utility to control output (detailed if VERBOSE defined).
 ifdef VERBOSE
@@ -75,6 +79,7 @@ build_dir :
 
 # Compile rules
 define compileRules
+.PRECIOUS: $(BUILD_DIR)/%.cpp.o
 $(BUILD_DIR)/%.cpp.o : $(1)/%.cpp
 	@echo "C++  $$(notdir $$<)"
 	$(HIDE) $$(CXX) $$(CXXFLAGS) $$(INCLUDES) -c -o $$@ $$< -MMD

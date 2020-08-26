@@ -20,7 +20,11 @@ DIGISIM_LIB     = $(DIGISIM_LIB_DIR)/libDIGISIM.a
 # Compiler options
 CXX        =  g++  # or clang++
 CXXFLAGS   = -std=c++17 -g
-INCLUDES   = -I$(DIGISIM_DIR)/include -I$(DIGISIM_DIR)/kicad/include
+INCLUDES   = -I$(DIGISIM_DIR)/include/core
+INCLUDES  += -I$(DIGISIM_DIR)/include/gates
+INCLUDES  += -I$(DIGISIM_DIR)/include/twopoles
+INCLUDES  += -I$(DIGISIM_DIR)/include/kicad
+INCLUDES  += -I$(DIGISIM_DIR)/kicad/include
 
 SRCS       = R2R-Ladder-DAC.cpp main.cpp
 OBJS       = $(SRCS:.cpp=.o)
@@ -44,14 +48,16 @@ all: $(BIN)
 	$(HIDE) $(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< -MMD
 
 # Build rules for binaries
-$(BIN) : $(OBJS)
+$(BIN) : $(OBJS) $(DIGISIM_LIB_DIR)/libDIGISIM.a
 	@echo "LD   $@"
 	$(HIDE) $(CXX) $(CXXFLAGS) -L$(DIGISIM_LIB_DIR) -o $@ $^ -lDIGISIM
 
 # Build rule for cpp and h files
+.PRECIOUS: %.h
 %.h : %.net
 	@echo "NET  $(notdir $<)"
 	$(HIDE) $(NET2SIM_BIN) $^
+.PRECIOUS: %.cpp
 %.cpp : %.net
 	@echo "NET  $(notdir $<)"
 	$(HIDE) $(NET2SIM_BIN)  $^
