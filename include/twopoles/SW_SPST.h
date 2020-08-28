@@ -32,8 +32,8 @@ public:
         return false;
     }
 
-    void switchOn(bool b) {
-        _R = b ? 0 : INF;
+    void setOn(bool b) {
+        _trans.setR(b ? 0 : INF);
         this->update(p[1], p[2], true);
     }
 

@@ -39,28 +39,28 @@ public:
     
     _1N4148(const string & name="") : TwoPole(name), C(p[1]), A(p[2]) {
         // Set default resistance
-        _R = R1;
+        _trans.setR(R1);
     }
 
     bool calculate() override {
-        float old_R = _R;
+        float old_R = _trans.getR();
         State a = A.getInpState();
         State c = C.getInpState();
 
         // Check that we have a driving state on both sides.
         // If not, set the resistance for free floating case.
         if (a.isNC() || c.isNC()) {
-            _R = R1;
-            return (_R != old_R);
+            _trans.setR(R1);
+            return (_trans.getR() != old_R);
         }
         // Calculate internal resistance and no-load voltage
-        float Ri = 1.0/a._G + 1.0/c._G;
-        float Ul =     a._U -     c._U;
+        float Ri = a.getR() + c.getR();
+        float Ul = a.getU() - c.getU();
         // Check for negative or zero no-load voltage.
         // Set R1 in this case (diode non-conducting)
         if (Ul <= 0.0) {
-            _R = R1;
-            return (_R != old_R);
+            _trans.setR(R1);
+            return (_trans.getR() != old_R);
         }
         // Check which resistance to use
         float Ik = Ul / Ri;
@@ -69,15 +69,17 @@ public:
 
         if (Ir <= Is) {
             // Use R2 for voltages up to Us
-            _R = R2;
+            _trans.setR(R2);
         } else {
             // Calculate resistance for voltage > Us
             float t = Us * (R3 - R2);
-            _R  = R2 * R3 * Ik - t;
-            _R /= R2 * Ri * Ik + t;
-            _R *= Ri;
+            float R;
+            R  = R2 * R3 * Ik - t;
+            R /= R2 * Ri * Ik + t;
+            R *= Ri;
+            _trans.setR(R);
         }
-        return (_R != old_R);
+        return (_trans.getR() != old_R);
     }
 };
 

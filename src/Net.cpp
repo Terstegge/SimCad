@@ -12,10 +12,10 @@
 //
 ///////////////////////////////////////////////
 //
-#include <ShortCircuitEx.h>
 #include "Net.h"
 #include "Pin.h"
 #include "TwoPole.h"
+#include "ShortCircuitEx.h"
 
 int Net::_no_nets = 0;
 int Net::_short_circuit_count = 0;
@@ -80,6 +80,8 @@ bool Net::update(NetSet *nets) {
     }
 
     // Check if the State of the Net has changed
+//    std::cout << "Comparing states for " << getName() << ": " << s << " == " << _state << " is " << (s == _state) << std::endl;
+
     if (s != _state) {
         // Set the State and call update on every Pin
         _state = s;
@@ -93,45 +95,21 @@ bool Net::update(NetSet *nets) {
 
 
 State Net::calculate_state() {
-    // Default NC
+//    std::cout << "Calc state for " << getName();
     State res;
-    Pin * last = nullptr;
-    bool  sum  = true;
-    bool  summed = false;
-
-    float Gi = 0;
-    _Ik = 0.0;
-    
-    // Loop over all Pins
+    Pin * first;
+    // Calculate all parallel driving states
     for (Pin * p : _pins) {
-        // Get the driving state
-        State s = p->getDrvState();
-        // Ignore NC
-        if (s.isNC()) continue;
-        // Check for strong pins
-        if (s.isStrong()) {
-            // Check for short circuit
-            if (res.isStrong() && (s != res)) {
-                throw short_circuit_exception(last, p);
-            }
-            last = p;
-            res  = s;
-            sum  = false;
-            summed = false;
-        } else {
-            // Check if we need to sum
-            if (sum) {
-                Gi  += s._G;
-                _Ik += s._G * s._U;
-                summed = true;
-            }
+        try {
+            res |= p->getDrvState();
+        } catch (short_circuit_exception & e) {
+            e.setPin1(first);
+            e.setPin2(p);
+            throw e;
         }
+        if (p->getDrvState().isStrong()) first = p;
     }
-    // Set the result
-    if (summed) {
-        res._U  = _Ik / Gi;
-        res._G  = Gi;
-    }
+//    std::cout << " --> " << res << std::endl;
     return res;
 }
 

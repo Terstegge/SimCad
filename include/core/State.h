@@ -13,11 +13,7 @@
 ///////////////////////////////////////////////
 //
 // The struct 'State' represents the electrical
-// state of a Pin or Net. It is also used as
-// the result type for EVS (Equivalent Voltage
-// Source) computations.
-// The class contains a voltage U and an ohmic
-// conductance G.
+// state of a Pin or Net.
 //
 #ifndef INCLUDE_STATE_H_
 #define INCLUDE_STATE_H_
@@ -27,57 +23,89 @@ struct State;
 extern State LOW;
 extern State HIGH;
 
+class Pin;
+
 #include <cmath>    // fabs()
 #include <limits>   // infinity
 #include <iostream>
 
 #define SUPPLY_VOLTAGE  5.0
-#define EPSILON         1e-8
+#define EPSILON         1e-4
 #define INF             std::numeric_limits<float>::infinity()
 
-struct  State {
-    // Attributes
-    float   _U;
-    float   _G;
 
-    // State constructor. Without parameters,
-    // a default State will be NC (Not Connected),
-    // meaning the conductivity _G is zero.
-    State(float u=0.0, float g=0.0) : _U(u), _G(g) { }
+class State {
+public:
+    // Default State constructor, creating
+    // a NC State (Not Connected).
+    State() { setNC(); }
+
+    // Constructor to create a (strong) voltage source
+    State(float u) : _isVS(true), _U(u), _R(0.0), _I(0.0) { }
 
     // Type conversion for booleans
     State(bool b) {
-        _U = b ? SUPPLY_VOLTAGE : 0.0;
-        _G = INF;
+        setVS(b ? SUPPLY_VOLTAGE : 0.0, 0.0);
     }
     inline operator bool () const {
         return isNC() ? true : _U > (SUPPLY_VOLTAGE/2);
     }
 
-    // Comparison operators
-    bool operator == (const State & rhs) const {
-        if ((_U == rhs._U) && (_G== rhs._G)) {
-            return true;
-        } else {
-            return (fabs(_U - rhs._U) < EPSILON) &&
-                   (fabs(_G - rhs._G) < EPSILON);
-        }
+    // Methods to set a voltage/current source or NC
+    void setVS(float u, float r) { _U = u; _R = r; _isVS = true;  }
+    void setCS(float i, float r) { _I = i; _R = r; _isVS = false; }
+    void setR (float r)          { _R = r; }
+    void setNC()   { _U = 0.0; _R = INF; _I = 0.0, _isVS = true;  }
+
+    // Various getters
+    inline bool  isVS() const { return _isVS; }
+    inline float getU() const { return _isVS ? _U : _R * _I; }
+    inline float getR() const { return _R; }
+    inline float getG() const { return 1.0 / _R; }
+    inline float getI() const {
+        // NAN killer
+        if (_isVS && _U==0.0) return 0.0;
+        return _isVS ? _U / _R : _I;
     }
+
+    // Methods to check NC and Strong states
+    inline bool isStrong() const { return _R == 0.0; }
+    inline bool isNC()     const { return _isVS ? _R == INF : _R == INF && _I == 0.0; }
+    inline bool isHIGH()   const { return isStrong() && _U == SUPPLY_VOLTAGE; }
+    inline bool isLOW()    const { return isStrong() && _U == 0.0; }
+
+    // Comparison operators
+    bool operator == (const State & rhs) const;
     inline bool operator != (const State & rhs) const {
         return !(*this == rhs);
     }
 
-    // Helper methods
-    inline bool isStrong() const {
-        return (_G == INF);
-    }
+    // Calculation operators for parallel and serial circuits
+    State & operator |= (const State & rhs);
+    State & operator /= (const State & rhs);
+    State & operator += (const State & rhs);
+    State & operator -= (const State & rhs);
 
-    inline bool isNC() const {
-        return (_G == 0.0);
+    State operator - () {
+        State s = *this;
+        _U *= -1.0;
+        _I *= -1.0;
+        return s;
     }
 
     // Stream output operator
-    friend std::ostream & operator << (std::ostream & os, const State & s);
+    friend std::ostream & operator << (std::ostream & os, const State & rhs);
+
+protected:
+    bool    _isVS;
+    float   _U;
+    float   _R;
+    float   _I;
 };
+
+State operator | (const State & lhs, const State & rhs);
+State operator / (const State & lhs, const State & rhs);
+State operator + (const State & lhs, const State & rhs);
+State operator - (const State & lhs, const State & rhs);
 
 #endif // INCLUDE_STATE_H_

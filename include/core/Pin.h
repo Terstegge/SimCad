@@ -69,12 +69,12 @@ public:
     State getInpState() const;
 
     // Get the state of the related Net
-    inline State getNetState() const {
+    inline const State & getNetState() const {
         return _netPtr->getState();
     }
 
     // Get the driving state of this Pin
-    inline State getDrvState() const {
+    inline const State & getDrvState() const {
         return _drvState;
     }
 

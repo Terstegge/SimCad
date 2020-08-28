@@ -27,7 +27,7 @@ class R : public TwoPole {
 public:
     R(const std::string & name, float r) : TwoPole(name) {
         // Set resistance
-        _R = r;
+        _trans.setR(r);
     }
 
     bool calculate() override {

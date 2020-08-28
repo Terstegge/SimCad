@@ -61,7 +61,7 @@ public:
     }
 
     Net(const std::string & name) : Named(name),
-        _short_circuit(false), _Ik(0.0)
+        _short_circuit(false)
     {
         ++_no_nets;
     }
@@ -85,7 +85,7 @@ public:
 
 
     // Return the current State of this Net.
-    inline State getState() {
+    inline const State & getState() {
         return _state;
     }
 
@@ -103,7 +103,7 @@ public:
     vector<Pin *>   _pins;
     State           _state;
     bool            _short_circuit;
-    float           _Ik; // Short circuit current
+
 };
 
 #endif // _NET_H_

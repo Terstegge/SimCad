@@ -25,13 +25,7 @@ void Pin::connect_to(Pin & p) {
 // Get the input state of a Pin
 State Pin::getInpState() const {
     State s = getNetState();
-
-    if (s.isNC()     || _drvState.isNC() ||
-        s.isStrong() || _drvState.isStrong()) return s;
-    if (_drvState == s) return State();
-
-    s._G -= _drvState._G;
-    s._U  = (_netPtr->_Ik - _drvState._U * _drvState._G) / s._G;
+    s /= _drvState;
     return s;
 }
 

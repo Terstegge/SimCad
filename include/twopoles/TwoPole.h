@@ -26,39 +26,21 @@
 class TwoPole : public Part {
 public:
     Narray<Pin, 3> p;
-    float         _R;  // TwoPole DC resistance
-    float         _U;  // TwoPole voltage offset
 
-    TwoPole(const std::string & name)
-    : Part(name), NAME(p), _R(INF), _U(0.0)
-    {
+    TwoPole(const std::string & name) : Part(name), NAME(p) {
         // Set the part pointers
         p[1].setPartPtr(this);
         p[2].setPartPtr(this);
         // Attach handlers
-        p[1].attach([this](NetSet * nets) {
-            // Check for disconnect
-            if (p[1].getInpState().isNC()) {
-                p[2].setDrvState(State(), nets);
-                return;
-            }
-            update(p[1], p[2], calculate(), 1.0, nets);
-        });
-        p[2].attach([this](NetSet * nets) {
-            // Check for disconnect
-            if (p[2].getInpState().isNC()) {
-                p[1].setDrvState(State(), nets);
-                return;
-            }
-            update(p[2], p[1], calculate(), -1.0, nets);
-        });
+        p[1].attach([this](NetSet * nets) { update(p[1], p[2], calculate(), nets); });
+        p[2].attach([this](NetSet * nets) { update(p[2], p[1], calculate(), nets); });
     }
 
     virtual ~TwoPole() {
     }
 
-    // The method to calculate the new parameters
-    // (_R and _U) of the TwoPole. If the values
+    // The method to calculate the new state
+    // (U/R/I) of the TwoPole. If the values
     // have changed, the method returns true.
     virtual bool calculate() = 0;
 
@@ -66,21 +48,16 @@ public:
     // of the TwoPole. If the parameter 'changed'
     // is true, the change will also propagated
     // to the local side.
-    void update(Pin & local, Pin & remote, bool changed,
-                float polarity=0.0,  NetSet * nets=nullptr)
+    void update(Pin & local, Pin & remote, bool changed=false, NetSet * nets=nullptr)
     {
-        State s = local.getInpState();
-        s._G  = 1.0 / ( 1.0/s._G + _R);
-        s._U += polarity * _U;
-        remote.setDrvState( s, nets);
+        remote.setDrvState(local.getInpState() + _trans, nets);
         if (changed) {
-            s = remote.getInpState();
-            s._G  = 1.0 / ( 1.0/s._G + _R);
-            s._U += -polarity * _U;
-            local.setDrvState( s, nets);
+            local.setDrvState(remote.getInpState() + -_trans, nets);
         }
     }
 
+protected:
+    State   _trans;
 };
 
 #endif // INCLUDE_TWOPOLE_H_

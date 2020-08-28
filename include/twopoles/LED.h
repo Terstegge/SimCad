@@ -35,9 +35,8 @@ public:
         if (a.isNC() || c.isNC()) {
             return false;
         }
-        float  I = (a._U - c._U) / _R;
         // LED is on if more than 5mA flow.
-        return I > 0.005;
+        return ((a - c).getU() / _trans.getR()) > 0.005;
     }
 };
 

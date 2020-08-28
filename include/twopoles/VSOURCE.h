@@ -26,8 +26,7 @@ public:
 
     VSOURCE(const std::string & name, float u) : TwoPole(name) {
         // Ideal voltage source with Ri=0
-        _R = 0.0;
-        _U = u;
+        _trans.setVS(u, 0.0);
     }
 
     bool calculate() override {
