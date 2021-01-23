@@ -13,11 +13,10 @@
 ///////////////////////////////////////////////
 //
 // Base class for all kinds of two-poles (e.g.
-// resistors and diodes). Currently only the
-// DC resistance and voltage offset is stored.
+// voltage/current sources or resistors and diodes).
 //
-#ifndef INCLUDE_TWOPOLE_H_
-#define INCLUDE_TWOPOLE_H_
+#ifndef _INCLUDE_TWOPOLE_H_
+#define _INCLUDE_TWOPOLE_H_
 
 #include "Part.h"
 #include "Pin.h"
@@ -25,39 +24,77 @@
 
 class TwoPole : public Part {
 public:
-    Narray<Pin, 3> p;
 
     TwoPole(const std::string & name) : Part(name), NAME(p) {
         // Set the part pointers
         p[1].setPartPtr(this);
         p[2].setPartPtr(this);
         // Attach handlers
-        p[1].attach([this](NetSet * nets) { update(p[1], p[2], calculate(), nets); });
-        p[2].attach([this](NetSet * nets) { update(p[2], p[1], calculate(), nets); });
+        p[1].attach([this](NetSet * nets) {
+            NetPtr net = p[1].getNetPtr();
+            // Set voltage
+            if (net) {
+                // Alternative :
+//                p[2].Ud = net->U;
+//                p[2].Gd = G;
+                float gw = net->Gi - p[1].Gd;
+                if (net->Gi == INF || p[1].Gd == 0.0 || gw == 0.0){
+                    p[2].Ud = net->U;
+                } else {
+                    p[2].Ud = (net->Is - p[1].Ud * p[1].Gd - p[1].Id) / gw;
+                }
+                p[2].Gd = 1.0/(1.0/gw + 1.0/G);
+            } else {
+                p[2].Ud = p[1].Ud;
+                p[2].Gd = p[1].Gd;
+            }
+            _p1_changed(nets);
+        });
+
+        p[2].attach([this](NetSet * nets) {
+            NetPtr net = p[2].getNetPtr();
+            // Set voltage
+            if (net) {
+//                p[1].Ud = net->U;
+//                p[1].Gd = G;
+                float gw = net->Gi - p[2].Gd;
+                if (net->Gi == INF || p[2].Gd == 0.0 || gw == 0.0){
+                    p[1].Ud = net->U;
+                } else {
+                    p[1].Ud = (net->Is - p[2].Ud * p[2].Gd - p[2].Id) / gw;
+                }
+                p[1].Gd = 1.0/(1.0/gw + 1.0/G);
+            } else {
+                p[1].Ud = p[2].Ud;
+                p[1].Gd = p[2].Gd;
+            }
+            _p2_changed(nets);
+        });
     }
 
     virtual ~TwoPole() {
     }
 
-    // The method to calculate the new state
-    // (U/R/I) of the TwoPole. If the values
-    // have changed, the method returns true.
-    virtual bool calculate() = 0;
+    virtual void p1_changed() {}
+    virtual void p2_changed() {}
 
-    // Utility method to update the drive states
-    // of the TwoPole. If the parameter 'changed'
-    // is true, the change will also propagated
-    // to the local side.
-    void update(Pin & local, Pin & remote, bool changed=false, NetSet * nets=nullptr)
-    {
-        remote.setDrvState(local.getInpState() + _trans, nets);
-        if (changed) {
-            local.setDrvState(remote.getInpState() + -_trans, nets);
-        }
-    }
+    void _p1_changed(NetSet * nets) {
+        p1_changed();
+        NetPtr n = p[2].getNetPtr();
+        if (n) nets->insert(n);
+    };
 
-protected:
-    State   _trans;
+    void _p2_changed(NetSet * nets) {
+        p2_changed();
+        NetPtr n = p[1].getNetPtr();
+        if (n) nets->insert(n);
+    };
+
+
+//protected:
+    Narray<Pin, 3> p;
+
+    float G;
 };
 
-#endif // INCLUDE_TWOPOLE_H_
+#endif // _INCLUDE_TWOPOLE_H_

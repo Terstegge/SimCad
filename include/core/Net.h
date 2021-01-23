@@ -28,7 +28,7 @@
 #define _NET_H_
 
 #include "Named.h"
-#include "State.h"
+//#include "State.h"
 
 #include <vector>
 using std::vector;
@@ -41,7 +41,8 @@ using std::vector;
 class Pin;
 class Net;
 
-typedef std::shared_ptr<Net> NetPtr;
+//typedef std::shared_ptr<Net> NetPtr;
+typedef Net* NetPtr;
 typedef std::set<NetPtr>     NetSet;
 
 class Net : public Named {
@@ -54,14 +55,12 @@ public:
     static int _no_nets;
 
     // Factory method: Create a new Net and add a first Pin
-    static std::shared_ptr<Net> create_net(std::string n, Pin * p) {
-        Net * net = new Net(n);
-        net->_pins.push_back(p);
-        return std::shared_ptr<Net>(net);
+    static NetPtr create_net(std::string n) {
+        return  new Net(n);
     }
 
     Net(const std::string & name) : Named(name),
-        _short_circuit(false)
+        _short_circuit(false), U(0), Gi(0), Is(0)
     {
         ++_no_nets;
     }
@@ -74,20 +73,22 @@ public:
     // which entries are copied to our Pin vector. The first
     // parameter is the shared_ptr of this Net, which needs
     // to be set in the new Pin entries!
-    void merge_net(NetPtr o, NetPtr n);
+//    void merge_net(NetPtr &o, NetPtr &n);
 
 
     // This method first calculates the new boolean state of
     // the Net. If it changed, update() is called on every
     // Pin in the Net. The method will return true if the
     // state has changed.
-    bool update(NetSet * nets);
+    bool update(NetSet * nets, bool force=false);
+
+    void update(bool force=false);
 
 
     // Return the current State of this Net.
-    inline const State & getState() {
-        return _state;
-    }
+//    inline const State & getState() {
+//        return _state;
+//    }
 
     // Output operator for a Net
     friend std::ostream & operator << (std::ostream & os, const NetPtr net);
@@ -98,12 +99,15 @@ public:
     // and calculates the resulting State. If a
     // short circuit is detected, a exception is
     // thrown.
-    State calculate_state();
+//    State calculate_state();
 
     vector<Pin *>   _pins;
-    State           _state;
+//    State           _state;
     bool            _short_circuit;
 
+    float           U;
+    float           Gi;
+    float           Is;
 };
 
 #endif // _NET_H_

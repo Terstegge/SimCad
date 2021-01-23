@@ -13,6 +13,8 @@
 ///////////////////////////////////////////////
 //
 // Virtual base class for all kinds of parts.
+// Its only use is to have a common type for
+// parts, so we can have part pointers.
 // A part is 'Named'.
 //
 #ifndef INCLUDE_PART_H_
@@ -31,4 +33,4 @@ struct Part : Named {
 
 };
 
-#endif /* INCLUDE_PART_H_ */
+#endif // INCLUDE_PART_H_

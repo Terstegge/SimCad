@@ -438,7 +438,6 @@ int Net2Sim::main(int argc, char* argv[])
                 s += ".connect_to(";
                 s += ref + ".";
                 s += "p[" + pin + "]";
-                //                s += get_pin_name(tree, ref.c_str(), pin.c_str());
                 s += ");\n";
                 net_output.push_back(s);
             }

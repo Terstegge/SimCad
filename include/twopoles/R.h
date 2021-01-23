@@ -26,14 +26,7 @@ class R : public TwoPole {
 
 public:
     R(const std::string & name, float r) : TwoPole(name) {
-        // Set resistance
-        _trans.setR(r);
-    }
-
-    bool calculate() override {
-        // The R value is already set in the constructor,
-        // and will not change. So we have nothing to do here...
-        return false;
+        this->G = 1.0/r;
     }
 };
 

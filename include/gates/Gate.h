@@ -48,17 +48,29 @@ public:
         }
         // Attach power signals
         VCC.attach( [this](NetSet * nets) {
-            on = (VCC == HIGH) && (GND == LOW);
-            OUT.setDrvState( on ? this->calculate() : State(), nets);
+            on  = VCC.isVCC() && GND.isGND();
+            if (on) {
+                update(nets);
+            } else {
+                OUT.setDrvNC(nets);
+            }
         });
         GND.attach( [this](NetSet * nets) {
-            on = (VCC == HIGH) && (GND == LOW);
-            OUT.setDrvState( on ? this->calculate() : State(), nets);
+            on  = VCC.isVCC() && GND.isGND();
+            if (on) {
+                update(nets);
+            } else {
+                OUT.setDrvNC(nets);
+            }
         });
         // Attach input signal handlers
         for(int i=1; i <= N; ++i) {
             p[i].attach( [this](NetSet * nets) {
-                OUT.setDrvState( on ? this->calculate() : State(), nets );
+                if (on) {
+                    update(nets);
+                } else {
+                    OUT.setDrvNC(nets);
+                }
             });
         }
     }
@@ -68,7 +80,7 @@ public:
 
     // The method to calculate the result of a specific gate.
     // Has to be provided by the concrete gate classes.
-    virtual State calculate() = 0;
+    virtual void update(NetSet * nets) = 0;
 
     friend std::ostream & operator << (std::ostream & os, const Gate<N> & rhs) {
         os << "Gate " << rhs.getName() << std::endl;
@@ -78,7 +90,7 @@ public:
             os << std::endl;
         }
         os << "Output "   << rhs.OUT.getName();
-        os << " driving " << rhs.OUT.getDrvState();
+        os << " driving " << drive << rhs.OUT.getDrvState();
         os << std::endl;
         return os;
     }

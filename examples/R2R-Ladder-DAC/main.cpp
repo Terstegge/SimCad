@@ -1,5 +1,7 @@
 #include "R2R-Ladder-DAC.h"
+#include "_74LS08.h"
 #include "ShortCircuitEx.h"
+#include "R.h"
 
 #include <iostream>
 using namespace std;
@@ -8,23 +10,26 @@ int main() {
 
     R2R_Ladder_DAC r2r("R2R");
 
-    try {    
+    try {
+        // Power up
+        cout << "********** Setting VCC" << endl;
+        r2r.VCC = SUPPLY_VOLTAGE;
+        cout << "********** Setting GND" << endl;
+        r2r.GND = SUPPLY_GROUND;
 
-    // Power up
-    r2r.VCC  = HIGH;
-    r2r.GND  = LOW;
+        cout << "********** Result" << endl;
+        cout << r2r.OUT << endl;
+        cout << r2r.AAA << endl;
+        cout << r2r.VCC << endl;
+        cout << r2r.GND << endl;
+        cout << r2r.R1.p[2] << endl;
+        cout << r2r.R1.p[1] << endl;
+        cout << r2r.R2.p[2] << endl;
 
-    for (int i=0; i < 16; ++i) {
+//        cout << r2r.VCC.getNetPtr()  << endl;
+//        cout << r2r.GND.getNetPtr()  << endl;
 
-        r2r.I1.press(i & 1);
-        r2r.I2.press(i & 2);
-        r2r.I3.press(i & 4);
-        r2r.I4.press(i & 8);
-        
-        cout << r2r.Q << " " << r2r.OUT << endl;
-    }
-
-    } catch (short_circuit_exception & e) {
+    } catch (short_circuit_exception &e) {
         cerr << e << endl;
     }
 }

@@ -27,13 +27,13 @@ public:
     AND(const std::string & name) : Gate<N>(name) {
     }
 
-    State calculate() override {
+    void update(NetSet * nets) override {
         bool res = true;
         for(int i=1; i <= N; ++i) {
             res &= (bool)this->p[i];
             if (!res) break;
         }
-        return res;
+        this->OUT.setDrvBool(res, nets);
     }
 };
 

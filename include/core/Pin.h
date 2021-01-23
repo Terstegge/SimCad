@@ -19,37 +19,99 @@
 // which is called whenever the associated Net changes its
 // value.
 //
-#ifndef INCLUDE_PIN_H_
-#define INCLUDE_PIN_H_
+#ifndef INCLUDE_PIN_H
+#define INCLUDE_PIN_H
 
 #include "Named.h"
 #include "Part.h"
-#include "State.h"
 #include "Net.h"
 
 #include <iostream>
 #include <functional>
 #include <string>
+#include <limits>
+
+#define INF std::numeric_limits<float>::infinity()
+
+#define SUPPLY_VOLTAGE 5.0
+#define SUPPLY_GROUND  0.0
 
 class Pin : public Named {
 public:
-
     // Pin constructor.
-    Pin(const std::string & name="") : Named(name),
-        _netPtr (Net::create_net(name, this)),
-        _partPtr(nullptr)
-    {
-    }
+    Pin(const std::string & name="");
 
     // No assignment, no copy for now...
     Pin & operator = (const Pin & p) = delete;
     Pin              (const Pin & p) = delete;
 
-    // Connect two pins. This is done by merging
-    // the two Nets which belong to the two Pins.
-    // If both Pins are members of the same Net,
-    // this method has no effect.
+    // Connect two pins. If both Pins are members of
+    // the same Net, this method has no effect.
     void connect_to(Pin & p);
+
+    // Methods dealing with driving state
+    void setDrvState(float u, float g, float i, NetSet *nets);
+
+    inline void setDrvVS(float u, NetSet *nets = nullptr) {
+        setDrvState(u, INF, 0, nets);
+    }
+    inline void setDrvNC(NetSet * nets) {
+        setDrvState(0.0, 0.0, 0.0, nets);
+    }
+    inline void setDrvBool(bool b, NetSet * nets) {
+        setDrvVS(b ? 5.0 : 0.0, nets);
+    }
+    bool isDrvNC() const {
+        return (Ud == 0.0) && (Gd == 0.0) && (Id == 0.0);
+    }
+    void operator = (float f) {
+        setDrvVS(f);
+    }
+
+
+    // Methods dealing with the NET state
+    inline float U() const {
+        return _netPtr ? _netPtr->U : Ud;
+    }
+    inline float Gi() const {
+        return _netPtr ? _netPtr->Gi : Gd;
+    }
+    float I() const {
+        if (Gd == INF) {
+            float i = 0;
+            int cnt = 0;
+            for (Pin * p : _netPtr->_pins) {
+                if (p->Gd == INF) {
+                    cnt++;
+                } else {
+                    i += p->I();
+                }
+            }
+            return -i / cnt;
+        } else {
+            return (Ud - U()) * Gd;
+        }
+    }
+    inline bool isGND() const {
+        return (U() == 0.0) && (Gi() == INF);
+    }
+    inline bool isVCC() const {
+        return (U() == 5.0) && (Gi() == INF);
+    }
+    inline bool isNC() const {
+        return Gi() == 0.0;
+    }
+    inline operator bool () const {
+        return isNC() ? true : U() > (SUPPLY_VOLTAGE/2);
+    }
+
+    // Getter/Setter for Net pointer
+    inline NetPtr getNetPtr() const { return _netPtr; }
+//    inline void setNetPtr(NetPtr p) { _netPtr = p;    }
+
+    // Getter/Setter for Part pointer
+    inline Part * getPartPtr() const { return _partPtr; }
+    inline void setPartPtr(Part * p) { _partPtr = p;    }
 
     // Attach a processing function to this pin
     // (usually the input pins of a circuit).
@@ -65,66 +127,31 @@ public:
         if (_update) _update(nets);
     }
 
-    // Get the input state of a Pin
-    State getInpState() const;
+    // Friend and output operator
+    friend class Net;
+    friend class TwoPole;
+    friend std::ostream & operator << (std::ostream & os, const Pin & p);
 
-    // Get the state of the related Net
-    inline const State & getNetState() const {
-        return _netPtr->getState();
-    }
-
-    // Get the driving state of this Pin
-    inline const State & getDrvState() const {
-        return _drvState;
-    }
-
-    // Set driving state. This method will
-    // report the next level of Nets to be
-    // updated, which are stored in the
-    // parameter 'nets'.
-    void setDrvState(State s, NetSet *nets);
-
-    // Getter/Setter for Net pointer
-    inline NetPtr getNetPtr() {
-        return _netPtr;
-    }
-    inline void setNetPtr(NetPtr p) {
-        _netPtr = p;
-    }
-
-    // Getter/Setter for Part pointer
-    inline Part * getPartPtr() {
-        return _partPtr;
-    }
-    inline void setPartPtr(Part * p) {
-        _partPtr = p;
-    }
-
-    // Operator support:
-    // - The assignment operator modifies the driving state.
-    // - The type conversion operators read out input state.
-    inline void operator = (State s) {
-        setDrvState(s, nullptr);
-    }
-
-    inline operator State () const {
-        return getInpState();
-    }
-    inline operator bool () const {
-        return (bool)getInpState();
-    }
-
-    // Output stream operator
-    friend std::ostream & operator << (std::ostream & os, const Pin & p) {
-        os << p.getName() << ": " << p.getInpState();
-        return os;
-    }
+    // Flag controlling the stream output.
+    // If set, the driving state is used.
+    static bool _drv;
 
 private:
-    std::function<void(NetSet *)> _update;  // The associated update function
-    State   _drvState;                      // The driving state of this Pin
-    NetPtr  _netPtr;                        // The associated Net
-    Part *  _partPtr;                       // Pointer to the related Part
+    float Ud;           // Driving voltage
+    float Gd;           // Driving conductivity
+    float Id;           // Driving current
+
+    NetPtr  _netPtr;    // The associated Net
+    Part *  _partPtr;   // Pointer to the related Part
+
+    // The associated update function
+    std::function<void(NetSet *)> _update;
 };
 
-#endif // INCLUDE_PIN_H_
+// Manipulator to output the driving state
+inline std::ostream &drive(std::ostream &out) {
+    Pin::_drv = true;
+    return out;
+}
+
+#endif // INCLUDE_PIN_H

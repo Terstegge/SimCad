@@ -25,15 +25,13 @@ class SW_Push : public TwoPole {
 
 public:
 
-    SW_Push(const std::string & name) : TwoPole(name) {
-    }
-
-    bool calculate() override {
-        return false;
+    SW_Push(const std::string & name) : TwoPole(name), _R(INF) {
+        this->G = 0;
     }
 
     void press(bool b) {
-        _trans.setR(b ? 0 : INF);
+        this->G = b ? INF : 0;
+        // TODO
         this->update(p[1], p[2], true);
     }
 
@@ -41,6 +39,23 @@ public:
     	press(true);
     	press(false);
     }
+private:
+    float _R;
+
+
+
+
+
+public:
+    R(const std::string & name, float r) : TwoPole(name), _R(r) {
+    }
+
+    void update(Pin & local, Pin & remote, NetSet * nets) {
+        remote = State(local.U, 1.0 / (1.0/local.G + _R), -local.I);
+    }
+
+private:
+    float _R;
 
 };
 

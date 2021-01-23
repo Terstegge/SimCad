@@ -22,69 +22,46 @@ int Net::_short_circuit_count = 0;
 
 #include <iostream>
 
-void Net::merge_net(NetPtr n, NetPtr o) {
-    // Insert the Pin pointers to our vector. The
-    // Net pointers in the Pins are not changed!
-    _pins.insert(_pins.end(), o->_pins.begin(), o->_pins.end() );
-    // Set the Net pointers in the new entries
-    for (Pin * p : o->_pins) {
-        p->setNetPtr(n);
-    }
-    // Update the Net
-    NetSet net1;
-    update(&net1);
-    if (net1.size() == 0) {
-        // At least update the new Pins
-        for (Pin * p : o->_pins) {
-            p->update(&net1);
-        }
-    }
-    while (net1.size()) {
-        NetSet net2;
-        for (std::shared_ptr<Net> n : net1) {
-            n->update(&net2);
-        }
-        net1 = net2;
-    }
-}
+bool Net::update(NetSet *nets, bool force) {
+    Pin * first  {nullptr}; // Pointer to first ideal voltage source
+    Pin * second {nullptr}; // Pointer to second ideal voltage source
+    float u {0}, g {0}, i {0};
 
-bool Net::update(NetSet *nets) {
-    State s;
-    try {
-        // Calculate the State of the Net
-        s =  calculate_state();
-    } catch(short_circuit_exception & ex) {
-        if (_short_circuit) {
-            // The Net was marked a SC before...
-            return false;
+    for (Pin * p : _pins) {
+        if (p->Gd != INF) {           // No ideal voltage source?
+            g += p->Gd;              // Normal case: Sum up G and I
+            i += p->Gd * p->Ud + p->Id;         //p->Gd ? p->Gd * p->Ud : p->Id;
         } else {
-            // Check if we are in a transaction
-            if (true) { //Pin::set_depth == 0) {
-                // No transaction->rethrow
-                throw ex;
+            if (!first) {               // Ideal Voltage source
+                u = p->Ud;           // Store NET voltage
+                g = INF;
+                first = p;              // Store pointer to first VS
+                continue;
             } else {
-                // Mark this Net as SC
-                std::cout << "new SC" << std::endl;
-                _short_circuit = true;
-                ++_short_circuit_count;
-                return false;
+                if (p->Ud != u) {     // Did we find a different voltage source?
+                    second = p;         // Different VS was found, store it
+                    break;
+                }
             }
         }
-        return false;
     }
-
-    if (_short_circuit) {
-        std::cout << "clear SC" << std::endl;
-        _short_circuit = false;
-        --_short_circuit_count;
+    if (first && second) {              // Check for short circuit...
+        short_circuit_exception e(first, second);
+        throw e;
+    }
+    if ((g != 0.0) && (g != INF)) {
+        u = i / g;       // Calculate resulting voltage
     }
 
     // Check if the State of the Net has changed
-//    std::cout << "Comparing states for " << getName() << ": " << s << " == " << _state << " is " << (s == _state) << std::endl;
+    if (U != u || Gi != g || Is != i || force) {
+        U  = u;
+        Gi = g;
+        Is = i;
 
-    if (s != _state) {
-        // Set the State and call update on every Pin
-        _state = s;
+        std::cout << "Changed State!" << std::endl;
+        std::cout << this << std::endl;
+
         for (Pin * p : _pins) {
             p->update(nets);
         }
@@ -93,31 +70,29 @@ bool Net::update(NetSet *nets) {
     return false;
 }
 
-
-State Net::calculate_state() {
-//    std::cout << "Calc state for " << getName();
-    State res;
-    Pin * first;
-    // Calculate all parallel driving states
-    for (Pin * p : _pins) {
-        try {
-            res |= p->getDrvState();
-        } catch (short_circuit_exception & e) {
-            e.setPin1(first);
-            e.setPin2(p);
-            throw e;
+void Net::update(bool force) {
+    NetSet nset1, nset2;
+    update(&nset1, force);
+    while (nset1.size()) {
+        nset2.clear();
+        for (NetPtr n : nset1) {
+            n->update(&nset2);
         }
-        if (p->getDrvState().isStrong()) first = p;
+        nset1 = nset2;
     }
-//    std::cout << " --> " << res << std::endl;
-    return res;
 }
+
 
 ostream & operator << (ostream & os, const NetPtr net)
 {
-    os << "Net " << net->_name << ": " << net->getState() << std::endl;
+    os << "Net " << net->_name;
+    os << "[" << net->U      << " V, "
+              << 1.0/net->Gi << " Ω]"
+              << std::endl;
     for (Pin * p : net->_pins) {
-        os << " " << p->getName() << " driving " << p->getDrvState() << std::endl;
+        os << "  driven by "
+           << drive << (*p) << std::endl;
     }
     return os;
 }
+

@@ -26,9 +26,9 @@ public:
     BUF(const std::string & name) : Gate<1>(name) {
     }
 
-    State calculate() override {
+    void update(NetSet * nets) override {
         bool res = (bool)this->p[1];
-        return res;
+        this->OUT.setDrvBool(res, nets);
     }
 };
 

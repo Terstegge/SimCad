@@ -15,10 +15,10 @@
 // Simple class to provide a name to an object.
 // The name will be set in the CTOR and should
 // not be modified afterwards. So there is only
-// a getter for the name!
+// a getter for the name.
 //
-#ifndef _INCLUDE_NAMED_H_
-#define _INCLUDE_NAMED_H_
+#ifndef INCLUDE_NAMED_H
+#define INCLUDE_NAMED_H
 
 #include <string>
 
@@ -31,8 +31,7 @@
 
 class Named {
 public:
-    Named(const std::string & n) {
-        _name = n;
+    Named(const std::string & n) : _name(n) {
     }
 
     const std::string & getName() const {
@@ -43,4 +42,4 @@ protected:
     std::string _name;
 };
 
-#endif // _INCLUDE_NAMED_H_
+#endif // INCLUDE_NAMED_H

@@ -25,12 +25,11 @@ class ISOURCE : public TwoPole {
 public:
 
     ISOURCE(const std::string & name, float i) : TwoPole(name) {
-        _trans.setCS(i, INF);
+        this->G = 0;
+//        p[1].Id =  i;
+//        p[2].Id = -i;
     }
 
-    bool calculate() override {
-        return false;
-    }
 };
 
 #endif /* INCLUDE_VSOURCE_H_ */

@@ -24,16 +24,16 @@
 class VSOURCE : public TwoPole {
 public:
 
-    VSOURCE(const std::string & name, float u) : TwoPole(name) {
+    VSOURCE(const std::string & name, float u) : TwoPole(name), _U(u) {
         // Ideal voltage source with Ri=0
-        _trans.setVS(u, 0.0);
+        this->G = INF;
     }
 
-    bool calculate() override {
-        // The values are already set in the constructor,
-        // and will not change. So we have nothing to do here...
-        return false;
-    }
+    void p1_changed() override { p[2].Ud = p[1].Ud + _U; }
+    void p2_changed() override { p[1].Ud = p[2].Ud - _U; }
+
+private:
+    float _U;
 };
 
 #endif /* INCLUDE_VSOURCE_H_ */
