@@ -60,7 +60,7 @@ public:
     }
 
     Net(const std::string & name) : Named(name),
-        _short_circuit(false), U(0), Gi(0), Is(0)
+        _short_circuit(false), U(0), Gi(0), Id(0), Ik(0)
     {
         ++_no_nets;
     }
@@ -107,7 +107,8 @@ public:
 
     float           U;
     float           Gi;
-    float           Is;
+    float           Ik;
+    float           Id;
 };
 
 #endif // _NET_H_

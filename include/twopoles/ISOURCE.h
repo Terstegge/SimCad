@@ -12,24 +12,32 @@
 //
 ///////////////////////////////////////////////
 //
-// A generic voltage source for simulation.
-// p[1] is the negative pin.
-// p[2] is the positive pin,
+// Implementation of a ideal current source.
 //
-#ifndef INCLUDE_ISOURCE_H_
-#define INCLUDE_ISOURCE_H_
+#ifndef _INCLUDE_ISOURCE_H_
+#define _INCLUDE_ISOURCE_H_
 
 #include "TwoPole.h"
 
 class ISOURCE : public TwoPole {
 public:
-
-    ISOURCE(const std::string & name, float i) : TwoPole(name) {
-        this->G = 0;
-//        p[1].Id =  i;
-//        p[2].Id = -i;
+    ISOURCE(const std::string & name, float i) : TwoPole(name), _I(i) {
+        setG ( 0 );
     }
 
+    void p1_callback() override {
+        p[2].Id = -_I;
+    }
+    void p2_callback() override {
+        p[1].Id = +_I;
+    }
+
+    void setI(float i) {
+        _I = i;
+    }
+
+private:
+    float _I;
 };
 
-#endif /* INCLUDE_VSOURCE_H_ */
+#endif // _INCLUDE_VSOURCE_H_

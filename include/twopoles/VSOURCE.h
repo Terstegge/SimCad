@@ -16,24 +16,26 @@
 // p[1] is the negative pin.
 // p[2] is the positive pin,
 //
-#ifndef INCLUDE_VSOURCE_H_
-#define INCLUDE_VSOURCE_H_
+#ifndef _INCLUDE_VSOURCE_H_
+#define _INCLUDE_VSOURCE_H_
 
 #include "TwoPole.h"
 
 class VSOURCE : public TwoPole {
 public:
-
     VSOURCE(const std::string & name, float u) : TwoPole(name), _U(u) {
-        // Ideal voltage source with Ri=0
-        this->G = INF;
+        setG( INF );
     }
 
-    void p1_changed() override { p[2].Ud = p[1].Ud + _U; }
-    void p2_changed() override { p[1].Ud = p[2].Ud - _U; }
+    void p1_callback() override {
+        p[2].Ud += _U;
+    }
+    void p2_callback() override {
+        p[1].Ud -= _U;
+    }
 
 private:
     float _U;
 };
 
-#endif /* INCLUDE_VSOURCE_H_ */
+#endif // _INCLUDE_VSOURCE_H_

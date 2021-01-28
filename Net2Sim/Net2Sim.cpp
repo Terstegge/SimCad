@@ -507,7 +507,7 @@ void Net2Sim::change_to_bus(string & net, vector<net_entry> & found_nets) {
 
 float Net2Sim::readValue(string s) {
     bool    shift_mode = true;
-    float   res;
+    float   res {0.0};
     float   factor;
     string  units = "AVRFH";
 
@@ -516,44 +516,40 @@ float Net2Sim::readValue(string s) {
 		if (units.find(s[i]) != string::npos) {
             continue;
         }
-        if (shift_mode) {
-            // Shift mode
-            if (isdigit(s[i])) {
-                res *= 10.0;
+		if (isdigit(s[i])) {
+	        if (shift_mode) {
+	            // Shift mode
+	            res *= 10.0;
                 res += (s[i]-'0');
-            } else {
-                switch(s[i]) {
-                    // Giga: Factor 10^9
-                    case 'G': { res *= 1e9;  factor = 1e8;  break; }
-                    // Mega: Factor 10^6
-                    case 'M': { res *= 1e6;  factor = 1e5;  break; }
-                    // Kilo: Factor 10^3
-                    case 'k':
-                    case 'K': { res *= 1e3;  factor = 1e2;  break; }
-                    // Decimal point
-                    case '.': { res *= 1e0;  factor = 1e-1; break; }
-                    // Milli: Factor 10^-3
-                    case 'm': { res *= 1e-3; factor = 1e-4; break; }
-                    // Micro: Factor 10^-6
-                    case 'u': { res *= 1e-6; factor = 1e-7; break; }
-                    // Nano: Factor 10^-9
-                    case 'n': { res *= 1e-9; factor = 1e-10; break; }
-                    // Pico: Factor 10^-12
-                    case 'p': { res *= 1e-12; factor = 1e-13; break; }
-                    default:
-                        throw Net2SimException("Wrong Value format: " + s);
-                }
-                shift_mode = false;  
-            }            
-        } else {
-            // Factor mode
-            if (isdigit(s[i])) {
-                res += (s[i]-'0') * factor;
+	        } else {
+	            // Factor mode
+	            res += (s[i]-'0') * factor;
                 factor /= 10;
-            } else {
+	        }
+	        continue;
+		}
+        switch(s[i]) {
+            // Giga: Factor 10^9
+            case 'G': { res *= 1e9;  factor = 1e8;  break; }
+            // Mega: Factor 10^6
+            case 'M': { res *= 1e6;  factor = 1e5;  break; }
+            // Kilo: Factor 10^3
+            case 'k':
+            case 'K': { res *= 1e3;  factor = 1e2;  break; }
+            // Decimal point
+            case '.': { res *= 1e0;  factor = 1e-1; break; }
+            // Milli: Factor 10^-3
+            case 'm': { res *= 1e-3; factor = 1e-4; break; }
+            // Micro: Factor 10^-6
+            case 'u': { res *= 1e-6; factor = 1e-7; break; }
+            // Nano: Factor 10^-9
+            case 'n': { res *= 1e-9; factor = 1e-10; break; }
+            // Pico: Factor 10^-12
+            case 'p': { res *= 1e-12; factor = 1e-13; break; }
+            default:
                 throw Net2SimException("Wrong Value format: " + s);
-            }
         }
+        shift_mode = false;
     }
     return res;
 }

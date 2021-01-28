@@ -76,6 +76,42 @@ public:
     inline float Gi() const {
         return _netPtr ? _netPtr->Gi : Gd;
     }
+    // Methods dealing with the NET state Without the Pin's contribution
+    inline float Uw() const {
+        if (_netPtr) {
+            if (_netPtr->Gi == INF || /*Gd == 0.0 ||*/ Gw() == 0.0) {
+                return U();
+            } else {
+                float res = _netPtr->U * _netPtr->Gi - Ud * Gd - Id;
+//                if (Id > 0.0) res -= Id;
+                return res / Gw();
+            }
+        } else {
+            return Ud;
+        }
+    }
+    inline float Gw() const {
+        if (Gd == INF) {
+            float g {0};
+            for (Pin * p : _netPtr->_pins) {
+                if (p != this) g += p->Gd;
+            }
+            return g;
+        } else {
+            return Gi() - Gd;
+        }
+    }
+
+//    // Sum up all Gs which do not drive a current
+//    float Gnd() const {
+//        float res;
+//        for (Pin * p : _netPtr->_pins) {
+//            if (!(p->Id > 0.0)) res += p->Gd;
+//        }
+//        return res;
+//    }
+
+
     float I() const {
         if (Gd == INF) {
             float i = 0;
@@ -87,7 +123,7 @@ public:
                     i += p->I();
                 }
             }
-            return -i / cnt;
+            return -i; // / cnt;
         } else {
             return (Ud - U()) * Gd;
         }
@@ -99,7 +135,11 @@ public:
         return (U() == 5.0) && (Gi() == INF);
     }
     inline bool isNC() const {
-        return Gi() == 0.0;
+        if (!_netPtr) {
+            std::cout << "No Netpointer :( in " << getName() << std::endl;
+            exit(1);
+        }
+        return Gi() == 0.0; // && _netPtr->Id == 0.0;
     }
     inline operator bool () const {
         return isNC() ? true : U() > (SUPPLY_VOLTAGE/2);
@@ -136,7 +176,9 @@ public:
     // If set, the driving state is used.
     static bool _drv;
 
-private:
+//private:
+    // Every Pin provides the values Uoc, Gi and Id, which represent
+    // a substitute voltage or current source of the
     float Ud;           // Driving voltage
     float Gd;           // Driving conductivity
     float Id;           // Driving current

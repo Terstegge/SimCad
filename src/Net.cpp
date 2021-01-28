@@ -25,12 +25,18 @@ int Net::_short_circuit_count = 0;
 bool Net::update(NetSet *nets, bool force) {
     Pin * first  {nullptr}; // Pointer to first ideal voltage source
     Pin * second {nullptr}; // Pointer to second ideal voltage source
-    float u {0}, g {0}, i {0};
+    float u {0}, g {0}, i {0}, id {0};
 
     for (Pin * p : _pins) {
+
+//        std::cout << "--------------Net pin: " << drive << *p << std::endl;
+
+
         if (p->Gd != INF) {           // No ideal voltage source?
-            g += p->Gd;              // Normal case: Sum up G and I
-            i += p->Gd * p->Ud + p->Id;         //p->Gd ? p->Gd * p->Ud : p->Id;
+            g  += p->Gd;              // Normal case: Sum up G and I
+            if (p->Gd) i  += p->Gd * p->Ud;
+            else       id += p->Id;      // p->Gd * p->Ud;        //p->Gd ? p->Gd * p->Ud : p->Id;
+//            id += p->Id > 0.0 ? p->Id : 0.0;
         } else {
             if (!first) {               // Ideal Voltage source
                 u = p->Ud;           // Store NET voltage
@@ -50,14 +56,24 @@ bool Net::update(NetSet *nets, bool force) {
         throw e;
     }
     if ((g != 0.0) && (g != INF)) {
-        u = i / g;       // Calculate resulting voltage
+        u = (i+id) / g;       // Calculate resulting voltage
     }
 
+
+//    std::cout << "--------------Net result: "
+//            << "U:"  << u << " "
+//            << "Ri:" << 1.0/g << " "
+//            << "I:"  << i << " "
+//            << "Id:" << id << std::endl;
+
+
+
     // Check if the State of the Net has changed
-    if (U != u || Gi != g || Is != i || force) {
+    if (U != u || Gi != g || Id != id || Ik != i ||force) {
         U  = u;
         Gi = g;
-        Is = i;
+        Id = id;
+        Ik = i;
 
         std::cout << "Changed State!" << std::endl;
         std::cout << this << std::endl;
@@ -87,7 +103,8 @@ ostream & operator << (ostream & os, const NetPtr net)
 {
     os << "Net " << net->_name;
     os << "[" << net->U      << " V, "
-              << 1.0/net->Gi << " Ω]"
+              << 1.0/net->Gi << " Ω, "
+              << net->Id     << " A]"
               << std::endl;
     for (Pin * p : net->_pins) {
         os << "  driven by "

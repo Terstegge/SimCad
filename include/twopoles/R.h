@@ -12,22 +12,18 @@
 //
 ///////////////////////////////////////////////
 //
-// Low-level implementation of a resistor.
-// The voltage of the changing net is propagated
-// to the other side of the resistor, using the
-// configured resistance.
+// Implementation of a resistor.
 //
-#ifndef INCLUDE_R_H_
-#define INCLUDE_R_H_
+#ifndef _INCLUDE_R_H_
+#define _INCLUDE_R_H_
 
 #include "TwoPole.h"
 
 class R : public TwoPole {
-
 public:
     R(const std::string & name, float r) : TwoPole(name) {
-        this->G = 1.0/r;
+        setG( 1.0/r );
     }
 };
 
-#endif // INCLUDE_R_H_
+#endif // _INCLUDE_R_H_
