@@ -28,10 +28,22 @@ public:
     }
 
     void p1_callback() override {
-        p[2].Ud += _U;
+        p[2].setUd( p[2].Ud + _U);
     }
     void p2_callback() override {
-        p[1].Ud -= _U;
+        p[1].setUd( p[1].Ud - _U);
+    }
+
+    void setU(float u) {
+        _U = u;
+        update();
+    }
+
+    void ground() {
+        p[1].attach(nullptr);
+        p[2].attach(nullptr);
+        p[1] = 0.0;
+        p[2] = (float)_U;
     }
 
 private:

@@ -17,8 +17,8 @@
 // The method on() checks if current is flowing
 // and the LED is on.
 //
-#ifndef _LED_H_
-#define _LED_H_
+#ifndef _INCLUDE_LED_H_
+#define _INCLUDE_LED_H_
 
 #include "_1N4148.h"
 
@@ -27,17 +27,9 @@ public:
     LED(const std::string & name="") : _1N4148(name) {
     }
     
-    bool on() {
-        State a = A.getNetState();
-        State c = C.getNetState();
-        // Check if both sides are driven.
-        // If not the LED is off!
-        if (a.isNC() || c.isNC()) {
-            return false;
-        }
-        // LED is on if more than 5mA flow.
-        return ((a - c).getU() / _trans.getR()) > 0.005;
+    inline bool on() {
+        return A.I() > 0.005;
     }
 };
 
-#endif // _LED_H_
+#endif // _INCLUDE_LED_H_

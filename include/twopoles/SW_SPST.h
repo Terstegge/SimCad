@@ -26,15 +26,13 @@ class SW_SPST : public TwoPole {
 public:
 
     SW_SPST(const std::string & name) : TwoPole(name) {
-    }
-
-    bool calculate() override {
-        return false;
+        // Default: Switch open
+        setG( 0 );
     }
 
     void setOn(bool b) {
-        _trans.setR(b ? 0 : INF);
-        this->update(p[1], p[2], true);
+        setG(b ? INF : 0.0);
+        update();
     }
 
 };

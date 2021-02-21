@@ -8,7 +8,7 @@
 //
 //  A simulation package for digital circuits
 //
-//  (c) 2020  A. Terstegge
+//  (c) 2021  A. Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -18,77 +18,74 @@
 #include "ShortCircuitEx.h"
 
 int Net::_no_nets = 0;
-int Net::_short_circuit_count = 0;
 
 #include <iostream>
+#include <cmath>
 
-bool Net::update(NetSet *nets, bool force) {
-    Pin * first  {nullptr}; // Pointer to first ideal voltage source
-    Pin * second {nullptr}; // Pointer to second ideal voltage source
-    float u {0}, g {0}, i {0}, id {0};
+void Net::merge_net(NetPtr n, NetPtr o) {
+    // Both Nets are the same?
+    if (n == o) return;
+    // Insert the Pin pointers to our vector. The
+    // Net pointers in the Pins are not changed!
+    _pins.insert(_pins.end(), o->_pins.begin(), o->_pins.end() );
+    // Set the Net pointers in the new entries
+    for (Pin * p : o->_pins) {
+        p->setNetPtr(n);
+    }
+    update();
+}
+
+void Net::update(NetSet *nets) {
+	Pin * ivs_ptr {nullptr};            // Pointer to first ideal voltage source
+    float gs {0}, is {0}, id {0};
 
     for (Pin * p : _pins) {
-
-//        std::cout << "--------------Net pin: " << drive << *p << std::endl;
-
-
+        // Skip non-driving Pins
+        if (p->isDrvNC()) continue;
         if (p->Gd != INF) {           // No ideal voltage source?
-            g  += p->Gd;              // Normal case: Sum up G and I
-            if (p->Gd) i  += p->Gd * p->Ud;
-            else       id += p->Id;      // p->Gd * p->Ud;        //p->Gd ? p->Gd * p->Ud : p->Id;
-//            id += p->Id > 0.0 ? p->Id : 0.0;
+            gs += p->Gd;              // Normal case: Sum up G and I
+            is += p->Gd * p->Ud;
+            id += p->Id;
         } else {
-            if (!first) {               // Ideal Voltage source
-                u = p->Ud;           // Store NET voltage
-                g = INF;
-                first = p;              // Store pointer to first VS
+            if (!ivs_ptr) {           // Ideal Voltage source
+                ivs_ptr = p;          // Store pointer to first VS
                 continue;
             } else {
-                if (p->Ud != u) {     // Did we find a different voltage source?
-                    second = p;         // Different VS was found, store it
-                    break;
+                if (p->Ud != ivs_ptr->Ud) {     // Did we find a different voltage source?
+                    short_circuit_exception e(ivs_ptr, p);
+                    throw e;
                 }
             }
         }
     }
-    if (first && second) {              // Check for short circuit...
-        short_circuit_exception e(first, second);
-        throw e;
+
+    float u {0}, gi {0};
+    if (ivs_ptr) {
+        u = ivs_ptr->Ud;
+        gi = INF;
+    } else {
+        u =  gs ? (is+id) / gs : 0;
+        gi = gs;
     }
-    if ((g != 0.0) && (g != INF)) {
-        u = (i+id) / g;       // Calculate resulting voltage
-    }
-
-
-//    std::cout << "--------------Net result: "
-//            << "U:"  << u << " "
-//            << "Ri:" << 1.0/g << " "
-//            << "I:"  << i << " "
-//            << "Id:" << id << std::endl;
-
 
 
     // Check if the State of the Net has changed
-    if (U != u || Gi != g || Id != id || Ik != i ||force) {
-        U  = u;
-        Gi = g;
-        Id = id;
-        Ik = i;
-
-        std::cout << "Changed State!" << std::endl;
-        std::cout << this << std::endl;
+    if (_U != u || _Gi != gi || _Id != id ) {
+        _U  = u;
+        _Gi = gi;
+        _Id = id;
+        _Gs = gs;
 
         for (Pin * p : _pins) {
             p->update(nets);
         }
-        return true;
     }
-    return false;
 }
 
-void Net::update(bool force) {
+
+void Net::update() {
     NetSet nset1, nset2;
-    update(&nset1, force);
+    update(&nset1);
     while (nset1.size()) {
         nset2.clear();
         for (NetPtr n : nset1) {
@@ -101,7 +98,7 @@ void Net::update(bool force) {
 
 ostream & operator << (ostream & os, const NetPtr net)
 {
-    os << "Net " << net->_name;
+    os << "Net " << net->getName();
     os << "[" << net->U      << " V, "
               << 1.0/net->Gi << " Ω, "
               << net->Id     << " A]"

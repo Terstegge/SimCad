@@ -37,21 +37,19 @@ public:
 
         // Attach handlers
         p[1].attach([this](NetSet * nets) {
-
-            p[2].Ud = p[1].Uw(); // Alt: p[1].U();
-            p[2].Id = p[1].Gw() ? 0.0 : p[1].getNetPtr()->Id;
+            p[2].setUd( p[1].Uw() ); // Alt: p[1].U();
+            p[2].setId( p[1].Iw() );
             p1_callback();
-            p[2].Gd = 1.0/(1.0/p[1].Gw() + 1.0/_G); // Alt: G;
+            p[2].setGd( 1.0/(1.0/p[1].Gw() + 1.0/_G) ); // Alt: G;
             NetPtr n = p[2].getNetPtr();
             if (n) nets->insert(n);
         });
 
         p[2].attach([this](NetSet * nets) {
-
-            p[1].Ud = p[2].Uw(); // Alt: p[2].U();
-            p[1].Id = p[2].Gw() ? 0.0 : p[2].getNetPtr()->Id;
+            p[1].setUd( p[2].Uw() ); // Alt: p[2].U();
+            p[1].setId( p[2].Iw() );
             p2_callback();
-            p[1].Gd = 1.0/(1.0/p[2].Gw() + 1.0/_G); // Alt: G;
+            p[1].setGd( 1.0/(1.0/p[2].Gw() + 1.0/_G) ); // Alt: G;
             NetPtr n = p[1].getNetPtr();
             if (n) nets->insert(n);
         });
@@ -62,6 +60,19 @@ public:
 
     virtual void p1_callback()  { }
     virtual void p2_callback()  { }
+
+    void update() {
+        NetSet nset1, nset2;
+        p[1].update(&nset1);
+        p[2].update(&nset1);
+        while (nset1.size()) {
+            nset2.clear();
+            for (NetPtr net : nset1) {
+                net->update(&nset2);
+            }
+            nset1 = nset2;
+        }
+    }
 
     void setG(float g) {
         _G = g;

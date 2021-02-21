@@ -8,27 +8,15 @@
 //
 //  A simulation package for digital circuits
 //
-//  (c) 2020  A. Terstegge
+//  (c) 2021  A. Terstegge
 //
 ///////////////////////////////////////////////
 //
-/*
- * This file is part of the DigiSim Software -
- * a simulation package for digital circuits.
- *
- * (c) 2020 A. Terstegge
- *
- * The class 'Net' contain a list of connected Pins.
- * Single Pins can be added to a Net.
- * Another whole Net can be merged into a Net.
- *
- */
-
-#ifndef _NET_H_
-#define _NET_H_
+#ifndef _INCLUDE_NET_H_
+#define _INCLUDE_NET_H_
 
 #include "Named.h"
-//#include "State.h"
+#include "Config.h"
 
 #include <vector>
 using std::vector;
@@ -47,20 +35,17 @@ typedef std::set<NetPtr>     NetSet;
 
 class Net : public Named {
 public:
-
-    // Global count of Short Circuits
-    static int _short_circuit_count;
-
     // Global counter for the number of Nets
     static int _no_nets;
 
     // Factory method: Create a new Net and add a first Pin
     static NetPtr create_net(std::string n) {
-        return  new Net(n);
+        return NetPtr(new Net(n));
     }
 
     Net(const std::string & name) : Named(name),
-        _short_circuit(false), U(0), Gi(0), Id(0), Ik(0)
+          U(_U), Gi(_Gi), Id(_Id), Gs(_Gs),
+         _U(0), _Gi(0),  _Id(0),  _Gs(0)
     {
         ++_no_nets;
     }
@@ -73,42 +58,49 @@ public:
     // which entries are copied to our Pin vector. The first
     // parameter is the shared_ptr of this Net, which needs
     // to be set in the new Pin entries!
-//    void merge_net(NetPtr &o, NetPtr &n);
+    void merge_net(NetPtr n, NetPtr o);
 
-
-    // This method first calculates the new boolean state of
+    // This method first calculates the new state of
     // the Net. If it changed, update() is called on every
-    // Pin in the Net. The method will return true if the
-    // state has changed.
-    bool update(NetSet * nets, bool force=false);
-
-    void update(bool force=false);
-
-
-    // Return the current State of this Net.
-//    inline const State & getState() {
-//        return _state;
-//    }
-
-    // Output operator for a Net
-    friend std::ostream & operator << (std::ostream & os, const NetPtr net);
-
-//private:
-
+    // Pin in the Net.
     // This method scans through all Pins in the Net
     // and calculates the resulting State. If a
     // short circuit is detected, a exception is
     // thrown.
-//    State calculate_state();
+    void update(NetSet * nets);
 
+    // Update the current Net and all Subnets
+    void update();
+
+    inline bool isGND() const {
+        return (_U == 0.0) && (_Gi == INF);
+    }
+    inline bool isVCC() const {
+        return (_U == SUPPLY_VOLTAGE) && (_Gi == INF);
+    }
+    inline bool isNC() const {
+        return _Gi == 0.0 && _Id == 0.0;
+    }
+    inline operator bool () const {
+        return isNC() ? true : _U > (SUPPLY_VOLTAGE/2);
+    }
+
+    // Output operator for a Net
+    friend class Pin;
+    friend std::ostream & operator << (std::ostream & os, const NetPtr net);
+
+    const float &   U;
+    const float &   Gi;
+    const float &   Id;
+    const float &   Gs;
+
+private:
     vector<Pin *>   _pins;
-//    State           _state;
-    bool            _short_circuit;
 
-    float           U;
-    float           Gi;
-    float           Ik;
-    float           Id;
+    float           _U;
+    float           _Gi;
+    float           _Id;
+    float           _Gs;
 };
 
 #endif // _NET_H_

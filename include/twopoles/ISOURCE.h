@@ -26,14 +26,15 @@ public:
     }
 
     void p1_callback() override {
-        p[2].Id = -_I;
+        p[2].setId( p[2].Id -_I );
     }
     void p2_callback() override {
-        p[1].Id = +_I;
+        p[1].setId( p[1].Id +_I );
     }
 
     void setI(float i) {
         _I = i;
+        update();
     }
 
 private:

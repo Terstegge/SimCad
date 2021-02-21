@@ -508,10 +508,6 @@ Text Label 4450 7450 2    50   ~ 0
 p24
 Text Notes 4150 7450 0    50   ~ 0
 ~OE\n
-Text Label 4150 6150 0    50   ~ 0
-p16
-Text Label 4150 5750 0    50   ~ 0
-p32
 Wire Wire Line
 	6200 7350 6500 7350
 Wire Wire Line

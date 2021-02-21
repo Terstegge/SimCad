@@ -19,22 +19,17 @@
 // which is called whenever the associated Net changes its
 // value.
 //
-#ifndef INCLUDE_PIN_H
-#define INCLUDE_PIN_H
+#ifndef _INCLUDE_PIN_H_
+#define _INCLUDE_PIN_H_
 
 #include "Named.h"
 #include "Part.h"
 #include "Net.h"
+#include "Config.h"
 
 #include <iostream>
 #include <functional>
 #include <string>
-#include <limits>
-
-#define INF std::numeric_limits<float>::infinity()
-
-#define SUPPLY_VOLTAGE 5.0
-#define SUPPLY_GROUND  0.0
 
 class Pin : public Named {
 public:
@@ -49,7 +44,8 @@ public:
     // the same Net, this method has no effect.
     void connect_to(Pin & p);
 
-    // Methods dealing with driving state
+    // Methods modifying the driving state
+    //////////////////////////////////////
     void setDrvState(float u, float g, float i, NetSet *nets);
 
     inline void setDrvVS(float u, NetSet *nets = nullptr) {
@@ -59,57 +55,51 @@ public:
         setDrvState(0.0, 0.0, 0.0, nets);
     }
     inline void setDrvBool(bool b, NetSet * nets) {
-        setDrvVS(b ? 5.0 : 0.0, nets);
+        setDrvVS(b ? SUPPLY_VOLTAGE : 0.0, nets);
     }
-    bool isDrvNC() const {
-        return (Ud == 0.0) && (Gd == 0.0) && (Id == 0.0);
-    }
-    void operator = (float f) {
+    inline void operator = (float f) {
         setDrvVS(f);
     }
+    inline void operator = (double f) {
+        setDrvVS((float)f);
+    }
+    inline void operator = (bool b) {
+        setDrvBool(b, nullptr);
+    }
+    inline bool isDrvNC() const {
+        return (Gd == 0.0) && (Id == 0.0);
+    }
+
+    // Methods checking the Net state
+    /////////////////////////////////
+    inline bool isGND()     const { return _netPtr->isGND(); }
+    inline bool isVCC()     const { return _netPtr->isVCC(); }
+    inline bool isNC()      const { return _netPtr->isNC();  }
+    inline operator bool () const { return _netPtr->operator bool(); }
 
 
-    // Methods dealing with the NET state
-    inline float U() const {
-        return _netPtr ? _netPtr->U : Ud;
-    }
-    inline float Gi() const {
-        return _netPtr ? _netPtr->Gi : Gd;
-    }
+
     // Methods dealing with the NET state Without the Pin's contribution
     inline float Uw() const {
-        if (_netPtr) {
-            if (_netPtr->Gi == INF || /*Gd == 0.0 ||*/ Gw() == 0.0) {
-                return U();
-            } else {
-                float res = _netPtr->U * _netPtr->Gi - Ud * Gd - Id;
-//                if (Id > 0.0) res -= Id;
-                return res / Gw();
-            }
+        float gw = Gw();
+        if (_netPtr->Gi == INF || gw == 0.0) {
+            return _netPtr->U;
         } else {
-            return Ud;
-        }
-    }
-    inline float Gw() const {
-        if (Gd == INF) {
-            float g {0};
-            for (Pin * p : _netPtr->_pins) {
-                if (p != this) g += p->Gd;
-            }
-            return g;
-        } else {
-            return Gi() - Gd;
+            return (_netPtr->U * _netPtr->Gi - Ud * Gd - Id) / gw;
         }
     }
 
-//    // Sum up all Gs which do not drive a current
-//    float Gnd() const {
-//        float res;
-//        for (Pin * p : _netPtr->_pins) {
-//            if (!(p->Id > 0.0)) res += p->Gd;
-//        }
-//        return res;
-//    }
+    inline float Gw() const {
+        if (Gd == INF) {
+            return _netPtr->Gs;
+        } else {
+            return _netPtr->Gi - Gd;
+        }
+    }
+
+    inline float Iw() const {
+        return Gw() ? 0.0 : _netPtr->Id;
+    }
 
 
     float I() const {
@@ -125,29 +115,21 @@ public:
             }
             return -i; // / cnt;
         } else {
-            return (Ud - U()) * Gd;
+            return (_netPtr->U - Ud) * Gd - Id;
         }
     }
-    inline bool isGND() const {
-        return (U() == 0.0) && (Gi() == INF);
-    }
-    inline bool isVCC() const {
-        return (U() == 5.0) && (Gi() == INF);
-    }
-    inline bool isNC() const {
-        if (!_netPtr) {
-            std::cout << "No Netpointer :( in " << getName() << std::endl;
-            exit(1);
-        }
-        return Gi() == 0.0; // && _netPtr->Id == 0.0;
-    }
-    inline operator bool () const {
-        return isNC() ? true : U() > (SUPPLY_VOLTAGE/2);
-    }
+
+
+
+
+
+
+
+
 
     // Getter/Setter for Net pointer
     inline NetPtr getNetPtr() const { return _netPtr; }
-//    inline void setNetPtr(NetPtr p) { _netPtr = p;    }
+    inline void setNetPtr(NetPtr p) { _netPtr = p;    }
 
     // Getter/Setter for Part pointer
     inline Part * getPartPtr() const { return _partPtr; }
@@ -167,33 +149,42 @@ public:
         if (_update) _update(nets);
     }
 
-    // Friend and output operator
-    friend class Net;
-    friend class TwoPole;
+    // Read-only attributes for easy access
+    const float & Ud;
+    const float & Gd;
+    const float & Id;
+
+    inline void setUd(float u) { _Ud = u; }
+    inline void setGd(float g) { _Gd = g; }
+    inline void setId(float i) { _Id = i; }
+
+    // Stream output operator
     friend std::ostream & operator << (std::ostream & os, const Pin & p);
 
     // Flag controlling the stream output.
     // If set, the driving state is used.
-    static bool _drv;
+    static bool _show_drive_state;
 
-//private:
-    // Every Pin provides the values Uoc, Gi and Id, which represent
-    // a substitute voltage or current source of the
-    float Ud;           // Driving voltage
-    float Gd;           // Driving conductivity
-    float Id;           // Driving current
+private:
 
     NetPtr  _netPtr;    // The associated Net
     Part *  _partPtr;   // Pointer to the related Part
 
-    // The associated update function
+    // The associated update function, which is called
+    // when the associated Net changes its state.
     std::function<void(NetSet *)> _update;
+
+    // Every Pin provides the values Ud, Gd and Id,
+    // the Pin 'driving' values.
+    float _Ud;          // Driving voltage
+    float _Gd;          // Driving conductivity
+    float _Id;          // Driving current
 };
 
 // Manipulator to output the driving state
 inline std::ostream &drive(std::ostream &out) {
-    Pin::_drv = true;
+    Pin::_show_drive_state = true;
     return out;
 }
 
-#endif // INCLUDE_PIN_H
+#endif // _INCLUDE_PIN_H_
