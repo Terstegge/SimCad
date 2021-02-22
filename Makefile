@@ -36,7 +36,7 @@ endif
 NET2SIM_DIR       = Net2Sim
 NET2SIM_SRCS      = $(wildcard $(NET2SIM_DIR)/*.cpp)
 NET2SIM_OBJS      = $(foreach obj, $(NET2SIM_SRCS), $(BUILD_DIR)/$(notdir $(obj)).o)
-NET2SIM_BIN       = $(BIN_DIR)/Net2Sim
+NET2SIM_BIN       = $(NET2SIM_DIR)/Net2Sim
 NET2SIM_DEPS      = $(NET2SIM_OBJS:.o=.d)
 SRC_DIRS         += $(NET2SIM_DIR)
 
@@ -54,12 +54,13 @@ KICAD_DEPS        = $(KICAD_OBJS:.o=.d)
 SRC_DIRS         += $(KICAD_SRC_DIR)
 
 # DigiSim library
+DIGISIM_DIR       = .
 DIGISIM_SRC_DIR   = src
 DIGISIM_SRC_FILES = $(wildcard $(DIGISIM_SRC_DIR)/*.cpp)
 DIGISIM_OBJS      = $(KICAD_OBJS)
 DIGISIM_OBJS     += $(foreach obj, $(DIGISIM_SRC_FILES), $(BUILD_DIR)/$(notdir $(obj)).o)
 DIGISIM_DEPS      = $(DIGISIM_OBJS:.o=.d)
-DIGISIM_LIB       = $(LIB_DIR)/libDIGISIM.a
+DIGISIM_LIB       = $(DIGISIM_DIR)/libDIGISIM.a
 SRC_DIRS         += $(DIGISIM_SRC_DIR)
 
 
