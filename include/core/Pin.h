@@ -46,9 +46,9 @@ public:
 
     // Methods modifying the driving state
     //////////////////////////////////////
-    void setDrvState(float u, float g, float i, NetSet *nets);
+    void setDrvState(double u, double g, double i, NetSet *nets);
 
-    inline void setDrvVS(float u, NetSet *nets = nullptr) {
+    inline void setDrvVS(double u, NetSet *nets = nullptr) {
         setDrvState(u, INF, 0, nets);
     }
     inline void setDrvNC(NetSet * nets) {
@@ -57,12 +57,12 @@ public:
     inline void setDrvBool(bool b, NetSet * nets) {
         setDrvVS(b ? SUPPLY_VOLTAGE : 0.0, nets);
     }
-    inline void operator = (float f) {
+    inline void operator = (double f) {
         setDrvVS(f);
     }
-    inline void operator = (double f) {
-        setDrvVS((float)f);
-    }
+//    inline void operator = (double f) {
+//        setDrvVS((double)f);
+//    }
     inline void operator = (bool b) {
         setDrvBool(b, nullptr);
     }
@@ -75,13 +75,14 @@ public:
     inline bool isGND()     const { return _netPtr->isGND(); }
     inline bool isVCC()     const { return _netPtr->isVCC(); }
     inline bool isNC()      const { return _netPtr->isNC();  }
+    inline bool isVS()      const { return _netPtr->isVS();  }
     inline operator bool () const { return _netPtr->operator bool(); }
 
-
+    inline double U() const { return _netPtr->U; }
 
     // Methods dealing with the NET state Without the Pin's contribution
-    inline float Uw() const {
-        float gw = Gw();
+    inline double Uw() const {
+        double gw = Gw();
         if (_netPtr->Gi == INF || gw == 0.0) {
             return _netPtr->U;
         } else {
@@ -89,7 +90,7 @@ public:
         }
     }
 
-    inline float Gw() const {
+    inline double Gw() const {
         if (Gd == INF) {
             return _netPtr->Gs;
         } else {
@@ -97,14 +98,14 @@ public:
         }
     }
 
-    inline float Iw() const {
+    inline double Iw() const {
         return Gw() ? 0.0 : _netPtr->Id;
     }
 
 
-    float I() const {
+    double I() const {
         if (Gd == INF) {
-            float i = 0;
+            double i = 0;
             int cnt = 0;
             for (Pin * p : _netPtr->_pins) {
                 if (p->Gd == INF) {
@@ -150,13 +151,13 @@ public:
     }
 
     // Read-only attributes for easy access
-    const float & Ud;
-    const float & Gd;
-    const float & Id;
+    const double & Ud;
+    const double & Gd;
+    const double & Id;
 
-    inline void setUd(float u) { _Ud = u; }
-    inline void setGd(float g) { _Gd = g; }
-    inline void setId(float i) { _Id = i; }
+    inline void setUd(double u) { _Ud = u; }
+    inline void setGd(double g) { _Gd = g; }
+    inline void setId(double i) { _Id = i; }
 
     // Stream output operator
     friend std::ostream & operator << (std::ostream & os, const Pin & p);
@@ -176,9 +177,9 @@ private:
 
     // Every Pin provides the values Ud, Gd and Id,
     // the Pin 'driving' values.
-    float _Ud;          // Driving voltage
-    float _Gd;          // Driving conductivity
-    float _Id;          // Driving current
+    double _Ud;          // Driving voltage
+    double _Gd;          // Driving conductivity
+    double _Id;          // Driving current
 };
 
 // Manipulator to output the driving state

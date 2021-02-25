@@ -119,7 +119,7 @@ Wire Wire Line
 	6750 2750 6750 3450
 Connection ~ 8400 3750
 Wire Wire Line
-	8400 3750 9300 3750
+	8400 3750 8800 3750
 Wire Wire Line
 	9300 4250 8300 4250
 Wire Wire Line
@@ -231,35 +231,8 @@ Wire Wire Line
 	7700 2650 7350 2650
 Wire Wire Line
 	7350 2650 7050 2950
-$Comp
-L DIGISIM:BUF U5
-U 1 1 5F207571
-P 7400 5150
-F 0 "U5" H 7550 5050 50  0000 L CNN
-F 1 "BUF" H 7400 5500 50  0001 C CNN
-F 2 "" H 7100 5400 50  0001 C CNN
-F 3 "" H 7100 5400 50  0001 C CNN
-	1    7400 5150
-	1    0    0    -1  
-$EndComp
-$Comp
-L DIGISIM:BUF U8
-U 1 1 5F207966
-P 8000 5150
-F 0 "U8" H 8150 5050 50  0000 L CNN
-F 1 "BUF" H 8000 5500 50  0001 C CNN
-F 2 "" H 7700 5400 50  0001 C CNN
-F 3 "" H 7700 5400 50  0001 C CNN
-	1    8000 5150
-	1    0    0    -1  
-$EndComp
-Text Label 7400 5350 3    50   ~ 0
-p0
-Text Label 8000 5350 3    50   ~ 0
-p0
 Wire Wire Line
 	7000 5150 7200 5150
-Connection ~ 7200 5150
 Text Notes 6900 5600 0    50   ~ 0
 Delay gates are necessary to suppress oscillation\n
 $Bitmap
@@ -545,10 +518,6 @@ Text Label 6350 3950 1    50   ~ 0
 p10
 Text Label 8050 3950 1    50   ~ 0
 p10
-Text Label 7400 4950 1    50   ~ 0
-p10
-Text Label 8000 4950 1    50   ~ 0
-p10
 Wire Wire Line
 	6700 3350 7200 3350
 Wire Wire Line
@@ -556,7 +525,56 @@ Wire Wire Line
 Connection ~ 7200 3350
 Wire Wire Line
 	7200 3350 7700 3350
+Connection ~ 8400 4700
 Wire Wire Line
 	8400 4700 8400 5150
-Connection ~ 8400 4700
+Connection ~ 7200 5150
+Text Label 7400 4950 1    50   ~ 0
+p10
+Text Label 7400 5350 3    50   ~ 0
+p0
+$Comp
+L DIGISIM:BUF U5
+U 1 1 5F207571
+P 7400 5150
+F 0 "U5" H 7550 5050 50  0000 L CNN
+F 1 "BUF" H 7400 5500 50  0001 C CNN
+F 2 "" H 7100 5400 50  0001 C CNN
+F 3 "" H 7100 5400 50  0001 C CNN
+	1    7400 5150
+	1    0    0    -1  
+$EndComp
+$Comp
+L DIGISIM:BUF U8
+U 1 1 5F207966
+P 8000 5150
+F 0 "U8" H 8150 5050 50  0000 L CNN
+F 1 "BUF" H 8000 5500 50  0001 C CNN
+F 2 "" H 7700 5400 50  0001 C CNN
+F 3 "" H 7700 5400 50  0001 C CNN
+	1    8000 5150
+	1    0    0    -1  
+$EndComp
+Text Label 8000 5350 3    50   ~ 0
+p0
+Text Label 8000 4950 1    50   ~ 0
+p10
+$Comp
+L Device:R R1
+U 1 1 6036F953
+P 8800 3475
+F 0 "R1" H 8875 3475 50  0000 L CNN
+F 1 "1G" V 8800 3425 50  0000 L CNN
+F 2 "" V 8730 3475 50  0001 C CNN
+F 3 "~" H 8800 3475 50  0001 C CNN
+	1    8800 3475
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8800 3625 8800 3750
+Connection ~ 8800 3750
+Wire Wire Line
+	8800 3750 9300 3750
+Wire Wire Line
+	8800 3325 8800 3200
 $EndSCHEMATC

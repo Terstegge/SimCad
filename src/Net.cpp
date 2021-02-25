@@ -37,7 +37,7 @@ void Net::merge_net(NetPtr n, NetPtr o) {
 
 void Net::update(NetSet *nets) {
 	Pin * ivs_ptr {nullptr};            // Pointer to first ideal voltage source
-    float gs {0}, is {0}, id {0};
+    double gs {0}, is {0}, id {0};
 
     for (Pin * p : _pins) {
         // Skip non-driving Pins
@@ -59,7 +59,7 @@ void Net::update(NetSet *nets) {
         }
     }
 
-    float u {0}, gi {0};
+    double u {0}, gi {0};
     if (ivs_ptr) {
         u = ivs_ptr->Ud;
         gi = INF;

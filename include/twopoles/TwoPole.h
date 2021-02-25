@@ -74,12 +74,12 @@ public:
         }
     }
 
-    void setG(float g) {
+    void setG(double g) {
         _G = g;
     }
 
 private:
-    float _G;
+    double _G;
 };
 
 #endif // _INCLUDE_TWOPOLE_H_

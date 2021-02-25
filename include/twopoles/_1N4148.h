@@ -29,10 +29,10 @@ protected:
     //////////////////////
     // Diode configuration
     //////////////////////
-    const float Us = 0.7;           // Forward voltage
-    const float G1 = 1.0 / 100000;  // Resistance up to 0V and for free floating case
-    const float G2 = 1.0 / 280;     // Resistance up to Us
-    const float G3 = 1.0 / 1.0;     // Resistance from Us on
+    const double Us = 0.7;           // Forward voltage
+    const double G1 = 1.0 / 100000;  // Resistance up to 0V and for free floating case
+    const double G2 = 1.0 / 280;     // Resistance up to Us
+    const double G3 = 1.0 / 1.0;     // Resistance from Us on
 
 public:
     Pin & A, & C;   // References for Anode and Cathode
@@ -47,13 +47,13 @@ public:
 
     void calculate() {
         // Calculate SVS parameters
-        float Ul = A.Uw() - C.Uw();
-        float Gi = 1.0 / (1.0/A.Gw() + 1.0/C.Gw());
-        float Ik = Ul * Gi;
+        double Ul = A.Uw() - C.Uw();
+        double Gi = 1.0 / (1.0/A.Gw() + 1.0/C.Gw());
+        double Ik = Ul * Gi;
         // Reverse voltage case
         if (Ul < 0.0) { setG( G1 ); return; }
         // Calculate resulting voltage drop
-        float u = (Ik + Us * (G3 - G2)) / (G3 + Gi);
+        double u = (Ik + Us * (G3 - G2)) / (G3 + Gi);
         // Case up to Us
         if (u < Us) { setG( G2 ); return; }
         // Case from Us on

@@ -67,13 +67,13 @@ private:
     void change_to_bus(string & net, vector<net_entry> & found_nets);
 
     // Read a physical value (e.g. voltage, current, resistance) and
-    // convert it to a float number.
+    // convert it to a double number.
     // Some examples:
     // 10.7V -> 10.7
     // 20mA  -> 0.02
     // 4k7   -> 4700
     // 2.4M  ->2400000
-    float readValue(string s);
+    double readValue(string s);
 
     ofstream h_ofs, c_ofs;
 };

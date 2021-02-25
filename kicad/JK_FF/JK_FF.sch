@@ -579,7 +579,7 @@ F 1 "NAND4" H 6850 4350 50  0001 C CNN
 F 2 "" H 6300 4350 50  0001 C CNN
 F 3 "" H 6300 4350 50  0001 C CNN
 	1    6850 3950
-	1    0    0    1   
+	1    0    0    -1  
 $EndComp
 Text Label 6850 4200 3    50   ~ 0
 p0
@@ -632,7 +632,7 @@ Wire Wire Line
 	7250 2500 7250 3200
 Connection ~ 8900 3500
 Wire Wire Line
-	8900 3500 9800 3500
+	8900 3500 9300 3500
 Wire Wire Line
 	9800 4000 8800 4000
 Wire Wire Line
@@ -691,7 +691,7 @@ F 1 "NAND4" H 8550 4350 50  0001 C CNN
 F 2 "" H 8000 4350 50  0001 C CNN
 F 3 "" H 8000 4350 50  0001 C CNN
 	1    8550 3950
-	-1   0    0    1   
+	-1   0    0    -1  
 $EndComp
 Wire Wire Line
 	8900 2850 9050 2850
@@ -820,4 +820,22 @@ Connection ~ 8900 4400
 Connection ~ 7700 4800
 Text Notes 7400 5250 0    50   ~ 0
 Delay gates are necessary to suppress oscillation\n
+$Comp
+L Device:R R1
+U 1 1 6036D0F1
+P 9300 3225
+F 0 "R1" H 9375 3225 50  0000 L CNN
+F 1 "1G" V 9300 3175 50  0000 L CNN
+F 2 "" V 9230 3225 50  0001 C CNN
+F 3 "~" H 9300 3225 50  0001 C CNN
+	1    9300 3225
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9300 3375 9300 3500
+Connection ~ 9300 3500
+Wire Wire Line
+	9300 3500 9800 3500
+Wire Wire Line
+	9300 3075 9300 2950
 $EndSCHEMATC

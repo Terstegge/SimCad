@@ -16,14 +16,29 @@ BUILD_DIR  = BUILD
 BIN_DIR    = bin
 LIB_DIR    = lib
 
+# Goole Test
+GTEST_DIR  = /usr/local/gtest-1.10.0
+GTEST_INC  = $(GTEST_DIR)/googletest/include/
+GTEST_LIBS = -L. -L$(GTEST_DIR)/lib -lgtest -lgtest_main -lDIGISIM
+
+# Tests
+TEST_DIR   = tests
+TEST_SRCS  = $(wildcard $(TEST_DIR)/*.cpp)
+TEST_OBJS  = $(foreach obj, $(TEST_SRCS), $(BUILD_DIR)/$(notdir $(obj)).o)
+TEST_BIN   = $(TEST_DIR)/RunTests
+TEST_DEPS  = $(TEST_OBJS:.o=.d)
+SRC_DIRS  += $(TEST_DIR)
+
 # Compiler options
-CXX        =  g++  # or clang++
-CXXFLAGS   = -std=c++17 -g
+CXX        =  g++-8  # or clang++
+CXXFLAGS   = -std=c++2a -g
 INCLUDES   = -Ikicad/include
 INCLUDES  += -Iinclude/core
 INCLUDES  += -Iinclude/gates
 INCLUDES  += -Iinclude/twopoles
 INCLUDES  += -Iinclude/kicad
+INCLUDES  += -Iinclude/tests
+INCLUDES  += -I$(GTEST_INC)
 
 # Utility to control output (detailed if VERBOSE defined).
 ifdef VERBOSE
@@ -68,10 +83,10 @@ SRC_DIRS         += $(DIGISIM_SRC_DIR)
 # RULES SECTION #
 #################
 
-all: build_dir $(NET2SIM_BIN) $(KICAD_H_FILES) $(KICAD_SRC_FILES) $(DIGISIM_LIB)
+all: build_dir $(NET2SIM_BIN) $(KICAD_H_FILES) $(KICAD_SRC_FILES) $(DIGISIM_LIB) $(TEST_BIN)
 
 # include the dependency files
--include $(NET2SIM_DEPS) $(KICAD_DEPS) $(DIGISIM_DEPS)
+-include $(NET2SIM_DEPS) $(KICAD_DEPS) $(DIGISIM_DEPS) $(TEST_DEPS)
 
 # Rule to create build directory
 .PHONY: build_dir
@@ -91,6 +106,10 @@ $(foreach srcdir, $(SRC_DIRS), $(eval $(call compileRules, $(srcdir))))
 $(NET2SIM_BIN) : $(NET2SIM_OBJS)
 	@echo "LD   $@"
 	$(HIDE) $(CXX) $(CXXFLAGS) -o $@ $^
+
+$(TEST_BIN) : $(TEST_OBJS)
+	@echo "LD   $@"
+	$(HIDE) $(CXX) $(CXXFLAGS)  -o $@ $^ $(GTEST_LIBS) -pthread
 
 # Build rule for library
 %.a : $(DIGISIM_OBJS)

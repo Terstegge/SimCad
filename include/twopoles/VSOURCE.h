@@ -23,7 +23,7 @@
 
 class VSOURCE : public TwoPole {
 public:
-    VSOURCE(const std::string & name, float u) : TwoPole(name), _U(u) {
+    VSOURCE(const std::string & name, double u) : TwoPole(name), _U(u) {
         setG( INF );
     }
 
@@ -34,7 +34,7 @@ public:
         p[1].setUd( p[1].Ud - _U);
     }
 
-    void setU(float u) {
+    void setU(double u) {
         _U = u;
         update();
     }
@@ -43,11 +43,11 @@ public:
         p[1].attach(nullptr);
         p[2].attach(nullptr);
         p[1] = 0.0;
-        p[2] = (float)_U;
+        p[2] = (double)_U;
     }
 
 private:
-    float _U;
+    double _U;
 };
 
 #endif // _INCLUDE_VSOURCE_H_

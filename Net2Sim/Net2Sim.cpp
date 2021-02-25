@@ -401,6 +401,7 @@ int Net2Sim::main(int argc, char* argv[])
     for (size_t i = 0; i < used_components.size(); ++i) {
         string ref = used_components[i].ref_base + used_components[i].ref_idx;
         if (used_components[i].part == "R" ||
+            used_components[i].part == "C" ||
             used_components[i].part == "VSOURCE" ||
             used_components[i].part == "ISOURCE")
         {
@@ -505,10 +506,10 @@ void Net2Sim::change_to_bus(string & net, vector<net_entry> & found_nets) {
     }
 }
 
-float Net2Sim::readValue(string s) {
+double Net2Sim::readValue(string s) {
     bool    shift_mode = true;
-    float   res {0.0};
-    float   factor;
+    double  res {0.0};
+    double  factor;
     string  units = "AVRFH";
 
     for(int i=0; i < s.size(); ++i) {

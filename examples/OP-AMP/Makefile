@@ -18,16 +18,16 @@ DIGISIM_LIB     = $(DIGISIM_DIR)/libDIGISIM.a
 
 # Compiler options
 CXX        =  g++  # or clang++
-CXXFLAGS   = -std=c++17 -g
+CXXFLAGS   = -std=c++17 -g -pthread
 INCLUDES   = -I$(DIGISIM_DIR)/include/core
 INCLUDES  += -I$(DIGISIM_DIR)/include/gates
 INCLUDES  += -I$(DIGISIM_DIR)/include/twopoles
 INCLUDES  += -I$(DIGISIM_DIR)/include/kicad
 INCLUDES  += -I$(DIGISIM_DIR)/kicad/include
 
-SRCS       = SimpleNet1.cpp main.cpp
+SRCS       = OP_AMP.cpp main.cpp
 OBJS       = $(SRCS:.cpp=.o)
-BIN        = SimpleNet1
+BIN        = OP_AMP
 
 # Utility to control output (detailed if VERBOSE defined).
 ifdef VERBOSE
@@ -65,5 +65,5 @@ $(BIN) : $(OBJS) $(DIGISIM_DIR)/libDIGISIM.a
 clean:
 	$(HIDE) rm -f *.o *.d
 	$(HIDE) rm -f $(BIN)
-	$(HIDE) rm -f SimpleNet1.h SimpleNet1.cpp
+	$(HIDE) rm -f OP_AMP.h OP_AMP.cpp
 	

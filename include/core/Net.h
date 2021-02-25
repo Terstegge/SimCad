@@ -81,6 +81,9 @@ public:
     inline bool isNC() const {
         return _Gi == 0.0 && _Id == 0.0;
     }
+    inline bool isVS() const {
+        return _Gi == INF;
+    }
     inline operator bool () const {
         return isNC() ? true : _U > (SUPPLY_VOLTAGE/2);
     }
@@ -89,18 +92,18 @@ public:
     friend class Pin;
     friend std::ostream & operator << (std::ostream & os, const NetPtr net);
 
-    const float &   U;
-    const float &   Gi;
-    const float &   Id;
-    const float &   Gs;
+    const double &  U;
+    const double &  Gi;
+    const double &  Id;
+    const double &  Gs;
 
 private:
     vector<Pin *>   _pins;
 
-    float           _U;
-    float           _Gi;
-    float           _Id;
-    float           _Gs;
+    double          _U;
+    double          _Gi;
+    double          _Id;
+    double          _Gs;
 };
 
 #endif // _NET_H_

@@ -21,7 +21,7 @@
 
 class R : public TwoPole {
 public:
-    R(const std::string & name, float r) : TwoPole(name) {
+    R(const std::string & name, double r) : TwoPole(name) {
         setG( 1.0/r );
     }
 };

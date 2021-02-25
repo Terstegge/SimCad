@@ -90,7 +90,7 @@ public:
             os << std::endl;
         }
         os << "Output "   << rhs.OUT.getName();
-        os << " driving " << drive << rhs.OUT.getDrvState();
+        os << " driving " << drive << rhs.OUT;
         os << std::endl;
         return os;
     }

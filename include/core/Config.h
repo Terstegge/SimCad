@@ -10,10 +10,10 @@
 
 #include <limits>
 
-#define INF std::numeric_limits<float>::infinity()
+#define INF std::numeric_limits<double>::infinity()
 
-#define SUPPLY_VOLTAGE (float)5.0
-#define SUPPLY_GROUND  (float)0.0
+#define SUPPLY_VOLTAGE (double)5.0
+#define SUPPLY_GROUND  (double)0.0
 
 #define HIGH true
 #define LOW  false

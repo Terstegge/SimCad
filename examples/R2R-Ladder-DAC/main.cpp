@@ -1,7 +1,5 @@
 #include "R2R-Ladder-DAC.h"
-#include "_74LS08.h"
 #include "ShortCircuitEx.h"
-#include "R.h"
 
 #include <iostream>
 using namespace std;

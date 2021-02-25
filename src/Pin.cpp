@@ -27,7 +27,7 @@ void Pin::connect_to(Pin & p) {
     _netPtr->merge_net(_netPtr, p._netPtr);
 }
 
-void Pin::setDrvState(float u, float g, float i, NetSet *nets) {
+void Pin::setDrvState(double u, double g, double i, NetSet *nets) {
     if (_Ud != u || _Gd != g || _Id != i) {
         _Ud = u;
         _Gd = g;

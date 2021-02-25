@@ -21,7 +21,7 @@
 
 class ISOURCE : public TwoPole {
 public:
-    ISOURCE(const std::string & name, float i) : TwoPole(name), _I(i) {
+    ISOURCE(const std::string & name, double i) : TwoPole(name), _I(i) {
         setG ( 0 );
     }
 
@@ -32,13 +32,13 @@ public:
         p[1].setId( p[1].Id +_I );
     }
 
-    void setI(float i) {
+    void setI(double i) {
         _I = i;
         update();
     }
 
 private:
-    float _I;
+    double _I;
 };
 
 #endif // _INCLUDE_VSOURCE_H_
