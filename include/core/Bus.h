@@ -44,7 +44,7 @@ public:
     Bus<N>              (const Bus<N> & p) = delete;
 
     void operator = (unsigned int val) {
-        NetSet net1;
+        ElementSet net1;
         unsigned int mask = 1;
         for (size_t i=0; i < this->size(); ++i) {
             (*this)[i].setDrvBool((val & mask) != 0, &net1);
@@ -52,8 +52,8 @@ public:
         }
         // Iterate until no updates are necessary
         while (net1.size()) {
-            NetSet net2;
-            for (NetPtr n : net1) {
+            ElementSet net2;
+            for (ElementPtr n : net1) {
                 n->update(&net2);
             }
             net1 = net2;
@@ -77,15 +77,15 @@ public:
 //    }
 
     void operator = (Bus<N> & rhs) {
-        NetSet net1;
+        ElementSet net1;
         // Set new drv state on all pins
         for (size_t i=0; i < this->size(); ++i) {
             (*this)[i].setDrvBool((bool)rhs[i], &net1);
         }
         // Iterate until no updates are necessary
         while (net1.size()) {
-            NetSet net2;
-            for (NetPtr n : net1) {
+            ElementSet net2;
+            for (ElementPtr n : net1) {
                 n->update(&net2);
             }
             net1 = net2;
@@ -122,7 +122,7 @@ public:
         }
     }
 
-    void attach(std::function<void(NetSet *)> u) {
+    void attach(std::function<void(ElementSet *)> u) {
         for (size_t i=0; i < this->size(); ++i) {
             (*this)[i].attach(u);
         }

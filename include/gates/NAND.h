@@ -27,13 +27,13 @@ public:
     NAND(const std::string & name) : Gate<N>(name) {
     }
 
-    void update(NetSet * nets) override {
+    void calculate(ElementSet * eps) override {
         bool res = true;
         for(int i=1; i <= N; ++i) {
             res &= (bool)this->p[i];
             if (!res) break;
         }
-        this->OUT.setDrvBool(!res, nets);
+        this->OUT.setDrvBool(!res, eps);
     }
 };
 

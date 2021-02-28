@@ -23,15 +23,15 @@
 #define _INCLUDE_PIN_H_
 
 #include "Named.h"
-#include "Part.h"
 #include "Net.h"
 #include "Config.h"
+#include "Element.h"
 
 #include <iostream>
 #include <functional>
 #include <string>
 
-class Pin : public Named {
+class Pin : public Named, public Element {
 public:
     // Pin constructor.
     Pin(const std::string & name="");
@@ -46,16 +46,16 @@ public:
 
     // Methods modifying the driving state
     //////////////////////////////////////
-    void setDrvState(double u, double g, double i, NetSet *nets);
+    void setDrvState(double u, double g, double i, ElementSet *esp);
 
-    inline void setDrvVS(double u, NetSet *nets = nullptr) {
-        setDrvState(u, INF, 0, nets);
+    inline void setDrvVS(double u, ElementSet *esp = nullptr) {
+        setDrvState(u, INF, 0, esp);
     }
-    inline void setDrvNC(NetSet * nets) {
-        setDrvState(0.0, 0.0, 0.0, nets);
+    inline void setDrvNC(ElementSet * esp) {
+        setDrvState(0.0, 0.0, 0.0, esp);
     }
-    inline void setDrvBool(bool b, NetSet * nets) {
-        setDrvVS(b ? SUPPLY_VOLTAGE : 0.0, nets);
+    inline void setDrvBool(bool b, ElementSet * esp) {
+        setDrvVS(b ? SUPPLY_VOLTAGE : 0.0, esp);
     }
     inline void operator = (double f) {
         setDrvVS(f);
@@ -133,12 +133,12 @@ public:
     inline void setNetPtr(NetPtr p) { _netPtr = p;    }
 
     // Getter/Setter for Part pointer
-    inline Part * getPartPtr() const { return _partPtr; }
-    inline void setPartPtr(Part * p) { _partPtr = p;    }
+//    inline Part * getPartPtr() const { return _partPtr; }
+//    inline void setPartPtr(Part * p) { _partPtr = p;    }
 
     // Attach a processing function to this pin
     // (usually the input pins of a circuit).
-    inline void attach(std::function<void(NetSet *)> u) {
+    inline void attach(std::function<void(ElementSet *)> u) {
         _update = u;
     }
 
@@ -146,8 +146,8 @@ public:
     // When the State of the connected Net changes, this
     // Net will call this method to trigger a new calculation
     // of some (logic) function.
-    inline void update(NetSet * nets) {
-        if (_update) _update(nets);
+    inline void update(ElementSet * esp) override {
+        if (_update) _update(esp);
     }
 
     // Read-only attributes for easy access
@@ -169,11 +169,11 @@ public:
 private:
 
     NetPtr  _netPtr;    // The associated Net
-    Part *  _partPtr;   // Pointer to the related Part
+//    Part *  _partPtr;   // Pointer to the related Part
 
     // The associated update function, which is called
     // when the associated Net changes its state.
-    std::function<void(NetSet *)> _update;
+    std::function<void(ElementSet *)> _update;
 
     // Every Pin provides the values Ud, Gd and Id,
     // the Pin 'driving' values.

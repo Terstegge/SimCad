@@ -15,14 +15,14 @@
 #ifndef INCLUDE_GATES_OPAMP_H_
 #define INCLUDE_GATES_OPAMP_H_
 
-#include "Part.h"
 #include "Pin.h"
 #include "Narray.h"
 
 #include <iostream>
 #include <string>
+#include <cmath>
 
-class OPAMP : public Part {
+class OPAMP : public Named {
 public:
     Narray<Pin, 6> p;
     Pin &    Iplus;
@@ -38,50 +38,50 @@ public:
     double lower;
 
     OPAMP(const std::string & name)
-        : Part(name), NAME(p),
+        : Named(name), NAME(p),
           Iplus(p[1]), Iminus(p[2]), OUT(p[3]),
           Vplus(p[4]), Vminus(p[5]),
           on(false), calc(false), upper(0), lower(0)
     {
         // Set the part pointers
-        for (Pin & pin : p) {
-            pin.setPartPtr(this);
-        }
+//        for (Pin & pin : p) {
+//            pin.setPartPtr(this);
+//        }
         // Attach power signals
-        Vplus.attach( [this](NetSet * nets) {
+        Vplus.attach( [this](ElementSet * esp) {
             on  = Vplus.isVS() && Vminus.isVS();
             if (on) {
-                update(nets);
+                calculate(esp);
             } else {
-                OUT.setDrvNC(nets);
+                OUT.setDrvNC(esp);
             }
         });
-        Vminus.attach( [this](NetSet * nets) {
+        Vminus.attach( [this](ElementSet * esp) {
             on  = Vplus.isVS() && Vminus.isVS();
             if (on) {
-                update(nets);
+                calculate(esp);
             } else {
-                OUT.setDrvNC(nets);
+                OUT.setDrvNC(esp);
             }
         });
         // Attach input signal handlers
-        Iplus.attach([this](NetSet * nets) {
+        Iplus.attach([this](ElementSet * esp) {
             if (on) {
-                update(nets);
+                calculate(esp);
             } else {
-                OUT.setDrvNC(nets);
+                OUT.setDrvNC(esp);
             }
         });
-        Iminus.attach([this](NetSet * nets) {
+        Iminus.attach([this](ElementSet * esp) {
             if (on) {
-                update(nets);
+                calculate(esp);
             } else {
-                OUT.setDrvNC(nets);
+                OUT.setDrvNC(esp);
             }
         });
     }
 
-    void update(NetSet * nets) {
+    void calculate(ElementSet * esp) {
         if (!calc) {
             calc = true;
             upper = Vplus.U();
@@ -95,13 +95,16 @@ public:
         } else {
             // Recursion
             double diff = Iplus.U() - Iminus.U();
-            if (diff == 0) return;
+            if (fabs(diff) < EPS) return;
+//            if (diff == 0) return;
             if (diff < 0.0) upper = OUT.Ud;
                 else        lower = OUT.Ud;
             OUT = (upper + lower) / 2;
         }
     }
 
+private:
+    const double EPS = 1e-5;
 };
 
 #endif /* INCLUDE_GATES_OPAMP_H_ */

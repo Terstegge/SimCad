@@ -13,9 +13,8 @@
 # 
 # Location if DIGISIM library
 DIGISIM_DIR     = ../..
-NET2SIM_BIN     = $(DIGISIM_DIR)/bin/Net2Sim
-DIGISIM_LIB_DIR = $(DIGISIM_DIR)/lib
-DIGISIM_LIB     = $(DIGISIM_LIB_DIR)/libDIGISIM.a
+NET2SIM_BIN     = $(DIGISIM_DIR)/Net2Sim/Net2Sim
+DIGISIM_LIB     = $(DIGISIM_DIR)/libDIGISIM.a
 
 # Compiler options
 CXX        =  g++  # or clang++
@@ -48,9 +47,9 @@ all: $(BIN)
 	$(HIDE) $(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< -MMD
 
 # Build rules for binaries
-$(BIN) : $(OBJS) $(DIGISIM_LIB_DIR)/libDIGISIM.a
+$(BIN) : $(OBJS) $(DIGISIM_DIR)/libDIGISIM.a
 	@echo "LD   $@"
-	$(HIDE) $(CXX) $(CXXFLAGS) -L$(DIGISIM_LIB_DIR) -o $@ $^ -lDIGISIM
+	$(HIDE) $(CXX) $(CXXFLAGS) -L$(DIGISIM_DIR) -o $@ $^ -lDIGISIM
 
 # Build rule for cpp and h files
 .PRECIOUS: %.h

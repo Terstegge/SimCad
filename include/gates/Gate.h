@@ -23,7 +23,6 @@
 #ifndef INCLUDE_GATE_H_
 #define INCLUDE_GATE_H_
 
-#include "Part.h"
 #include "Pin.h"
 #include "Narray.h"
 
@@ -31,7 +30,7 @@
 #include <string>
 
 template<int N>
-class Gate : public Part {
+class Gate : public Named {
 public:
     Narray<Pin, N+3> p;
     Pin &    VCC;
@@ -40,36 +39,36 @@ public:
     bool     on;    // true if power is switched on
 
     Gate(const std::string & name)
-        : Part(name), NAME(p), VCC(p[N+2]), GND(p[0]), OUT(p[N+1]), on(false)
+        : Named(name), NAME(p), VCC(p[N+2]), GND(p[0]), OUT(p[N+1]), on(false)
     {
         // Set the part pointers
-        for (Pin & pin : p) {
-            pin.setPartPtr(this);
-        }
+//        for (Pin & pin : p) {
+//            pin.setPartPtr(this);
+//        }
         // Attach power signals
-        VCC.attach( [this](NetSet * nets) {
+        VCC.attach( [this](ElementSet * esp) {
             on  = VCC.isVCC() && GND.isGND();
             if (on) {
-                update(nets);
+                calculate(esp);
             } else {
-                OUT.setDrvNC(nets);
+                OUT.setDrvNC(esp);
             }
         });
-        GND.attach( [this](NetSet * nets) {
+        GND.attach( [this](ElementSet * esp) {
             on  = VCC.isVCC() && GND.isGND();
             if (on) {
-                update(nets);
+                calculate(esp);
             } else {
-                OUT.setDrvNC(nets);
+                OUT.setDrvNC(esp);
             }
         });
         // Attach input signal handlers
         for(int i=1; i <= N; ++i) {
-            p[i].attach( [this](NetSet * nets) {
+            p[i].attach( [this](ElementSet * esp) {
                 if (on) {
-                    update(nets);
+                    calculate(esp);
                 } else {
-                    OUT.setDrvNC(nets);
+                    OUT.setDrvNC(esp);
                 }
             });
         }
@@ -80,7 +79,7 @@ public:
 
     // The method to calculate the result of a specific gate.
     // Has to be provided by the concrete gate classes.
-    virtual void update(NetSet * nets) = 0;
+    virtual void calculate(ElementSet * esp) = 0;
 
     friend std::ostream & operator << (std::ostream & os, const Gate<N> & rhs) {
         os << "Gate " << rhs.getName() << std::endl;

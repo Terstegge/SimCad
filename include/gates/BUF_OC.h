@@ -26,10 +26,10 @@ public:
     BUF_OC(const std::string & name) : Gate<1>(name) {
     }
 
-    void update(NetSet * nets) override {
+    void calculate(ElementSet * esp) override {
         bool res = (bool)this->p[1];
-        if (res) this->OUT.setDrvNC(nets);
-        else     this->OUT.setDrvBool(false, nets);
+        if (res) this->OUT.setDrvNC(esp);
+        else     this->OUT.setDrvBool(false, esp);
     }
 };
 

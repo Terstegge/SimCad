@@ -22,8 +22,10 @@ CXXFLAGS   = -std=c++17 -g -pthread
 INCLUDES   = -I$(DIGISIM_DIR)/include/core
 INCLUDES  += -I$(DIGISIM_DIR)/include/gates
 INCLUDES  += -I$(DIGISIM_DIR)/include/twopoles
+INCLUDES  += -I$(DIGISIM_DIR)/include/threepoles
 INCLUDES  += -I$(DIGISIM_DIR)/include/kicad
-INCLUDES  += -I$(DIGISIM_DIR)/kicad/include
+INCLUDES  += -I$(DIGISIM_DIR)/kicad/gen
+INCLUDES  += -I$(DIGISIM_DIR)/kicad/impl
 
 SRCS       = OP_AMP.cpp main.cpp
 OBJS       = $(SRCS:.cpp=.o)

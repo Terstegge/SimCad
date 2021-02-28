@@ -27,12 +27,12 @@ public:
     EOR(const std::string & name) : Gate<N>(name) {
     }
 
-    void update(NetSet * nets) override {
+    void calculate(ElementSet * esp) override {
         bool res = false;
         for(int i=1; i <= N; ++i) {
             res ^= (bool)this->p[i];
         }
-        this->OUT.setDrvBool(res, nets);
+        this->OUT.setDrvBool(res, esp);
     }
 };
 

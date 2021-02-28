@@ -35,7 +35,7 @@ void Net::merge_net(NetPtr n, NetPtr o) {
     update();
 }
 
-void Net::update(NetSet *nets) {
+void Net::update(ElementSet *nets) {
 	Pin * ivs_ptr {nullptr};            // Pointer to first ideal voltage source
     double gs {0}, is {0}, id {0};
 
@@ -84,11 +84,11 @@ void Net::update(NetSet *nets) {
 
 
 void Net::update() {
-    NetSet nset1, nset2;
+    ElementSet nset1, nset2;
     update(&nset1);
     while (nset1.size()) {
         nset2.clear();
-        for (NetPtr n : nset1) {
+        for (ElementPtr n : nset1) {
             n->update(&nset2);
         }
         nset1 = nset2;

@@ -17,6 +17,7 @@
 
 #include "Named.h"
 #include "Config.h"
+#include "Element.h"
 
 #include <vector>
 using std::vector;
@@ -31,9 +32,9 @@ class Net;
 
 //typedef std::shared_ptr<Net> NetPtr;
 typedef Net* NetPtr;
-typedef std::set<NetPtr>     NetSet;
+//typedef std::set<NetPtr>     NetSet;
 
-class Net : public Named {
+class Net : public Named, public Element {
 public:
     // Global counter for the number of Nets
     static int _no_nets;
@@ -67,7 +68,7 @@ public:
     // and calculates the resulting State. If a
     // short circuit is detected, a exception is
     // thrown.
-    void update(NetSet * nets);
+    void update(ElementSet * esp) override;
 
     // Update the current Net and all Subnets
     void update();

@@ -18,8 +18,8 @@ bool Pin::_show_drive_state = false;
 Pin::Pin(const std::string & name) : Named(name),
      Ud(_Ud),  Gd(_Gd),  Id(_Id),
     _Ud(0.0), _Gd(0.0), _Id(0.0),
-    _netPtr (Net::create_net(name)),
-    _partPtr(nullptr) {
+    _netPtr (Net::create_net(name))
+{
     _netPtr->_pins.push_back(this);
 }
 
@@ -27,7 +27,7 @@ void Pin::connect_to(Pin & p) {
     _netPtr->merge_net(_netPtr, p._netPtr);
 }
 
-void Pin::setDrvState(double u, double g, double i, NetSet *nets) {
+void Pin::setDrvState(double u, double g, double i, ElementSet *nets) {
     if (_Ud != u || _Gd != g || _Id != i) {
         _Ud = u;
         _Gd = g;

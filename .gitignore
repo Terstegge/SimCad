@@ -1,7 +1,4 @@
-/kicad/src/
-/kicad/include/
+/kicad/gen/
 /BUILD/
-/bin/
-/lib/
 /libDIGISIM.a
 /TODO

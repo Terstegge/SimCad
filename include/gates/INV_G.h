@@ -31,10 +31,10 @@ public:
     INV_G(const std::string & name) : Gate<2>(name), G(this->p[2]) {
     }
 
-    void update(NetSet * nets) override {
+    void calculate(ElementSet * eps) override {
         bool res = !(bool)this->p[1]; 
-        G ? this->OUT.setDrvBool(res,nets)
-          : this->OUT.setDrvNC(nets);
+        G ? this->OUT.setDrvBool(res,eps)
+          : this->OUT.setDrvNC(eps);
     }
 };
 

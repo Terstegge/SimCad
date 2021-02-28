@@ -123,6 +123,8 @@
                 				
                 <buildCommand>make</buildCommand>
                 				
+                <buildArguments/>
+                				
                 <buildTarget>all</buildTarget>
                 				
                 <stopOnError>true</stopOnError>
@@ -136,8 +138,6 @@
             <target name="clean" path="examples/RS-flipflop" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                 				
                 <buildCommand>make</buildCommand>
-                				
-                <buildArguments/>
                 				
                 <buildTarget>clean</buildTarget>
                 				
@@ -153,8 +153,6 @@
                 				
                 <buildCommand>make</buildCommand>
                 				
-                <buildArguments/>
-                				
                 <buildTarget>all</buildTarget>
                 				
                 <stopOnError>true</stopOnError>
@@ -168,8 +166,6 @@
             <target name="clean" path="examples/OP-AMP" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                 				
                 <buildCommand>make</buildCommand>
-                				
-                <buildArguments/>
                 				
                 <buildTarget>clean</buildTarget>
                 				
@@ -201,8 +197,6 @@
                 				
                 <buildCommand>make</buildCommand>
                 				
-                <buildArguments/>
-                				
                 <buildTarget>clean</buildTarget>
                 				
                 <stopOnError>true</stopOnError>
@@ -216,6 +210,8 @@
             <target name="all" path="examples/SimpleNet1" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                 				
                 <buildCommand>make</buildCommand>
+                				
+                <buildArguments/>
                 				
                 <buildTarget>all</buildTarget>
                 				
@@ -231,6 +227,8 @@
                 				
                 <buildCommand>make</buildCommand>
                 				
+                <buildArguments/>
+                				
                 <buildTarget>clean</buildTarget>
                 				
                 <stopOnError>true</stopOnError>
@@ -245,6 +243,8 @@
                 				
                 <buildCommand>make</buildCommand>
                 				
+                <buildArguments/>
+                				
                 <buildTarget>all</buildTarget>
                 				
                 <stopOnError>true</stopOnError>
@@ -258,8 +258,6 @@
             <target name="clean" path="examples/R2R-Ladder-DAC" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                 				
                 <buildCommand>make</buildCommand>
-                				
-                <buildArguments/>
                 				
                 <buildTarget>clean</buildTarget>
                 				

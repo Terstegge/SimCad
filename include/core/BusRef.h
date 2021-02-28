@@ -27,7 +27,7 @@ public:
     BusRef(vector<Pin *> v) : std::vector<Pin *>(v) { }
 
     void operator = (unsigned int val) {
-        NetSet net1;
+        ElementSet net1;
         unsigned int mask = 1;
         for (size_t i=0; i < this->size(); ++i) {
             (*this)[i]->setDrvBool((bool)(val & mask), &net1);
@@ -35,8 +35,8 @@ public:
         }
         // Iterate until no updates are necessary
         while (net1.size()) {
-            NetSet net2;
-            for (NetPtr n : net1) {
+            ElementSet net2;
+            for (ElementPtr n : net1) {
                 n->update(&net2);
             }
             net1 = net2;
