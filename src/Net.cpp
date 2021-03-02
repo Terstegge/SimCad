@@ -35,7 +35,7 @@ void Net::merge_net(NetPtr n, NetPtr o) {
     update();
 }
 
-void Net::update(ElementSet *nets) {
+void Net::update(ElementSet *esp) {
 	Pin * ivs_ptr {nullptr};            // Pointer to first ideal voltage source
     double gs {0}, is {0}, id {0};
 
@@ -77,7 +77,7 @@ void Net::update(ElementSet *nets) {
         _Gs = gs;
 
         for (Pin * p : _pins) {
-            p->update(nets);
+            p->update(esp);
         }
     }
 }

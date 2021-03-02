@@ -17,6 +17,7 @@
 #include <iostream>
 #include <map>
 #include <algorithm>
+#include <regex>
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -459,6 +460,8 @@ int Net2Sim::main(int argc, char* argv[])
 
 
 void Net2Sim::name2var(string & s) {
+    s = std::regex_replace(s, std::regex("\\-(?=[0-9])"), "minus_");
+    s = std::regex_replace(s, std::regex("\\+(?=[0-9])"), "plus_");
     std::replace(s.begin(),  s.end(), '/', '_');
     std::replace(s.begin(),  s.end(), '-', '_');
     std::replace(s.begin(),  s.end(), '~', 'n');

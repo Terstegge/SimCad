@@ -36,7 +36,6 @@ public:
     }
 
     void start() {
-        const int dt_millis = 10;
         if (!_running) {
             _running = true;
             setG( 100 );
@@ -68,6 +67,8 @@ public:
     }
 
 private:
+    const int dt_millis = 10;
+
     double  _cap;
     double  _Q;
     double  _U;

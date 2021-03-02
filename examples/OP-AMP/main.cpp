@@ -14,9 +14,10 @@ int main() {
     try {
         // Power up
         cout << "Power up" << endl;
-        op.VCC  = +SUPPLY_VOLTAGE;
-        op.GND  =  SUPPLY_GROUND;
-        op.VCCQ = -SUPPLY_VOLTAGE;
+        op.GND      =  SUPPLY_GROUND;
+        op.VCC      =  SUPPLY_VOLTAGE;
+        op.plus_5V  = +SUPPLY_VOLTAGE;
+        op.minus_5V = -SUPPLY_VOLTAGE;
 
         op.C1.start();
         op.C2.start();

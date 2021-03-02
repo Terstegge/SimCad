@@ -11,60 +11,12 @@
 #///////////////////////////////////////////////
 #//
 # 
-# Location if DIGISIM library
-DIGISIM_DIR     = ../..
-NET2SIM_BIN     = $(DIGISIM_DIR)/bin/Net2Sim
-DIGISIM_LIB_DIR = $(DIGISIM_DIR)/lib
-DIGISIM_LIB     = $(DIGISIM_LIB_DIR)/libDIGISIM.a
+DIGISIM_DIR = ../..
+BUILD_DIR   = BUILD
 
-# Compiler options
-CXX        =  g++  # or clang++
-CXXFLAGS   = -std=c++17 -g
-INCLUDES   = -I$(DIGISIM_DIR)/include/core
-INCLUDES  += -I$(DIGISIM_DIR)/include/gates
-INCLUDES  += -I$(DIGISIM_DIR)/include/twopoles
-INCLUDES  += -I$(DIGISIM_DIR)/include/kicad
-INCLUDES  += -I$(DIGISIM_DIR)/kicad/include
+TARGET_BIN_FILE = SimpleNet2
+TARGET_NET_FILE = SimpleNet2.net
+TARGET_SRC_DIRS = .
+TARGET_INC_DIRS = .
 
-SRCS       = SimpleNet2.cpp main.cpp
-OBJS       = $(SRCS:.cpp=.o)
-BIN        = SimpleNet2
-
-# Utility to control output (detailed if VERBOSE defined).
-ifdef VERBOSE
-HIDE :=
-else
-HIDE := @
-endif
-
-all: $(BIN)
-
-# include the dependency files
--include $(OBJS:.o=.d)
-
-# Build rule for C++ compiler
-%.o : %.cpp
-	@echo "C++  $(notdir $<)"
-	$(HIDE) $(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $< -MMD
-
-# Build rules for binaries
-$(BIN) : $(OBJS) $(DIGISIM_LIB_DIR)/libDIGISIM.a
-	@echo "LD   $@"
-	$(HIDE) $(CXX) $(CXXFLAGS) -L$(DIGISIM_LIB_DIR) -o $@ $^ -lDIGISIM
-
-# Build rule for cpp and h files
-.PRECIOUS: %.h
-%.h : %.net
-	@echo "NET  $(notdir $<)"
-	$(HIDE) $(NET2SIM_BIN) $^
-.PRECIOUS: %.cpp
-%.cpp : %.net
-	@echo "NET  $(notdir $<)"
-	$(HIDE) $(NET2SIM_BIN)  $^
-
-.PHONY: clean
-clean:
-	$(HIDE) rm -f *.o *.d
-	$(HIDE) rm -f $(BIN)
-	$(HIDE) rm -f SimpleNet2.h SimpleNet2.cpp
-	
+include $(DIGISIM_DIR)/common.mk

@@ -27,13 +27,13 @@ void Pin::connect_to(Pin & p) {
     _netPtr->merge_net(_netPtr, p._netPtr);
 }
 
-void Pin::setDrvState(double u, double g, double i, ElementSet *nets) {
+void Pin::setDrvState(double u, double g, double i, ElementSet *esp) {
     if (_Ud != u || _Gd != g || _Id != i) {
         _Ud = u;
         _Gd = g;
         _Id = i;
-        if (nets) {
-            nets->insert(_netPtr);
+        if (esp) {
+            esp->insert(_netPtr);
         } else {
             _netPtr->update();
         }
