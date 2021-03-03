@@ -68,6 +68,7 @@ TEST_BIN          = $(TEST_DIR)/RunTests
 LIB_SRC_DIRS     += $(TEST_DIR)
 
 # User target
+TARGET_SRC_DIRS  += $(dir $(TARGET_NET_FILE))
 TARGET_SRC_FILES  = $(TARGET_NET_FILE:.net=.cpp)
 TARGET_SRC_FILES += $(foreach dir, $(TARGET_SRC_DIRS), $(wildcard $(dir)/*.cpp))
 TARGET_OBJS       = $(foreach obj, $(TARGET_SRC_FILES), $(BUILD_DIR)/$(notdir $(obj)).o)
@@ -89,7 +90,7 @@ INCLUDES = $(addprefix -I, $(INC_DIRS))
 # RULES SECTION #
 #################
 
-all: build_dir $(NET2SIM_BIN) $(KICAD_H_FILES) $(KICAD_SRC_FILES) $(DIGISIM_LIB) $(TARGET_BIN_FILE)
+all: build_dir $(NET2SIM_BIN) $(KICAD_H_FILES) $(DIGISIM_LIB) $(TARGET_BIN_FILE)
 
 test: all $(TEST_BIN)
 	$(TEST_BIN)
@@ -132,11 +133,11 @@ $(NET2SIM_BIN) : $(NET2SIM_OBJS)
 	@echo "LD   $@"
 	$(HIDE) $(CXX) $(CXXFLAGS) -o $@ $^
 
-$(TEST_BIN) : $(TEST_OBJS)
+$(TEST_BIN) : $(TEST_OBJS) $(DIGISIM_LIB)
 	@echo "LD   $@"
 	$(HIDE) $(CXX) $(CXXFLAGS)  -o $@ $^ $(DIGISIM_LIB_OPTS) $(GTEST_LIB_OPTS)
 
-$(TARGET_BIN_FILE) : $(TARGET_OBJS)
+$(TARGET_BIN_FILE) : $(TARGET_OBJS) $(DIGISIM_LIB)
 	@echo "LD   $@"
 	$(HIDE) $(CXX) $(CXXFLAGS)  -o $@ $^ $(DIGISIM_LIB_OPTS) $(GTEST_LIB_OPTS)
 

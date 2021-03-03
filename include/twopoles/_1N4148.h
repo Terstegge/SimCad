@@ -46,18 +46,14 @@ public:
     void p2_callback() override { calculate(); }
 
     void calculate() {
-        // Calculate SVS parameters
-        double Ul = A.Uw() - C.Uw();
-        double Gi = 1.0 / (1.0/A.Gw() + 1.0/C.Gw());
-        double Ik = Ul * Gi;
-        // Reverse voltage case
-        if (Ul < 0.0) { setG( G1 ); return; }
-        // Calculate resulting voltage drop
-        double u = (Ik + Us * (G3 - G2)) / (G3 + Gi);
-        // Case up to Us
-        if (u < Us) { setG( G2 ); return; }
-        // Case from Us on
-        setG( Gi * (Ul/u - 1) );
+        double Ig = Us * G2;
+        double I  = A.I();
+
+        if (I < 0.0) { setG( G1 ); return; }
+        if (I <= Ig) { setG( G2 ); return; }
+        
+        double U = ( I - Ig) / G3 + Us;
+        setG( I / U );
     }
 };
 

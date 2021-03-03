@@ -401,8 +401,9 @@ int Net2Sim::main(int argc, char* argv[])
     c_ofs << endl << classname << "::" << classname << "(std::string name) :" <<endl;
     for (size_t i = 0; i < used_components.size(); ++i) {
         string ref = used_components[i].ref_base + used_components[i].ref_idx;
-        if (used_components[i].part == "R" ||
-            used_components[i].part == "C" ||
+        if (used_components[i].part == "R"  ||
+            used_components[i].part == "C"  ||
+            used_components[i].part == "CP" ||
             used_components[i].part == "VSOURCE" ||
             used_components[i].part == "ISOURCE")
         {
