@@ -105,6 +105,8 @@ private:
     double          _Gi;
     double          _Id;
     double          _Gs;
+
+    bool isEqual(double a, double b);
 };
 
 #endif // _NET_H_

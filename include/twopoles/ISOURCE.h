@@ -22,7 +22,7 @@
 class ISOURCE : public TwoPole {
 public:
     ISOURCE(const std::string & name, double i) : TwoPole(name), _I(i) {
-        setG ( 0 );
+        _G = 0;
     }
 
     void p1_callback() override {

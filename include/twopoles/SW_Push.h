@@ -27,11 +27,11 @@ public:
 
     SW_Push(const std::string & name) : TwoPole(name) {
         // Default: Switch open
-        setG( 0 );
+        _G = 0;
     }
 
     void press(bool b) {
-        setG( b ? INF : 0);
+        _G = b ? INF : 0;
         update();
     }
 

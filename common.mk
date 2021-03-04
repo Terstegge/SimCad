@@ -92,7 +92,7 @@ INCLUDES = $(addprefix -I, $(INC_DIRS))
 
 all: build_dir $(NET2SIM_BIN) $(KICAD_H_FILES) $(DIGISIM_LIB) $(TARGET_BIN_FILE)
 
-test: all $(TEST_BIN)
+tests: all $(TEST_BIN)
 	$(TEST_BIN)
 
 # Read the dependency files

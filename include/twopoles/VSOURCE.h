@@ -24,7 +24,7 @@
 class VSOURCE : public TwoPole {
 public:
     VSOURCE(const std::string & name, double u) : TwoPole(name), _U(u) {
-        setG( INF );
+        _G = INF;
     }
 
     void p1_callback() override {

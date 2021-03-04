@@ -21,6 +21,7 @@
 #include "TwoPole.h"
 #include "R.h"
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -39,7 +40,7 @@ public:
     
     _1N4148(const string & name="") : TwoPole(name), C(p[1]), A(p[2]) {
         // Set default resistance
-        setG(G1);
+        _G = G1;
     }
 
     void p1_callback() override { calculate(); }
@@ -49,11 +50,14 @@ public:
         double Ig = Us * G2;
         double I  = A.I();
 
-        if (I < 0.0) { setG( G1 ); return; }
-        if (I <= Ig) { setG( G2 ); return; }
+        if (I < 0.0) { _G = G1; return; }
+        if (I <= Ig) { _G = G2; return; }
         
-        double U = ( I - Ig) / G3 + Us;
-        setG( I / U );
+        double g = I / (( I - Ig) / G3 + Us);
+        
+        if (fabs(_G - g) > 1e-6) {
+            _G = g;
+        }
     }
 };
 

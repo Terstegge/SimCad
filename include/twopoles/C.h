@@ -28,7 +28,7 @@ using namespace std::this_thread;
 class C : public TwoPole {
 public:
     C(const std::string & name, double c) : TwoPole(name), _cap(c), _Q(0), _U(0), _running(false) {
-        setG( 0 );
+        _G = 0;
     }
 
     ~C() {
@@ -38,7 +38,7 @@ public:
     void start() {
         if (!_running) {
             _running = true;
-            setG( 100 );
+            _G = 100;
             update();
             _t = thread([this]() {
                 while(_running) {

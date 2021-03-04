@@ -76,11 +76,7 @@ public:
         }
     }
 
-    void setG(double g) {
-        _G = g;
-    }
-
-private:
+protected:
     double _G;
 };
 

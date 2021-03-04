@@ -68,13 +68,6 @@ void Net::update(ElementSet *esp) {
         gi = gs;
     }
 
-    bool U_diff = fabs(_U - u) > 1e-5;
-    bool G_diff = fabs(_Gi - gi) > 1e-5;
-    bool I_diff = fabs(_Id - id) > 1e-5;
-    //if (U_diff || G_diff || I_diff ) {
-    // Note that the valuea might be INF, and the
-    // X_diff vars give wrong values!!!!
-        
     // Check if the State of the Net has changed
     if (_U != u || _Gi != gi || _Id != id ) {
         _U  = u;
