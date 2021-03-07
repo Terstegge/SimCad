@@ -41,12 +41,17 @@ public:
             _G = 100;
             update();
             _t = thread([this]() {
-                while(_running) {
-                    const auto now = system_clock::now();
-                    _Q += p[2].I() * (double)dt_millis;
-                    _U  = _Q / (_cap * 1000);
-                    update();
-                    sleep_until(now + milliseconds( dt_millis ));
+                auto now = system_clock::now();
+            	while(_running) {
+            		// Add I * delta_t to charge
+            		_Q += p[2].I() * (double)dt_millis;
+            		// Calculate new voltage
+            		_U  = _Q / (_cap * 1000);
+            		// Update the connected Nets
+            		update();
+            		// Wait for another delta_t
+            		now += milliseconds( dt_millis );
+                    sleep_until(now);
                 }
             });
         }
@@ -69,9 +74,9 @@ public:
 private:
     const int dt_millis = 10;
 
-    double  _cap;
-    double  _Q;
-    double  _U;
+    double  _cap;	// Capacity in F
+    double  _Q;		// Current charge in As
+    double  _U;		// Current voltage V
 
     thread  _t;
     bool    _running;

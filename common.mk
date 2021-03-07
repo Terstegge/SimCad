@@ -12,7 +12,7 @@
 #//
 # 
 # Configuration section
-CXX           =  g++-8  # or clang++
+CXX           =  g++  # or clang++
 CXXFLAGS      = -std=c++2a -g
 LIB_BUILD_DIR = $(DIGISIM_DIR)/BUILD
 GTEST_DIR     = /usr/local/gtest-1.10.0

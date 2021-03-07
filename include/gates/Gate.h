@@ -41,10 +41,6 @@ public:
     Gate(const std::string & name)
         : Named(name), NAME(p), VCC(p[N+2]), GND(p[0]), OUT(p[N+1]), on(false)
     {
-        // Set the part pointers
-//        for (Pin & pin : p) {
-//            pin.setPartPtr(this);
-//        }
         // Attach power signals
         VCC.attach( [this](ElementSet * esp) {
             on  = VCC.isVCC() && GND.isGND();
