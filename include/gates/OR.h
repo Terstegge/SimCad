@@ -15,8 +15,8 @@
 // Low-level implementation of an OR gate
 // with N inputs (p[1]...p[N]).
 //
-#ifndef INCLUDE_OR_H_
-#define INCLUDE_OR_H_
+#ifndef _INCLUDE_OR_H_
+#define _INCLUDE_OR_H_
 
 #include "Gate.h"
 
@@ -27,14 +27,14 @@ public:
     OR(const std::string & name) : Gate<N>(name) {
     }
 
-    void calculate(ElementSet * eps) override {
+    void calculate(NetSet * nset) override {
         bool res = false;
         for(int i=1; i <= N; ++i) {
             res |= (bool)this->p[i];
             if (res) break;
         }
-        this->OUT.setDrvBool(res, eps);
+        this->setOUTbool(res, nset);
     }
 };
 
-#endif // INCLUDE_OR_H_
+#endif // _INCLUDE_OR_H_

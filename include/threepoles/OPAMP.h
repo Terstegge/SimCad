@@ -17,7 +17,6 @@
 
 #include "Pin.h"
 #include "Narray.h"
-
 #include <iostream>
 #include <string>
 #include <cmath>
@@ -30,58 +29,50 @@ public:
     Pin &    OUT;
     Pin &    Vplus;
     Pin &    Vminus;
-
     bool on;
     bool calc;
-
     double upper;
     double lower;
-
     OPAMP(const std::string & name)
         : Named(name), NAME(p),
           Iplus(p[1]), Iminus(p[2]), OUT(p[3]),
           Vplus(p[4]), Vminus(p[5]),
           on(false), calc(false), upper(0), lower(0)
     {
-        // Set the part pointers
-//        for (Pin & pin : p) {
-//            pin.setPartPtr(this);
-//        }
         // Attach power signals
-        Vplus.attach( [this](ElementSet * esp) {
+        Vplus.attach( [this](NetSet * usp) {
             on  = Vplus.isVS() && Vminus.isVS();
             if (on) {
-                calculate(esp);
+                calculate(usp);
             } else {
-                OUT.setDrvNC(esp);
+                OUT.setDrvNC(usp);
             }
         });
-        Vminus.attach( [this](ElementSet * esp) {
+        Vminus.attach( [this](NetSet * usp) {
             on  = Vplus.isVS() && Vminus.isVS();
             if (on) {
-                calculate(esp);
+                calculate(usp);
             } else {
-                OUT.setDrvNC(esp);
+                OUT.setDrvNC(usp);
             }
         });
         // Attach input signal handlers
-        Iplus.attach([this](ElementSet * esp) {
+        Iplus.attach([this](NetSet * usp) {
             if (on) {
-                calculate(esp);
+                calculate(usp);
             } else {
-                OUT.setDrvNC(esp);
+                OUT.setDrvNC(usp);
             }
         });
-        Iminus.attach([this](ElementSet * esp) {
+        Iminus.attach([this](NetSet * usp) {
             if (on) {
-                calculate(esp);
+                calculate(usp);
             } else {
-                OUT.setDrvNC(esp);
+                OUT.setDrvNC(usp);
             }
         });
     }
-
-    void calculate(ElementSet * esp) {
+    void calculate(NetSet * usp) {
         if (!calc) {
             calc = true;
             upper = Vplus.U();
@@ -97,12 +88,11 @@ public:
             double diff = Iplus.U() - Iminus.U();
             if (fabs(diff) < EPS) return;
 //            if (diff == 0) return;
-            if (diff < 0.0) upper = OUT.Ud;
-                else        lower = OUT.Ud;
+            if (diff < 0.0) upper = OUT.U();
+                else        lower = OUT.U();
             OUT = (upper + lower) / 2;
         }
     }
-
 private:
     const double EPS = 1e-5;
 };

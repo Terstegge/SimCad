@@ -13,10 +13,10 @@
 ///////////////////////////////////////////////
 //
 // Low-level implementation of a inverting
-// Buffer.
+// Buffer with open collector output.
 //
-#ifndef INCLUDE_INV_OC_H_
-#define INCLUDE_INV_OC_H_
+#ifndef _INCLUDE_INV_OC_H_
+#define _INCLUDE_INV_OC_H_
 
 #include "Gate.h"
 
@@ -26,11 +26,11 @@ public:
     INV_OC(const std::string & name) : Gate<1>(name) {
     }
 
-    void calculate(ElementSet * eps) override {
+    void calculate(NetSet * nset) override {
         bool res = !(bool)this->p[1];
-        if (res) this->OUT.setDrvNC(eps);
-        else     this->OUT.setDrvBool(false, eps);
+        if (res) this->setOUTnc(nset);
+        else     this->setOUTbool(false, nset);
     }
 };
 
-#endif // INCLUDE_INV_OC_H_
+#endif // _INCLUDE_INV_OC_H_

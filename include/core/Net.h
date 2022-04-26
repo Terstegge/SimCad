@@ -1,65 +1,57 @@
 ///////////////////////////////////////////////
-//
 //  This file is part of
 //   ____  ____  ___  ____  ___  ____  __  __
 //  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
 //   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
 //  (____/(____)\___/(____)(___/(____)(_/\/\_)
-//
 //  A simulation package for digital circuits
-//
 //  (c) 2021  A. Terstegge
-//
 ///////////////////////////////////////////////
-//
 #ifndef _INCLUDE_NET_H_
 #define _INCLUDE_NET_H_
 
 #include "Named.h"
 #include "Config.h"
-#include "Element.h"
-
 #include <vector>
 using std::vector;
-
 #include <set>
 #include <memory>
 #include <string>
 #include <iostream>
-
+#include <functional>
 class Pin;
 class Net;
 
-//typedef std::shared_ptr<Net> NetPtr;
-typedef Net* NetPtr;
-//typedef std::set<NetPtr>     NetSet;
+// Type definition for a set of update-able objects
+using NetSet = std::set<Net *>;
+// Type definition for update functions
+using UFUNC  = std::function<void(NetSet *)>;
 
-class Net : public Named, public Element {
+class Net : public Named {
+
+private:
+    std::vector<Pin *>  _pins;
+    bool    _isNC;
+    double  _U;
+    bool    _isVS;
+    int     _drivers;
+
 public:
     // Global counter for the number of Nets
     static int _no_nets;
-
-    // Factory method: Create a new Net and add a first Pin
-    static NetPtr create_net(std::string n) {
-        return NetPtr(new Net(n));
-    }
-
     Net(const std::string & name) : Named(name),
-          U(_U), Gi(_Gi), Id(_Id), Gs(_Gs),
-         _U(0), _Gi(0),  _Id(0),  _Gs(0)
+          U(_U), _U(0.0), _isVS(false), _isNC(true), _drivers(0)
     {
         ++_no_nets;
     }
-
     ~Net() {
         --_no_nets;
     }
-
     // Merge two Nets. The second parameter is the 'old' Net,
     // which entries are copied to our Pin vector. The first
     // parameter is the shared_ptr of this Net, which needs
     // to be set in the new Pin entries!
-    void merge_net(NetPtr n, NetPtr o);
+    void merge_net(Net * n, Net * o);
 
     // This method first calculates the new state of
     // the Net. If it changed, update() is called on every
@@ -68,45 +60,46 @@ public:
     // and calculates the resulting State. If a
     // short circuit is detected, a exception is
     // thrown.
-    void update(ElementSet * esp) override;
+    void update(NetSet * nset);
 
     // Update the current Net and all Subnets
     void update();
 
     inline bool isGND() const {
-        return (_U == 0.0) && (_Gi == INF);
+        return (_U == 0.0) && _isVS;
     }
     inline bool isVCC() const {
-        return (_U == SUPPLY_VOLTAGE) && (_Gi == INF);
+        return (_U == SUPPLY_VOLTAGE) && _isVS;
     }
     inline bool isNC() const {
-        return _Gi == 0.0 && _Id == 0.0;
+        return _isNC && !_isVS;
     }
     inline bool isVS() const {
-        return _Gi == INF;
+        return _isVS;
     }
     inline operator bool () const {
         return isNC() ? true : _U > (SUPPLY_VOLTAGE/2);
     }
+    inline bool hasDrivers() { return _drivers != 0; }
 
     // Output operator for a Net
     friend class Pin;
-    friend std::ostream & operator << (std::ostream & os, const NetPtr net);
+    friend std::ostream & operator << (std::ostream & os, const Net *  net);
 
     const double &  U;
-    const double &  Gi;
-    const double &  Id;
-    const double &  Gs;
+    double Isum(double U, Pin * p = nullptr) const;
+    int sgn(double v);
+    double zero(std::function<double(double)> f);
+    void show_driver();
 
-private:
-    vector<Pin *>   _pins;
+    inline double R() const {
+        return U / Isum(U);
+    }
 
-    double          _U;
-    double          _Gi;
-    double          _Id;
-    double          _Gs;
-
-    bool isEqual(double a, double b);
+    inline double Rd() const {
+        double dU = 0.2;
+        return dU / (Isum(U + dU/2.0) - Isum(U - dU/2.0));
+    }
 };
 
 #endif // _NET_H_

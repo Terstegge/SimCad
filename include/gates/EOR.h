@@ -13,10 +13,11 @@
 ///////////////////////////////////////////////
 //
 // Low-level implementation of a EOR (XOR) gate
-// with N inputs (p[1]...p[N]).
+// with N inputs (p[1]...p[N]). For more than
+// 2 inputs, the output is a odd parity function.
 //
-#ifndef INCLUDE_EOR_H_
-#define INCLUDE_EOR_H_
+#ifndef _INCLUDE_EOR_H_
+#define _INCLUDE_EOR_H_
 
 #include "Gate.h"
 
@@ -27,13 +28,13 @@ public:
     EOR(const std::string & name) : Gate<N>(name) {
     }
 
-    void calculate(ElementSet * esp) override {
+    void calculate(NetSet * nset) override {
         bool res = false;
         for(int i=1; i <= N; ++i) {
             res ^= (bool)this->p[i];
         }
-        this->OUT.setDrvBool(res, esp);
+        this->setOUTbool(res, nset);
     }
 };
 
-#endif // INCLUDE_EOR_H_
+#endif // _INCLUDE_EOR_H_

@@ -3,17 +3,22 @@
 #include <iostream>
 using namespace std;
 
+#include "SST39SF040.h"
+#include <iostream>
+
+using namespace std;
+
 SST39SF040::cmd_state SST39SF040::_state = wait1;
 
 SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(name) {
         // Attach address bus listener
-        A.attach([this](ElementSet * nets) {
+        A.attach([this](NetSet * usp) {
             DATA_OUT = _mem[ A ];
         });
     
         // Latch address at start of write cycle
         // and latch data at falling edge
-        WRITE.attach([this](ElementSet * nets) {
+        WRITE.attach([this](NetSet * usp) {
             if (WRITE == HIGH) {
                 // Latch address
                 _addr = A;
@@ -28,7 +33,6 @@ SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(name) {
         // Write out initial data
         DATA_OUT = _mem[A];
     } 	
-
     void SST39SF040::run_state_machine(int addr, int data) {
         switch (_state) {
             case wait1: {

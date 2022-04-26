@@ -18,8 +18,8 @@
 // p[1] is signal input
 // p[2] is enable input (active high).
 //
-#ifndef INCLUDE_BUF_G_H_
-#define INCLUDE_BUF_G_H_
+#ifndef _INCLUDE_BUF_G_H_
+#define _INCLUDE_BUF_G_H_
 
 #include "Gate.h"
 
@@ -30,11 +30,11 @@ public:
     BUF_G(const std::string & name) : Gate<2>(name), G(this->p[2]) {
     }
 
-    void calculate(ElementSet * esp) override {
+    void calculate(NetSet * nset) override {
         bool res = (bool)this->p[1];
-        G ? this->OUT.setDrvBool(res, esp)
-          : this->OUT.setDrvNC(esp);
+        G ? this->setOUTbool(res, nset)
+          : this->setOUTnc(nset);
     }
 };
 
-#endif // INCLUDE_BUF_G_H_
+#endif // _INCLUDE_BUF_G_H_

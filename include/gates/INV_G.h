@@ -18,24 +18,23 @@
 // p[1] is signal input
 // p[2] is enable input (active high)
 //
-#ifndef INCLUDE_INV_G_H_
-#define INCLUDE_INV_G_H_
+#ifndef _INCLUDE_INV_G_H_
+#define _INCLUDE_INV_G_H_
 
 #include "Gate.h"
 
 class INV_G : public Gate<2> {
 public:
-
     Pin & G;
 
     INV_G(const std::string & name) : Gate<2>(name), G(this->p[2]) {
     }
 
-    void calculate(ElementSet * eps) override {
-        bool res = !(bool)this->p[1]; 
-        G ? this->OUT.setDrvBool(res,eps)
-          : this->OUT.setDrvNC(eps);
+    void calculate(NetSet * nset) override {
+        bool res = !(bool)this->p[1];
+        G ? this->setOUTbool(res, nset)
+          : this->setOUTnc(nset);
     }
 };
 
-#endif // INCLUDE_INV_G_H_
+#endif // _INCLUDE_INV_G_H_

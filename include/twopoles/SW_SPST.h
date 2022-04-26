@@ -19,22 +19,22 @@
 #ifndef _SW_SPST_H_
 #define _SW_SPST_H_
 
-#include "TwoPole.h"
+#include "R.h"
 
-class SW_SPST : public TwoPole {
-
+class SW_SPST : public R {
 public:
-
-    SW_SPST(const std::string & name) : TwoPole(name) {
-        // Default: Switch open
-        _G = 0;
+    SW_SPST(const std::string & name) : R(name, INF) {
     }
 
     void setOn(bool b) {
-        _G = b ? INF : 0.0;
+        _R = b ? 0.001 : INF;
         update();
     }
 
+    void toggle() {
+        setOn(true);
+        setOn(false);
+    }
 };
 
 #endif // _SW_SPST_H_

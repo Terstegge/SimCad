@@ -16,8 +16,8 @@
 // p[1]...p[N-1] are signal inputs (AND gate).
 // p[N] is enable (active low).
 //
-#ifndef INCLUDE_INH_H_
-#define INCLUDE_INH_H_
+#ifndef _INCLUDE_INH_H_
+#define _INCLUDE_INH_H_
 
 #include "Gate.h"
 
@@ -28,14 +28,14 @@ public:
     INH(const std::string & name) : Gate<N>(name) {
     }
 
-    void calculate(ElementSet * eps) override {
+    void calculate(NetSet * nset) override {
         bool res = !(bool)this->p[N];
         for(int i=1; i < N; ++i) {
             res &= (bool)this->p[i];
             if (!res) break;
         }
-        this->OUT.setDrvBool(res, eps);
+        this->setOUTbool(res, nset);
     }
 };
 
-#endif // INCLUDE_INH_H_
+#endif // _INCLUDE_INH_H_

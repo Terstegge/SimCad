@@ -15,8 +15,8 @@
 // Low-level implementation of a NAND gate
 // with N inputs (p[1]...p[N]).
 //
-#ifndef INCLUDE_NAND_H_
-#define INCLUDE_NAND_H_
+#ifndef _INCLUDE_NAND_H_
+#define _INCLUDE_NAND_H_
 
 #include "Gate.h"
 
@@ -27,14 +27,14 @@ public:
     NAND(const std::string & name) : Gate<N>(name) {
     }
 
-    void calculate(ElementSet * eps) override {
+    void calculate(NetSet * nset) override {
         bool res = true;
         for(int i=1; i <= N; ++i) {
             res &= (bool)this->p[i];
             if (!res) break;
         }
-        this->OUT.setDrvBool(!res, eps);
+        this->setOUTbool(!res, nset);
     }
 };
 
-#endif // INCLUDE_NAND_H_
+#endif // _INCLUDE_NAND_H_

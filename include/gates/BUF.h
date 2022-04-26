@@ -15,8 +15,8 @@
 // Low-level implementation of a non-inverting
 // Buffer.
 //
-#ifndef INCLUDE_BUF_H_
-#define INCLUDE_BUF_H_
+#ifndef _INCLUDE_BUF_H_
+#define _INCLUDE_BUF_H_
 
 #include "Gate.h"
 
@@ -26,10 +26,10 @@ public:
     BUF(const std::string & name) : Gate<1>(name) {
     }
 
-    void calculate(ElementSet * esp) override {
+    void calculate(NetSet * nset) override {
         bool res = (bool)this->p[1];
-        this->OUT.setDrvBool(res, esp);
+        this->setOUTbool(res, nset);
     }
 };
 
-#endif // INCLUDE_BUF_H_
+#endif // _INCLUDE_BUF_H_

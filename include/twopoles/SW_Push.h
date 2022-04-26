@@ -19,25 +19,22 @@
 #ifndef _SW_Push_H_
 #define _SW_Push_H_
 
-#include "TwoPole.h"
+#include "R.h"
 
-class SW_Push : public TwoPole {
-
+class SW_Push : public R {
 public:
 
-    SW_Push(const std::string & name) : TwoPole(name) {
-        // Default: Switch open
-        _G = 0;
+	SW_Push(const std::string & name) : R(name, INF) {
     }
 
-    void press(bool b) {
-        _G = b ? INF : 0;
+	void press(bool b) {
+        _R = b ? 0 : INF;
         update();
     }
 
-    void toggle() {
-    	press(true);
-    	press(false);
+	void toggle() {
+        press(true);
+        press(false);
     }
 };
 

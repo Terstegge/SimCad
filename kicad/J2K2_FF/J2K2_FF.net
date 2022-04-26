@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/andreas/github/DIGISIM/kicad/J2K2_FF/J2K2_FF.sch)
-    (date "Mi 24 Feb 2021 22:42:56 CET")
+    (date "Do 04 Mär 2021 20:30:17 CET")
     (tool "Eeschema 5.1.7-a382d34a8~88~ubuntu16.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -66,7 +66,7 @@
       (sheetpath (names /) (tstamps /))
       (tstamp 5F207966))
     (comp (ref R1)
-      (value 1G)
+      (value 1M)
       (datasheet ~)
       (libsource (lib Device) (part R) (description Resistor))
       (sheetpath (names /) (tstamps /))

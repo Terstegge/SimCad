@@ -15,8 +15,8 @@
 // Low-level implementation of a inverting
 // Buffer.
 //
-#ifndef INCLUDE_INV_H_
-#define INCLUDE_INV_H_
+#ifndef _INCLUDE_INV_H_
+#define _INCLUDE_INV_H_
 
 #include "Gate.h"
 
@@ -26,10 +26,10 @@ public:
     INV(const std::string & name) : Gate<1>(name) {
     }
 
-    void calculate(ElementSet * eps) override {
+    void calculate(NetSet * nset) override {
         bool res = !(bool)this->p[1];
-        this->OUT.setDrvBool(res, eps);
+        this->setOUTbool(res, nset);
     }
 };
 
-#endif // INCLUDE_INV_H_
+#endif // _INCLUDE_INV_H_

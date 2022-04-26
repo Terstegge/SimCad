@@ -1,38 +1,78 @@
 ///////////////////////////////////////////////
-//
 //  This file is part of
 //   ____  ____  ___  ____  ___  ____  __  __
 //  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
 //   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
 //  (____/(____)\___/(____)(___/(____)(_/\/\_)
-//
 //  A simulation package for digital circuits
-//
-//  (c) 2020  A. Terstegge
-//
+//  (c) 2021  A. Terstegge
 ///////////////////////////////////////////////
-//
 // The class 'Pin' models a single pin (either as part
-// of a circuit or stand-alone). It has a driving state,
-// and is associated to a Net (a set of Pins which are
-// connected to each other). A Pin has an update function,
-// which is called whenever the associated Net changes its
-// value.
+// of an electronic component  or stand-alone). It is
+// always associated to a Net (a new Net is created in
+// the constructor). A Pin can either be an ideal voltage
+// source or a Pin driving a specific I(U) characteristic.
+// A Pin can have an update-function, which is always
+// called when the associated Net changes its state.
 //
 #ifndef _INCLUDE_PIN_H_
 #define _INCLUDE_PIN_H_
 
-#include "Named.h"
+// DIGISIM includes
 #include "Net.h"
-#include "Config.h"
-#include "Element.h"
-
-#include <iostream>
+// Base classes
+#include "Named.h"
+// Standard includes
 #include <functional>
 #include <string>
 
-class Pin : public Named, public Element {
+// Type definition for a I(U) characteristic
+using IFUNC = std::function<double(double)>;
+
+class Pin : public Named {
+
+	// Net is our friend and might change _netPtr or _Uw.
+    friend class Net;
+    // TwoPole is our friend and might change _Idrv.
+    friend class TwoPole;
+    // Gate is our friend and might change _Idrv, _Uvs, _isVS.
+    template<int N> friend class Gate;
+    friend class ISOURCE;
+
+private:
+    // Pointer to the associated Net. Note that this pointer is always
+    // valid, because a Pin will always create its own Net in the CTOR.
+    // When Pins are (electrically) connected, this pointer might change.
+    // _netPtr is only changed internally (e.g. with the connect_to()
+    // function), so there is no public setter.
+    Net * _netPtr;
+
+    // Attributes used if this Pin is a voltage source. In this case,
+    // the attribute _isVS will be set to true, and _Uvs will store the
+    // voltage value. _Idrv will not be used.
+    double  _Uvs;
+    bool    _isVS;
+
+    // The I(U) driving function, which describes the contribution of
+    // this Pin within its Net. If the function is not set, the Pin is
+    // either not connected or a voltage source.
+    IFUNC   _Idrv;
+
+    // Helper method to set _Idrv and to update the Net afterwards.
+    void setIDrv(IFUNC f, NetSet * nset = nullptr);
+
+    // The associated update function, which is called when the associated
+    // Net changes its voltage/state.
+    UFUNC   _update;
+
+    // This attribute stores the voltage of the associated Net _without_
+    // incorporating the contribution of this Pin (_Idrv). Uw is only used
+    // internally (there are no public getters/setters), and is set in the
+    // Net::update() method.
+    double  _Uw;
+
 public:
+
     // Pin constructor.
     Pin(const std::string & name="");
 
@@ -40,34 +80,43 @@ public:
     Pin & operator = (const Pin & p) = delete;
     Pin              (const Pin & p) = delete;
 
-    // Connect two pins. If both Pins are members of
-    // the same Net, this method has no effect.
+    // Electrically connect two pins. If both Pins are members of the
+    // same Net, this method has no effect. Otherwise, all Pins of the
+    // Net which contains p will be merged into the Net of this Pin.
     void connect_to(Pin & p);
 
-    // Methods modifying the driving state
-    //////////////////////////////////////
-    void setDrvState(double u, double g, double i, ElementSet *esp);
+    // Getter for the Net pointer
+    inline Net * getNet() const { return _netPtr; }
 
-    inline void setDrvVS(double u, ElementSet *esp = nullptr) {
-        setDrvState(u, INF, 0, esp);
+    // Set this Pin to drive an ideal Voltage Source (VS).
+    void setDrvVS(double u, NetSet * nset = nullptr);
+
+    // Set this Pin to drive an ideal Voltage Source with either
+    // SUPPLY_VOLTAGE or 0 volts. This method is used in digital circuits.
+    void setDrvBool(bool b, NetSet * nset = nullptr);
+
+    // Set this Pin to a 'not connected' state (NC).
+    void setDrvNC(NetSet * nset = nullptr);
+
+    // Getters to check if Pin is driving a voltage source
+    // or is not connected.
+    inline bool isDrvVS() const { return  _isVS; }
+    inline bool isDrvNC() const { return !_isVS && !_Idrv; }
+
+    // Operators for easily setting a voltage source by assigning
+    // a double or boolean value.
+    inline void operator = (double f) { setDrvVS(f);   }
+    inline void operator = (bool b)   { setDrvBool(b); }
+
+    // Attach a processing function to this Pin. This method will be
+    // called when the associated Net has changed its value/state.
+    inline void attach(UFUNC u) {
+        _update = u;
     }
-    inline void setDrvNC(ElementSet * esp) {
-        setDrvState(0.0, 0.0, 0.0, esp);
-    }
-    inline void setDrvBool(bool b, ElementSet * esp) {
-        setDrvVS(b ? SUPPLY_VOLTAGE : 0.0, esp);
-    }
-    inline void operator = (double f) {
-        setDrvVS(f);
-    }
-//    inline void operator = (double f) {
-//        setDrvVS((double)f);
-//    }
-    inline void operator = (bool b) {
-        setDrvBool(b, nullptr);
-    }
-    inline bool isDrvNC() const {
-        return (Gd == 0.0) && (Id == 0.0);
+
+    // Safely call the _update() method.
+    inline void update(NetSet * nset) {
+        if (_update) _update(nset);
     }
 
     // Methods checking the Net state
@@ -78,114 +127,25 @@ public:
     inline bool isVS()      const { return _netPtr->isVS();  }
     inline operator bool () const { return _netPtr->operator bool(); }
 
-    inline double U() const { return _netPtr->U; }
-
-    // Methods dealing with the NET state Without the Pin's contribution
-    inline double Uw() const {
-        double gw = Gw();
-        if (_netPtr->Gi == INF || gw == 0.0) {
-            return _netPtr->U;
-        } else {
-            return (_netPtr->U * _netPtr->Gi - Ud * Gd - Id) / gw;
-        }
-    }
-
-    inline double Gw() const {
-        if (Gd == INF) {
-            return _netPtr->Gs;
-        } else {
-            return _netPtr->Gi - Gd;
-        }
-    }
-
-    inline double Iw() const {
-        return Gw() ? 0.0 : _netPtr->Id;
-    }
-
-
-    double I() const {
-        if (Gd == INF) {
-            double i = 0;
-            int cnt = 0;
-            for (Pin * p : _netPtr->_pins) {
-                if (p->Gd == INF) {
-                    cnt++;
-                } else {
-                    i += p->I();
-                }
-            }
-            return -i; // / cnt;
-        } else {
-            return (_netPtr->U - Ud) * Gd - Id;
-        }
-    }
-
-
-
-
-
-
-
-
-
-    // Getter/Setter for Net pointer
-    inline NetPtr getNetPtr() const { return _netPtr; }
-    inline void setNetPtr(NetPtr p) { _netPtr = p;    }
-
-    // Getter/Setter for Part pointer
-//    inline Part * getPartPtr() const { return _partPtr; }
-//    inline void setPartPtr(Part * p) { _partPtr = p;    }
-
-    // Attach a processing function to this pin
-    // (usually the input pins of a circuit).
-    inline void attach(std::function<void(ElementSet *)> u) {
-        _update = u;
-    }
-
-    // Helper-method to safely call the _update() method.
-    // When the State of the connected Net changes, this
-    // Net will call this method to trigger a new calculation
-    // of some (logic) function.
-    inline void update(ElementSet * esp) override {
-        if (_update) _update(esp);
-    }
-
-    // Read-only attributes for easy access
-    const double & Ud;
-    const double & Gd;
-    const double & Id;
-
-    inline void setUd(double u) { _Ud = u; }
-    inline void setGd(double g) { _Gd = g; }
-    inline void setId(double i) { _Id = i; }
+    // Electrical values
+    ////////////////////
+    double U() const;
+    double R() const;
+    double I() const;
 
     // Stream output operator
     friend std::ostream & operator << (std::ostream & os, const Pin & p);
 
-    // Flag controlling the stream output.
-    // If set, the driving state is used.
+    // Flag controlling the stream output. If set, the driving state
+    // is used in the <<-operator for the next operation. The flag is
+    // then reset automatically.
     static bool _show_drive_state;
-
-private:
-
-    NetPtr  _netPtr;    // The associated Net
-//    Part *  _partPtr;   // Pointer to the related Part
-
-    // The associated update function, which is called
-    // when the associated Net changes its state.
-    std::function<void(ElementSet *)> _update;
-
-    // Every Pin provides the values Ud, Gd and Id,
-    // the Pin 'driving' values.
-    double _Ud;          // Driving voltage
-    double _Gd;          // Driving conductivity
-    double _Id;          // Driving current
 };
 
 // Manipulator to output the driving state
 inline std::ostream &drive(std::ostream &out) {
-    Pin::_show_drive_state = true;
-    return out;
+	Pin::_show_drive_state = true;
+	return out;
 }
 
 #endif // _INCLUDE_PIN_H_
