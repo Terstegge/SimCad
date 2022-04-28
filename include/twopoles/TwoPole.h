@@ -15,9 +15,10 @@
 #include <memory>
 #include "Pin.h"
 #include "Narray.h"
+
 class TwoPole : public Named {
 public:
-    // TwoPole Pins, only p[1] and p[2] are used
+	// TwoPole Pins, only p[1] and p[2] are used
     Narray<Pin, 3> p;
     TwoPole(const std::string & name) : Named(name), NAME(p) {
         // Attach handlers
@@ -60,9 +61,12 @@ public:
             }
         });
     }
+
     virtual ~TwoPole() {
     }
+
     virtual double Ichar(double) = 0;
+
     void update() {
         int round = 0;
         NetSet set1, set2;

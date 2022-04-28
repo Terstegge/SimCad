@@ -36,6 +36,7 @@ public:
     Pin &    GND;
     Pin &    OUT;
     bool     on;    // true if power is switched on
+
     Gate(const std::string & name)
         : Named(name), NAME(p), VCC(p[N+2]), GND(p[0]), OUT(p[N+1]), on(false)
     {
@@ -73,7 +74,7 @@ public:
 
     // The method to calculate the result of a specific gate.
     // Has to be provided by the concrete gate classes.
-    virtual void calculate(NetSet * usp) = 0;
+    virtual void calculate(NetSet * nset) = 0;
 
     // Utility method to set the digital OUT Pin
     void setOUTbool(bool b, NetSet *nset) {
@@ -93,7 +94,6 @@ public:
             }
         }
         nset->insert(OUT._netPtr);
-//        usp->push_back(OUT._netPtr);
     }
 
     void setOUTnc(NetSet *usp) {
@@ -101,7 +101,6 @@ public:
         VCC._Idrv = nullptr;
         GND._Idrv = nullptr;
         usp->insert(OUT._netPtr);
-//        usp->push_back(OUT._netPtr);
     }
 
     friend std::ostream & operator << (std::ostream & os, const Gate<N> & rhs) {
