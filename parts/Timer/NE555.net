@@ -1,15 +1,15 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/kicad/NE555P/NE555P.sch)
-    (date "Do 25 Feb 2021 22:05:52 CET")
-    (tool "Eeschema 5.1.7-a382d34a8~88~ubuntu16.04.1")
+    (source /home/andreas/github/DIGISIM/parts/Timer/NE555.sch)
+    (date "Fr 29 Apr 2022 11:27:32 CEST")
+    (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
         (title)
         (company)
         (rev)
         (date)
-        (source NE555P.sch)
+        (source NE555.sch)
         (comment (number 1) (value ""))
         (comment (number 2) (value ""))
         (comment (number 3) (value ""))
@@ -130,7 +130,7 @@
         (pin (num 5) (name V-) (type power_in)))))
   (libraries
     (library (logical DIGISIM)
-      (uri /home/andreas/github/DIGISIM/kicad/NE555P/../lib/DIGISIM.lib))
+      (uri /home/andreas/github/DIGISIM/parts/Timer/../lib/DIGISIM.lib))
     (library (logical Device)
       (uri /usr/share/kicad/library/Device.lib))
     (library (logical pspice)
