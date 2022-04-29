@@ -15,8 +15,7 @@ int main() {
         r2r.VCC = SUPPLY_VOLTAGE;
 
         // Reset 74LS161
-        r2r.SW_CLR1.setOn(true);
-        r2r.SW_CLR1.setOn(false);
+        r2r.SW_CLR1.toggle();
 
         // Iterate over all 16 voltage steps
         cout << r2r.Q << "  " << r2r.OUT << endl;
