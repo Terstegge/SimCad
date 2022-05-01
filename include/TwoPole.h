@@ -22,42 +22,42 @@ public:
     Narray<Pin, 3> p;
     TwoPole(const std::string & name) : Named(name), NAME(p) {
         // Attach handlers
-        p[1].attach([this](NetSet * usp) {
+        p[1].attach([this](NetSet * nset) {
             if (p[1].isVS()) {
                 p[2]._Idrv = [&] (double U) -> double {
                     return Ichar(U - p[1].U());
                 };
             } else {
                 p[2]._Idrv =  [&] (double U) -> double {
-//                    return Ichar()(U - p[1].U());
+//                    return Ichar(U - p[1].U());
                     Net * net = p[1].getNet();
                     return 1.0 / (1.0/net->Isum(U, &p[1])
                                 + 1.0/Ichar(U - p[1]._Uw) );
                 };
             }
             if (!p[1].isVS() && p[2].isVS()) {
-                p[2].update(usp);
+                p[2].update(nset);
             } else {
-                usp->insert(p[2].getNet());
+                nset->insert(p[2].getNet());
             }
         });
-        p[2].attach([this](NetSet * usp) {
+        p[2].attach([this](NetSet * nset) {
             if (p[2].isVS()) {
                 p[1]._Idrv = [&] (double U) -> double {
                     return Ichar(U - p[2].U());
                 };
             } else {
                 p[1]._Idrv = [&] (double U) -> double {
-//                    return characteristic()(U - p[2].U());
+//                    return Ichar(U - p[2].U());
                     Net * net = p[2].getNet();
                     return 1.0 / (1.0/net->Isum(U, &p[2])
                                 + 1.0/Ichar(U - p[2]._Uw) );
                 };
             }
             if (p[1].isVS() && !p[2].isVS()) {
-                p[1].update(usp);
+                p[1].update(nset);
             } else {
-                usp->insert(p[1].getNet());
+                nset->insert(p[1].getNet());
             }
         });
     }
@@ -65,10 +65,12 @@ public:
     virtual ~TwoPole() {
     }
 
+    // The I(U) characteristic of the twopole. The voltage
+    // U is calculated as U = p[2].U - p[1].U. This is important
+    // for parts with non-linar behaviour.
     virtual double Ichar(double) = 0;
 
     void update() {
-        int round = 0;
         NetSet set1, set2;
         p[1].update(&set1);
         p[2].update(&set1);
