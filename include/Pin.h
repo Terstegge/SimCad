@@ -65,12 +65,6 @@ private:
     // Net changes its voltage/state.
     UFUNC   _update;
 
-    // This attribute stores the voltage of the associated Net _without_
-    // incorporating the contribution of this Pin (_Idrv). Uw is only used
-    // internally (there are no public getters/setters), and is set in the
-    // Net::update() method.
-    double  _Uw;
-
 public:
 
     // Pin constructor.

@@ -14,36 +14,34 @@ int main() {
     try {
         // Power up
         cout << "Power up" << endl;
-        op.GND      =  SUPPLY_GROUND;
-        op.VCC      =  SUPPLY_VOLTAGE;
-        op.plus_5V  = +SUPPLY_VOLTAGE;
-        op.minus_5V = -SUPPLY_VOLTAGE;
+        op.minus_5V = -5.0;
+        op.plus_5V  = +5.0;
+        op.GND      =  0.0;
 
-        op.C1.start();
-        op.C2.start();
-
-        cout << "Setting Iplus" << endl;
-        for (double u = -5; u <= 5; u += 0.2) {
-            op.Iminus = u;
-            cout << op.Iminus.Ud << " -> " << op.OUT.U() << endl;
+        cout << "Voltage follower:" << endl;
+        for (double u=-2.0; u <= 2.1; u += 0.5) {
+        	op.Voltage_Follower_IN = u;
+        	cout << u << " V -> " << op.Voltage_Follower_OUT.U() << " V" << endl;
         }
-        //op.Iminus = 2.6;
+        cout << endl;
 
-        for(int i=0; i < 10000; ++i) {
-//            cout << op.voltage.U() << " " << op.VC.U() << " " << op.Q.U() << " " << op.DIS.U() << " " << op.C2.p[2].I() << endl ;
-//            cout << drive << op.C2.p[1] << endl;
-//            cout << drive << op.C2.p[2] << endl;
-            cout << i << " " << op.Q.U() << endl;
-            sleep_for(std::chrono::milliseconds(10));
+        cout << "Non inverting amplifier (x 2):" << endl;
+        for (double u=-2.0; u <= 2.1; u += 0.5) {
+        	op.Non_Inv_Ampl_IN = u;
+        	cout << u << " V -> " << op.Non_Inv_Ampl_OUT.U() << " V" << endl;
         }
+        cout << endl;
 
-        op.C1.stop();
-        op.C2.stop();
+        cout << "Inverting amplifier (x 2):" << endl;
+        for (double u=-2.0; u <= 2.1; u += 0.5) {
+        	op.Inv_Ampl_IN = u;
+        	cout << u << " V -> " << op.Inv_Ampl_OUT.U() << " V" << endl;
+        }
+        cout << endl;
+
 
     } catch (short_circuit_exception &e) {
         cerr << e << endl;
     }
-
-    cout << "Hallo" << endl;
 }
 

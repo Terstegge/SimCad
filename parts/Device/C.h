@@ -28,7 +28,7 @@ using namespace std::this_thread;
 class C : public TwoPole {
 public:
     C(const std::string & name, double c) : TwoPole(name), _cap(c), _Q(0), _U(0), _running(false) {
-        _G = 0;
+        _R = 0.01;
     }
 
     ~C() {
@@ -38,7 +38,6 @@ public:
     void start() {
         if (!_running) {
             _running = true;
-            _G = 100;
             update();
             _t = thread([this]() {
                 auto now = system_clock::now();
@@ -64,11 +63,8 @@ public:
         }
     }
 
-    void p1_callback() override {
-        p[2].setUd( p[2].Ud + _U);
-    }
-    void p2_callback() override {
-        p[1].setUd( p[1].Ud - _U);
+    double Ichar(double U) override {
+        return (U - _U) /_R;
     }
 
 private:
@@ -77,6 +73,7 @@ private:
     double  _cap;	// Capacity in F
     double  _Q;		// Current charge in As
     double  _U;		// Current voltage V
+    double  _R;
 
     thread  _t;
     bool    _running;

@@ -23,18 +23,9 @@ public:
     TwoPole(const std::string & name) : Named(name), NAME(p) {
         // Attach handlers
         p[1].attach([this](NetSet * nset) {
-            if (p[1].isVS()) {
-                p[2]._Idrv = [&] (double U) -> double {
-                    return Ichar(U - p[1].U());
-                };
-            } else {
-                p[2]._Idrv =  [&] (double U) -> double {
-//                    return Ichar(U - p[1].U());
-                    Net * net = p[1].getNet();
-                    return 1.0 / (1.0/net->Isum(U, &p[1])
-                                + 1.0/Ichar(U - p[1]._Uw) );
-                };
-            }
+            p[2]._Idrv = [&] (double U) -> double {
+                return Ichar(U - p[1].U());
+            };
             if (!p[1].isVS() && p[2].isVS()) {
                 p[2].update(nset);
             } else {
@@ -42,18 +33,9 @@ public:
             }
         });
         p[2].attach([this](NetSet * nset) {
-            if (p[2].isVS()) {
-                p[1]._Idrv = [&] (double U) -> double {
-                    return Ichar(U - p[2].U());
-                };
-            } else {
-                p[1]._Idrv = [&] (double U) -> double {
-//                    return Ichar(U - p[2].U());
-                    Net * net = p[2].getNet();
-                    return 1.0 / (1.0/net->Isum(U, &p[2])
-                                + 1.0/Ichar(U - p[2]._Uw) );
-                };
-            }
+            p[1]._Idrv = [&] (double U) -> double {
+                return -Ichar(p[2].U() - U);
+            };
             if (p[1].isVS() && !p[2].isVS()) {
                 p[1].update(nset);
             } else {
@@ -77,7 +59,9 @@ public:
         while (set1.size()) {
             set2.clear();
             for (Net * net : set1) {
+            	net->_mutex.lock();
                 net->update(&set2);
+                net->_mutex.unlock();
             }
             set1 = set2;
         }

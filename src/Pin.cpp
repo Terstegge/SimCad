@@ -19,7 +19,7 @@
 bool Pin::_show_drive_state = false;
 
 Pin::Pin(const std::string & name) : Named(name),
-    _Uvs(0.0), _isVS(false), _Uw(0.0)
+    _Uvs(0.0), _isVS(false)
 {
 	// Create a new Net and insert this Pin into it
     _netPtr = new Net(name);

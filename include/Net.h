@@ -19,6 +19,7 @@ using std::vector;
 #include <string>
 #include <iostream>
 #include <functional>
+#include <mutex>
 class Pin;
 class Net;
 
@@ -36,7 +37,10 @@ private:
     bool    _isVS;
     int     _drivers;
 
+
 public:
+    std::mutex _mutex;
+
     // Global counter for the number of Nets
     static int _no_nets;
     Net(const std::string & name) : Named(name),
@@ -95,6 +99,8 @@ public:
     inline double R() const {
         return U / Isum(U);
     }
+
+//    double R(Net *net=nullptr);
 
     inline double Rd() const {
         double dU = 0.2;

@@ -40,39 +40,39 @@ public:
           on(false), calc(false), upper(0), lower(0)
     {
         // Attach power signals
-        Vplus.attach( [this](NetSet * usp) {
+        Vplus.attach( [this](NetSet * nset) {
             on  = Vplus.isVS() && Vminus.isVS();
             if (on) {
-                calculate(usp);
+                calculate(nset);
             } else {
-                OUT.setDrvNC(usp);
+                OUT.setDrvNC(nset);
             }
         });
-        Vminus.attach( [this](NetSet * usp) {
+        Vminus.attach( [this](NetSet * nset) {
             on  = Vplus.isVS() && Vminus.isVS();
             if (on) {
-                calculate(usp);
+                calculate(nset);
             } else {
-                OUT.setDrvNC(usp);
+                OUT.setDrvNC(nset);
             }
         });
         // Attach input signal handlers
-        Iplus.attach([this](NetSet * usp) {
+        Iplus.attach([this](NetSet * nset) {
             if (on) {
-                calculate(usp);
+                calculate(nset);
             } else {
-                OUT.setDrvNC(usp);
+                OUT.setDrvNC(nset);
             }
         });
-        Iminus.attach([this](NetSet * usp) {
+        Iminus.attach([this](NetSet * nset) {
             if (on) {
-                calculate(usp);
+                calculate(nset);
             } else {
-                OUT.setDrvNC(usp);
+                OUT.setDrvNC(nset);
             }
         });
     }
-    void calculate(NetSet * usp) {
+    void calculate(NetSet * nset) {
         if (!calc) {
             calc = true;
             upper = Vplus.U();
@@ -81,6 +81,7 @@ public:
             diff *= 1e5;
             if (diff > Vplus.U())  diff = Vplus.U();
             if (diff < Vminus.U()) diff = Vminus.U();
+            // Start a new update on the OUT pin
             OUT = diff;
             calc = false;
         } else {
@@ -90,7 +91,7 @@ public:
 //            if (diff == 0) return;
             if (diff < 0.0) upper = OUT.U();
                 else        lower = OUT.U();
-            OUT = (upper + lower) / 2;
+            OUT.setDrvVS((upper + lower) / 2, nset);
         }
     }
 private:

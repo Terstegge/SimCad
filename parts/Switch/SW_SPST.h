@@ -27,7 +27,7 @@ public:
     }
 
     void setOn(bool b) {
-        _R = b ? 0.001 : INF;
+        _R = b ? 0 : INF;
         update();
     }
 

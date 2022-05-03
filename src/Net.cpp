@@ -28,7 +28,7 @@ int Net::sgn(double v) {
 
 double Net::zero(std::function<double(double)> f) {
     int k = 0;
-    double low = 0.0;
+    double low = -5.0;
     double high = 5.0;
     double f_high = f(high);
     double f_low  = f(low);
@@ -79,7 +79,7 @@ void Net::update() {
 
 //    if (getName().find("__R") != std::string::npos)
 //        std::cout << "update Net " << getName() << std::endl;
-
+	_mutex.lock();
 	NetSet set1, set2;
     update(&set1);
     while (set1.size()) {
@@ -89,10 +89,12 @@ void Net::update() {
         }
         set1 = set2;
     }
+    _mutex.unlock();
 }
 
 void Net::update(NetSet * usp) {
-	//    std:: cout << "update " << getName() << std::endl;
+
+	// std:: cout << "update " << getName() << std::endl;
 	Pin * ivs_ptr {nullptr};            // Pointer to first ideal voltage source
 	bool isnc = true;
 	_drivers = 0;
@@ -116,15 +118,15 @@ void Net::update(NetSet * usp) {
 			_drivers++;
 		}
 	}
-	if (!ivs_ptr  && _drivers) {
-		for (Pin * p : _pins) {
-			double ud = zero( [&](double U) -> double { return Isum(U, p); } );
-			if (p->_Uw != ud) {
-				p->_Uw = ud;
-				p->update(usp);
-			}
-		}
-	}
+//	if (/*!ivs_ptr  &&*/ _drivers) {
+//		for (Pin * p : _pins) {
+//			double ud = zero( [&](double U) -> double { return Isum(U, p); } );
+//			if (p->_Uw != ud) {
+//				p->_Uw = ud;
+//				p->update(usp);
+//			}
+//		}
+//	}
 
 	double u {0};
 	bool   vs{false};
@@ -162,6 +164,16 @@ double Net::Isum(double U, Pin * p) const {
     }
     return res;
 }
+
+//double Net::R(Net *net=nullptr) {
+//	Net *n = net ? net : this;
+//	double R = 0.0;
+//	for (Pin * pin : _pins) {
+//		if (!pin->isDrvNC() && !pin->isDrvVS()) {
+//			G +=
+//		}
+//	}
+//}
 
 ostream & operator << (ostream & os, const Net * net)
 {

@@ -12,10 +12,10 @@
 #//
 #
 # Configuration section
-CXX       =  g++  # or clang++
-CXXFLAGS  = -std=c++17 -g
-BUILD_DIR = $(DIGISIM_DIR)/BUILD
-GTEST_DIR = /usr/local/gtest-1.10.0
+CXX           =  g++  # or clang++
+CXXFLAGS      = -std=c++17 -g
+LIB_BUILD_DIR = $(DIGISIM_DIR)/BUILD
+GTEST_DIR     = /usr/local/gtest-1.10.0
 
 # Utility to control makefile output
 # (detailed output if VERBOSE defined).
@@ -32,7 +32,7 @@ GTEST_LIB_OPTS    = -L$(GTEST_DIR)/lib -lgtest -lgtest_main -pthread
 # Net2Sim 
 NET2SIM_DIR       = $(DIGISIM_DIR)/Net2Sim
 NET2SIM_SRCS      = $(wildcard $(NET2SIM_DIR)/*.cpp)
-NET2SIM_OBJS      = $(foreach obj, $(NET2SIM_SRCS), $(BUILD_DIR)/$(notdir $(obj)).o)
+NET2SIM_OBJS      = $(foreach obj, $(NET2SIM_SRCS), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
 NET2SIM_BIN       = $(NET2SIM_DIR)/Net2Sim
 SRC_DIRS         += $(NET2SIM_DIR)
 
@@ -44,8 +44,8 @@ KICAD_MODELS      = $(KICAD_NET_FILES:.net=)
 MODELS_H_FILES    = $(addsuffix .h,   $(KICAD_MODELS))
 MODELS_SRC_FILES  = $(addsuffix .cpp, $(KICAD_MODELS))
 MODELS_IMPL_FILES = $(wildcard $(PARTS_DIR)/*/*.cpp)
-MODELS_OBJS       = $(foreach obj, $(MODELS_SRC_FILES),  $(BUILD_DIR)/$(notdir $(obj)).o)
-MODELS_OBJS      += $(foreach obj, $(MODELS_IMPL_FILES), $(BUILD_DIR)/$(notdir $(obj)).o)
+MODELS_OBJS       = $(foreach obj, $(MODELS_SRC_FILES),  $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
+MODELS_OBJS      += $(foreach obj, $(MODELS_IMPL_FILES), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
 SRC_DIRS         += $(PARTS_SUBDIRS)
 
 # DigiSim library
@@ -53,7 +53,7 @@ DIGISIM_SRC_DIR   = $(DIGISIM_DIR)/src
 DIGISIM_INC_DIR   = $(DIGISIM_DIR)/include
 DIGISIM_SRC_FILES = $(wildcard $(DIGISIM_SRC_DIR)/*.cpp)
 DIGISIM_OBJS      = $(MODELS_OBJS)
-DIGISIM_OBJS     += $(foreach obj, $(DIGISIM_SRC_FILES), $(BUILD_DIR)/$(notdir $(obj)).o)
+DIGISIM_OBJS     += $(foreach obj, $(DIGISIM_SRC_FILES), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
 DIGISIM_LIB       = $(DIGISIM_DIR)/libDIGISIM.a
 DIGISIM_LIB_OPTS  = -L$(DIGISIM_DIR) -lDIGISIM -pthread
 SRC_DIRS         += $(DIGISIM_SRC_DIR)
@@ -61,7 +61,7 @@ SRC_DIRS         += $(DIGISIM_SRC_DIR)
 # Tests
 TEST_DIR          = $(DIGISIM_DIR)/tests
 TEST_SRCS         = $(wildcard $(TEST_DIR)/*.cpp)
-TEST_OBJS         = $(foreach obj, $(TEST_SRCS), $(BUILD_DIR)/$(notdir $(obj)).o)
+TEST_OBJS         = $(foreach obj, $(TEST_SRCS), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
 TEST_BIN          = $(TEST_DIR)/RunTests
 SRC_DIRS         += $(TEST_DIR)
 
@@ -99,15 +99,15 @@ tests: all $(TEST_BIN)
 # Rule to create build directories
 .PHONY: build_dir
 build_dir :
-	$(HIDE) mkdir -p $(BUILD_DIR)
+	$(HIDE) mkdir -p $(LIB_BUILD_DIR)
 ifneq ($(BUILD_DIR),)
 	$(HIDE) mkdir -p $(BUILD_DIR)
 endif
 
 # Compile rule for DigiSim library
 define compileRulesLib
-.PRECIOUS: $(BUILD_DIR)/%.cpp.o
-$(BUILD_DIR)/%.cpp.o : $(1)/%.cpp
+.PRECIOUS: $(LIB_BUILD_DIR)/%.cpp.o
+$(LIB_BUILD_DIR)/%.cpp.o : $(1)/%.cpp
 	@echo "C++  $$(notdir $$<)"
 	$(HIDE) $$(CXX) $$(CXXFLAGS) $$(INCLUDES) -c -o $$@ $$< -MMD
 endef
@@ -168,7 +168,7 @@ $(TARGET_BIN_FILE) : $(TARGET_OBJS) $(DIGISIM_LIB)
 .PHONY: clean
 clean:
 ifeq ($(TARGET_BIN_FILE),)
-	$(HIDE) rm -rf $(BUILD_DIR)
+	$(HIDE) rm -rf $(LIB_BUILD_DIR)
 	$(HIDE) rm -f  $(NET2SIM_BIN) 
 	$(HIDE) rm -f  $(MODELS_H_FILES)
 	$(HIDE) rm -f  $(MODELS_SRC_FILES)

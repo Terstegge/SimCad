@@ -23,6 +23,7 @@ int main() {
             r2r.SW_CLK1.toggle();
             cout << r2r.Q << "  " << r2r.OUT << endl;
         }
+
     } catch (short_circuit_exception &e) {
         cerr << e << endl;
     }

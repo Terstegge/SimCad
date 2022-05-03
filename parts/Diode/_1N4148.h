@@ -9,33 +9,16 @@
 ///////////////////////////////////////////////
 //
 // Low-level implementation of a Si diode
-// (forward voltage approx 0.7V)
+// (forward voltage 0.7V at 10mA)
 //
 #ifndef _INCLUDE_1N4148_H_
 #define _INCLUDE_1N4148_H_
 
-#include "TwoPole.h"
-#include <iostream>
-#include <cmath>
+#include "DIODE.h"
 
-using namespace std;
-
-class _1N4148 : public TwoPole {
+class _1N4148 : public DIODE {
 public:
-    Pin & A, & C;   // References for Anode and Cathode
-    _1N4148(const string & name="") : TwoPole(name), C(p[1]), A(p[2]) {
-        Ut = 0.035;
-        Is = 1e-10;
-    }
-    double Ichar(double U) override {
-        // Shockley equation
-        return Is * (exp(U / Ut) -1);
-    }
-
-protected:
-    // Diode configuration
-    double Ut;  // 0.025V * [1...2]
-    double Is;  // 10e-6...10e-12
+    _1N4148(const string & name="") : DIODE(name, 0.7) { }
 };
 
-#endif // INCLUDE_1N4148_H_
+#endif // _INCLUDE_1N4148_H_

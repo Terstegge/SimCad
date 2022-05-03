@@ -353,4 +353,10 @@ F 3 "~" H 6850 2875 50  0001 C CNN
 	1    6850 2675
 	0    1    1    0   
 $EndComp
+Wire Wire Line
+	6225 4175 6225 4475
+Wire Wire Line
+	6225 4475 6400 4475
+Text Label 6400 4475 0    50   ~ 0
+Z
 $EndSCHEMATC

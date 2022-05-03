@@ -45,18 +45,18 @@ public:
         E.connect_to(_R_ce.p[2]);
 
         // Attach handlers
-        B.attach( [this](ElementSet * esp) {
-            calculate();
+        B.attach( [this](NetSet * nset) {
+            calculate(nset);
         });
-        E.attach( [this](ElementSet * esp) {
-            calculate();
+        E.attach( [this](NetSet * nset) {
+            calculate(nset);
         });
-        C.attach( [this](ElementSet * esp) {
-            calculate();
+        C.attach( [this](NetSet * nset) {
+            calculate(nset);
         });
     }
 
-    void calculate() {
+    void calculate(NetSet * nset) {
         if (!calc) {
             calc = true;
             double Ib = _D_be.A.I();
@@ -66,11 +66,11 @@ public:
             double Ice = _R_ce.p[1].I();
 
             if (Ice < 0.0) {
-                _R_ce.setR(100000);
+                _R_ce._R = 100000;
             } else if (Ice <= Ice_max) {
-                _R_ce.setR(50);
+                _R_ce._R = 50;
             } else {
-                _R_ce.setR( Uce / Ice_max );
+                _R_ce._R = Uce / Ice_max;
             }
             _R_ce.update();
             calc = false;
@@ -81,13 +81,14 @@ public:
             if (fabs(Ice - Ice_max) < 1E-2) return;
 
             if (Ice < 0.0) {
-                _R_ce.setR(100000);
+                _R_ce._R = 100000;
             } else if (Ice <= Ice_max) {
-                _R_ce.setR(50);
+                _R_ce._R = 50;
             } else {
-                _R_ce.setR( Uce / Ice_max );
+                _R_ce._R = Uce / Ice_max;
             }
-            _R_ce.update();
+            C.update(nset);
+            E.update(nset);
         }
     }
 

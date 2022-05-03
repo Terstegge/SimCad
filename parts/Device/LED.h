@@ -20,13 +20,12 @@
 #ifndef _INCLUDE_LED_H_
 #define _INCLUDE_LED_H_
 
-#include "_1N4148.h"
+#include "DIODE.h"
 
-class LED : public _1N4148 {
+class LED : public DIODE {
 public:
-    LED(const std::string & name="") : _1N4148(name) {
-    }
-    
+    LED(const std::string & name="") : DIODE(name, 2.0) { }
+
     inline bool on() {
         return A.I() > 0.005;
     }

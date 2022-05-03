@@ -11,5 +11,12 @@
 #///////////////////////////////////////////////
 #//
 # 
-DIGISIM_DIR = .
+DIGISIM_DIR = ../..
+BUILD_DIR   = BUILD
+
+TARGET_BIN_FILE = Diodes
+TARGET_NET_FILE = Diodes.net
+TARGET_SRC_DIRS = .
+TARGET_INC_DIRS = .
+
 include $(DIGISIM_DIR)/common.mk
