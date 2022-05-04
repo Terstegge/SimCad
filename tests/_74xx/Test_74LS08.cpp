@@ -1,10 +1,24 @@
+///////////////////////////////////////////////
+//
+//  This file is part of
+//     ___  ____  __  __  ___    __    ____
+//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//    (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation package for electronic circuits
+//
+//  (c) 2022  Andreas Terstegge
+//
+///////////////////////////////////////////////
+//
 #include "gtest/gtest.h"
 #include "TestUtils.h"
 #include "_74LS08.h"
 
 auto f_and = [](bool a, bool b) { return a && b; };
 
-TEST(Series_74, LS08)
+TEST(_74xx, LS08)
 {
     _74LS08 ic("74LS08");
 

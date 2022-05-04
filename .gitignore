@@ -1,4 +1,2 @@
-/kicad/gen/*
 /BUILD/
-/libDIGISIM.a
-/TODO
+/libSIMCAD.a

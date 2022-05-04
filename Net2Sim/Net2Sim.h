@@ -13,9 +13,9 @@
 ///////////////////////////////////////////////
 //
 // The Net2Sim application will read a KiCad-generated
-// Eeschema net-file, and convert it into a DigiSim
-// compatible C++ header file, which can be used for
-// a digital simulation of the original schematic.
+// Eeschema net-file, and convert it into a SimCad
+// compatible C++ class (*.h, *.cpp), which can be used
+// for a digital simulation of the original circuit.
 //
 #ifndef _NET2SIM_H_
 #define _NET2SIM_H_

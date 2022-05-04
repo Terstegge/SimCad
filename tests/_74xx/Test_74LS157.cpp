@@ -1,11 +1,25 @@
+///////////////////////////////////////////////
+//
+//  This file is part of
+//     ___  ____  __  __  ___    __    ____
+//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//    (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation package for electronic circuits
+//
+//  (c) 2022  Andreas Terstegge
+//
+///////////////////////////////////////////////
+//
 #include "gtest/gtest.h"
 #include "TestUtils.h"
-#include "_74LS257.h"
+#include "_74LS157.h"
 #include "BusRef.h"
 
-TEST(Series_74, LS257)
+TEST(_74xx, LS157)
 {
-    _74LS257 ic("74LS257");
+    _74LS157 ic("74LS157");
 
     // Power up
     ASSERT_TRUE( TestUtils::test_power_up16(ic.p) );
@@ -30,10 +44,7 @@ TEST(Series_74, LS257)
                     if (nE == LOW) {
                         ASSERT_TRUE( Z == ((s & 1) ? i1 : i0) );
                     } else {
-                        ASSERT_TRUE( ic.p[4].isNC() );
-                        ASSERT_TRUE( ic.p[7].isNC() );
-                        ASSERT_TRUE( ic.p[12].isNC() );
-                        ASSERT_TRUE( ic.p[9].isNC() );
+                        ASSERT_TRUE( Z == 0);
                     }
                 }
             }

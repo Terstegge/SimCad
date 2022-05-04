@@ -1,10 +1,24 @@
+///////////////////////////////////////////////
+//
+//  This file is part of
+//     ___  ____  __  __  ___    __    ____
+//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//    (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation package for electronic circuits
+//
+//  (c) 2022  Andreas Terstegge
+//
+///////////////////////////////////////////////
+//
 #include "gtest/gtest.h"
 #include "TestUtils.h"
 #include "_74LS86.h"
 
 auto f_xor = [](bool a, bool b) { return a ^ b; };
 
-TEST(Series_74, LS86)
+TEST(_74xx, LS86)
 {
     _74LS86 ic("74LS86");
 

@@ -1,9 +1,23 @@
+///////////////////////////////////////////////
+//
+//  This file is part of
+//     ___  ____  __  __  ___    __    ____
+//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//    (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation package for electronic circuits
+//
+//  (c) 2022  Andreas Terstegge
+//
+///////////////////////////////////////////////
+//
 #include "gtest/gtest.h"
 #include "TestUtils.h"
 #include "_74LS283.h"
 #include "BusRef.h"
 
-TEST(Series_74, LS283)
+TEST(_74xx, LS283)
 {
     _74LS283 ic("74LS283");
 

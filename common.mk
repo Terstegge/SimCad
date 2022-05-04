@@ -1,12 +1,14 @@
 #///////////////////////////////////////////////
 #//
 #//  This file is part of
-#//   ____  ____  ___  ____  ___  ____  __  __
-#//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-#//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-#//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+#//     ___  ____  __  __  ___    __    ____
+#//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+#//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+#//    (___/(____)(_/\/\_)\___)(__)(__)(____/
 #//
-#//  (c) 2020  A. Terstegge
+#//  A simulation package for electronic circuits
+#//
+#//  (c) 2022  Andreas Terstegge
 #//
 #///////////////////////////////////////////////
 #//
@@ -14,7 +16,7 @@
 # Configuration section
 CXX           =  g++  # or clang++
 CXXFLAGS      = -std=c++17 -g
-LIB_BUILD_DIR = $(DIGISIM_DIR)/BUILD
+LIB_BUILD_DIR = $(SIMCAD_DIR)/BUILD
 GTEST_DIR     = /usr/local/gtest-1.10.0
 
 # Utility to control makefile output
@@ -30,14 +32,14 @@ GTEST_INC         = $(GTEST_DIR)/googletest/include/
 GTEST_LIB_OPTS    = -L$(GTEST_DIR)/lib -lgtest -lgtest_main -pthread
 
 # Net2Sim 
-NET2SIM_DIR       = $(DIGISIM_DIR)/Net2Sim
+NET2SIM_DIR       = $(SIMCAD_DIR)/Net2Sim
 NET2SIM_SRCS      = $(wildcard $(NET2SIM_DIR)/*.cpp)
 NET2SIM_OBJS      = $(foreach obj, $(NET2SIM_SRCS), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
 NET2SIM_BIN       = $(NET2SIM_DIR)/Net2Sim
 SRC_DIRS         += $(NET2SIM_DIR)
 
 # KiCad Parts
-PARTS_DIR         = $(DIGISIM_DIR)/parts
+PARTS_DIR         = $(SIMCAD_DIR)/parts
 PARTS_SUBDIRS     = $(wildcard $(PARTS_DIR)/*)
 KICAD_NET_FILES   = $(wildcard $(PARTS_DIR)/*/*.net)
 KICAD_MODELS      = $(KICAD_NET_FILES:.net=)
@@ -48,22 +50,23 @@ MODELS_OBJS       = $(foreach obj, $(MODELS_SRC_FILES),  $(LIB_BUILD_DIR)/$(notd
 MODELS_OBJS      += $(foreach obj, $(MODELS_IMPL_FILES), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
 SRC_DIRS         += $(PARTS_SUBDIRS)
 
-# DigiSim library
-DIGISIM_SRC_DIR   = $(DIGISIM_DIR)/src
-DIGISIM_INC_DIR   = $(DIGISIM_DIR)/include
-DIGISIM_SRC_FILES = $(wildcard $(DIGISIM_SRC_DIR)/*.cpp)
-DIGISIM_OBJS      = $(MODELS_OBJS)
-DIGISIM_OBJS     += $(foreach obj, $(DIGISIM_SRC_FILES), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
-DIGISIM_LIB       = $(DIGISIM_DIR)/libDIGISIM.a
-DIGISIM_LIB_OPTS  = -L$(DIGISIM_DIR) -lDIGISIM -pthread
-SRC_DIRS         += $(DIGISIM_SRC_DIR)
+# SimCad library
+SIMCAD_SRC_DIR   = $(SIMCAD_DIR)/src
+SIMCAD_INC_DIR   = $(SIMCAD_DIR)/include
+SIMCAD_SRC_FILES = $(wildcard $(SIMCAD_SRC_DIR)/*.cpp)
+SIMCAD_OBJS      = $(MODELS_OBJS)
+SIMCAD_OBJS     += $(foreach obj, $(SIMCAD_SRC_FILES), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
+SIMCAD_LIB       = $(SIMCAD_DIR)/libSIMCAD.a
+SIMCAD_LIB_OPTS  = -L$(SIMCAD_DIR) -lSIMCAD -pthread
+SRC_DIRS         += $(SIMCAD_SRC_DIR)
 
 # Tests
-TEST_DIR          = $(DIGISIM_DIR)/tests
-TEST_SRCS         = $(wildcard $(TEST_DIR)/*.cpp)
+TEST_DIR          = $(SIMCAD_DIR)/tests
+TEST_SUBDIRS      = $(wildcard $(TEST_DIR)/*)
+TEST_SRCS         = $(wildcard $(TEST_DIR)/*/*.cpp)
 TEST_OBJS         = $(foreach obj, $(TEST_SRCS), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
-TEST_BIN          = $(TEST_DIR)/RunTests
-SRC_DIRS         += $(TEST_DIR)
+TEST_BIN          = $(SIMCAD_DIR)/RunTests
+SRC_DIRS         += $(TEST_SUBDIRS)
 
 # User target
 TARGET_SRC_DIRS  += $(dir $(TARGET_NET_FILE))
@@ -72,9 +75,9 @@ TARGET_SRC_FILES += $(foreach dir, $(TARGET_SRC_DIRS), $(wildcard $(dir)/*.cpp))
 TARGET_OBJS       = $(foreach obj, $(TARGET_SRC_FILES), $(BUILD_DIR)/$(notdir $(obj)).o)
 
 # Include files
-INC_DIRS  += $(DIGISIM_INC_DIR)
+INC_DIRS  += $(SIMCAD_INC_DIR)
 INC_DIRS  += $(PARTS_SUBDIRS)
-INC_DIRS  += $(TEST_DIR)
+INC_DIRS  += $(TEST_SUBDIRS)
 INC_DIRS  += $(GTEST_INC)
 INC_DIRS  += $(TARGET_INC_DIRS)
 
@@ -84,7 +87,7 @@ INCLUDES = $(addprefix -I, $(INC_DIRS))
 # RULES SECTION #
 #################
 
-all: build_dir $(NET2SIM_BIN) $(MODELS_H_FILES) $(DIGISIM_LIB) $(TARGET_BIN_FILE)
+all: build_dir $(NET2SIM_BIN) $(MODELS_H_FILES) $(SIMCAD_LIB) $(TARGET_BIN_FILE)
 
 tests: all $(TEST_BIN)
 	$(TEST_BIN)
@@ -92,7 +95,7 @@ tests: all $(TEST_BIN)
 # Read the dependency files
 -include $(NET2SIM_OBJS:.o=.d)
 -include $(MODELS_OBJS:.o=.d)
--include $(DIGISIM_OBJS:.o=.d)
+-include $(SIMCAD_OBJS:.o=.d)
 -include $(TEST_OBJS:.o=.d)
 -include $(TARGET_OBJS:.o=.d)
 
@@ -127,31 +130,18 @@ $(NET2SIM_BIN) : $(NET2SIM_OBJS)
 	@echo "LD   $@"
 	$(HIDE) $(CXX) $(CXXFLAGS) -o $@ $^
 
-$(TEST_BIN) : $(TEST_OBJS) $(DIGISIM_LIB)
+$(TEST_BIN) : $(TEST_OBJS) $(SIMCAD_LIB)
 	@echo "LD   $@"
-	$(HIDE) $(CXX) $(CXXFLAGS)  -o $@ $^ $(DIGISIM_LIB_OPTS) $(GTEST_LIB_OPTS)
+	$(HIDE) $(CXX) $(CXXFLAGS)  -o $@ $^ $(SIMCAD_LIB_OPTS) $(GTEST_LIB_OPTS)
 
-$(TARGET_BIN_FILE) : $(TARGET_OBJS) $(DIGISIM_LIB)
+$(TARGET_BIN_FILE) : $(TARGET_OBJS) $(SIMCAD_LIB)
 	@echo "LD   $@"
-	$(HIDE) $(CXX) $(CXXFLAGS)  -o $@ $^ $(DIGISIM_LIB_OPTS) $(GTEST_LIB_OPTS)
+	$(HIDE) $(CXX) $(CXXFLAGS)  -o $@ $^ $(SIMCAD_LIB_OPTS) $(GTEST_LIB_OPTS)
 
-# Build rule for DIGISIM library
-%.a : $(DIGISIM_OBJS)
+# Build rule for SIMCAD library
+%.a : $(SIMCAD_OBJS)
 	@echo "AR   $@"
 	$(HIDE) $(AR) -rc $@ $^
-
-# Build rules for kicad models in DigiSim library
-#define modelBuildRule
-#.PRECIOUS: $$(GEN_DIR)/%.h
-#$$(GEN_DIR)/%.h : $$(GEN_DIR)/$(strip $(1))/%.net
-#	@echo "NET  $$(notdir $$<)"
-#	$$(HIDE) $$(NET2SIM_BIN) -h $$(GEN_DIR)/$(strip $(1)).h -c $$(GEN_DIR)/$(strip $(1)).cpp  $$^
-#.PRECIOUS: $$(GEN_DIR)/%.cpp
-#$$(GEN_DIR)/%.cpp : $$(GEN_DIR)/$(strip $(1))/%.net
-#	@echo "NET  $$(notdir $$<)"
-#	$$(HIDE) $$(NET2SIM_BIN) -h $$(GEN_DIR)/$(strip $(1)).h -c $$(GEN_DIR)/$(strip $(1)).cpp  $$^
-#endef
-#$(foreach model, $(PARTS_SUBDIRS), $(eval $(call modelBuildRule, $(model))))
 
 # Build rules for user kicad models
 
@@ -172,7 +162,7 @@ ifeq ($(TARGET_BIN_FILE),)
 	$(HIDE) rm -f  $(NET2SIM_BIN) 
 	$(HIDE) rm -f  $(MODELS_H_FILES)
 	$(HIDE) rm -f  $(MODELS_SRC_FILES)
-	$(HIDE) rm -f  $(DIGISIM_LIB)
+	$(HIDE) rm -f  $(SIMCAD_LIB)
 	$(HIDE) rm -f  $(TEST_BIN)
 else
 	$(HIDE) rm -rf $(BUILD_DIR)

@@ -1,8 +1,22 @@
+///////////////////////////////////////////////
+//
+//  This file is part of
+//     ___  ____  __  __  ___    __    ____
+//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//    (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation package for electronic circuits
+//
+//  (c) 2022  Andreas Terstegge
+//
+///////////////////////////////////////////////
+//
 #include "gtest/gtest.h"
 #include "TestUtils.h"
 #include "D_LATCH.h"
 
-TEST(Flipflops, D_LATCH)
+TEST(base_parts, D_LATCH)
 {
     D_LATCH ff("D_LATCH");
 
@@ -14,7 +28,7 @@ TEST(Flipflops, D_LATCH)
     Pin & nQ  = ff.p[6];
 
     // Power up
-    ff.p[0]  = SUPPLY_GROUND;
+    ff.p[0] = SUPPLY_GROUND;
     ff.p[7] = SUPPLY_VOLTAGE;
 
     // Test Set/Reset

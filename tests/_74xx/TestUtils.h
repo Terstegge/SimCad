@@ -1,12 +1,19 @@
-/*
- * TestUtils.h
- *
- *  Created on: 23.02.2021
- *      Author: andreas
- */
-
-#ifndef TESTS_TESTUTILS_H_
-#define TESTS_TESTUTILS_H_
+///////////////////////////////////////////////
+//
+//  This file is part of
+//     ___  ____  __  __  ___    __    ____
+//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//    (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation package for electronic circuits
+//
+//  (c) 2022  Andreas Terstegge
+//
+///////////////////////////////////////////////
+//
+#ifndef _TESTUTILS_H_
+#define _TESTUTILS_H_
 
 #include <functional>
 #include <initializer_list>
@@ -34,4 +41,4 @@ public:
 
 };
 
-#endif /* TESTS_TESTUTILS_H_ */
+#endif // _TESTUTILS_H_

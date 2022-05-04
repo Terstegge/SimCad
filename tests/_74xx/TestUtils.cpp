@@ -1,10 +1,17 @@
-/*
- * TestUtils.cpp
- *
- *  Created on: 23.02.2021
- *      Author: andreas
- */
-
+///////////////////////////////////////////////
+//
+//  This file is part of
+//     ___  ____  __  __  ___    __    ____
+//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//    (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation package for electronic circuits
+//
+//  (c) 2022  Andreas Terstegge
+//
+///////////////////////////////////////////////
+//
 #include "TestUtils.h"
 
 bool TestUtils::test_power_up14(Bus<15> & p) {
