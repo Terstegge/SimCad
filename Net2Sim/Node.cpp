@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -21,7 +21,7 @@ Node * Node::find_Node(const char * name)
         return this;
     } else {
         for(Node & child : _children) {
-        	// Recursive search
+            // Recursive search
             Node * p = child.find_Node(name);
             if (p) return p;
         }

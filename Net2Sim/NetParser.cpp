@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -21,7 +21,7 @@ void NetParser::parse(ifstream & fs, Node & tree)
 
 
 void NetParser::parse_node(std::vector<Node> & nodes,
-                           ifstream & fs, int level)
+        ifstream & fs, int level)
 {
     char c;
     // Check for empty vector
@@ -68,8 +68,8 @@ string NetParser::get_word(ifstream & fs)
     } else {
         c = fs.peek();
         while(fs.good() &&
-              c != '('  && c != ')'  && c != ' ' &&
-              c != '\n' && c != '\r' && c != '\t')
+                c != '('  && c != ')'  && c != ' ' &&
+                c != '\n' && c != '\r' && c != '\t')
         {
             fs >> c;
             result += c;

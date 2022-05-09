@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -45,7 +45,6 @@ struct net_entry {
     string  index;  // index or empty if no index
     bool    isBus;  // belongs to a bus
 };
-
 
 
 class Net2Sim {
