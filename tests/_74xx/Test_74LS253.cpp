@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //

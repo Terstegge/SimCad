@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -79,5 +79,5 @@ TEST(_74xx, LS161)
 
     // Power down
     ASSERT_TRUE( TestUtils::test_power_down16(ic.p, { &ic.p[14],  &ic.p[13],
-                                                      &ic.p[12],  &ic.p[11], &RCO }) );
+            &ic.p[12],  &ic.p[11], &RCO }) );
 }

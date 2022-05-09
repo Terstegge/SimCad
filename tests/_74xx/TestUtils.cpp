@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -57,7 +57,7 @@ bool TestUtils::test_power_down16(Bus<17> & p, std::initializer_list<Pin *> outp
 }
 
 bool TestUtils::test_gate1(Pin & I, Pin & O,
-                           std::function<bool(bool)> f) {
+        std::function<bool(bool)> f) {
     I = LOW;
     if (O != f(LOW)) return false;
     I = HIGH;
@@ -67,7 +67,7 @@ bool TestUtils::test_gate1(Pin & I, Pin & O,
 
 
 bool TestUtils::test_gate2(Pin & I1, Pin & I2, Pin & O,
-                           std::function<bool(bool,bool)> f) {
+        std::function<bool(bool,bool)> f) {
     for(int i=0; i<4; ++i) {
         bool v1 = i & 1;
         bool v2 = i & 2;
@@ -79,7 +79,7 @@ bool TestUtils::test_gate2(Pin & I1, Pin & I2, Pin & O,
 }
 
 bool TestUtils::test_gate3(Pin & I1, Pin & I2, Pin & I3, Pin & O,
-                           std::function<bool(bool,bool, bool)> f) {
+        std::function<bool(bool,bool, bool)> f) {
     for(int i=0; i<8; ++i) {
         bool v1 = i & 1;
         bool v2 = i & 2;

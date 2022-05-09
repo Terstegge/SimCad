@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -36,18 +36,18 @@ TEST(Memory_RAM, 74189)
     nWE = HIGH;
     // Write Data
     for(int a=0; a < 16; ++a) {
-    	ADDR = a;
-    	DATA = a;
-    	nWE  = LOW;
-    	nWE  = HIGH;
+        ADDR = a;
+        DATA = a;
+        nWE  = LOW;
+        nWE  = HIGH;
     }
     // Read back Data
     for(int a=0; a < 16; ++a) {
-    	ADDR = a;
-    	ASSERT_TRUE( (nOUT ^0xf) == a);
+        ADDR = a;
+        ASSERT_TRUE( (nOUT ^0xf) == a);
     }
 
     // Power down
     ASSERT_TRUE( TestUtils::test_power_down16(ic.p, { &ic.p[5],  &ic.p[7],
-                                                      &ic.p[9],  &ic.p[11] }) );
+            &ic.p[9],  &ic.p[11] }) );
 }

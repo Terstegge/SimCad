@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -38,16 +38,16 @@ TEST(_74xx, LS245)
     AtoB = HIGH;
 
     for (int i=0; i < 256; i++) {
-    	A = i;
-    	ASSERT_TRUE(B == i);
+        A = i;
+        ASSERT_TRUE(B == i);
     }
 
     // Test B to A
     A.setDrvNC();
     AtoB = LOW;
     for (int i=0; i < 256; i++) {
-    	B = i;
-    	ASSERT_TRUE(A == i);
+        B = i;
+        ASSERT_TRUE(A == i);
     }
 
     ic.p[20] = SUPPLY_GROUND;

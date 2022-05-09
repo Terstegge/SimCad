@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -31,13 +31,13 @@ public:
     static bool test_power_down16(Bus<17> & pins, std::initializer_list<Pin *> outputs = {});
 
     static bool test_gate1(Pin & I, Pin & O,
-                           std::function<bool(bool)> f);
+            std::function<bool(bool)> f);
 
     static bool test_gate2(Pin & I1, Pin & I2, Pin & O,
-                           std::function<bool(bool,bool)> f);
+            std::function<bool(bool,bool)> f);
 
     static bool test_gate3(Pin & I1, Pin & I2, Pin & I3, Pin & O,
-                           std::function<bool(bool,bool, bool)> f);
+            std::function<bool(bool,bool, bool)> f);
 
 };
 

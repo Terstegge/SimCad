@@ -8,7 +8,7 @@
 //
 //  A simulation package for electronic circuits
 //
-//  (c) 2022  Andreas Terstegge
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -41,18 +41,18 @@ TEST(_74xx, LS165)
     INH = LOW;
     for (int i = 0; i < 256; ++i) {
         // Load value
-    	DATA = i;
-    	nLD = LOW;
-    	nLD = HIGH;
-    	// Shift value out
-    	int result = 0;
-    	for (int s = 0; s < 8; ++s) {
-    		result |= (Q ? 256 : 0);
-    		result >>= 1;
-    		CLK = HIGH;
-    		CLK = LOW;
-    	}
-    	ASSERT_TRUE( i == result );
+        DATA = i;
+        nLD = LOW;
+        nLD = HIGH;
+        // Shift value out
+        int result = 0;
+        for (int s = 0; s < 8; ++s) {
+            result |= (Q ? 256 : 0);
+            result >>= 1;
+            CLK = HIGH;
+            CLK = LOW;
+        }
+        ASSERT_TRUE( i == result );
     }
     // Power down
     ASSERT_TRUE( TestUtils::test_power_down16(ic.p, { &Q, &nQ }) );
