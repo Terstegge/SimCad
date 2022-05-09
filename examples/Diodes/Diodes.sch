@@ -181,10 +181,6 @@ F 3 "" H 7675 3050 50  0001 C CNN
 	1    7675 3050
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7225 3900 7225 3825
-Wire Wire Line
-	7225 3425 7225 3350
 $Comp
 L Device:LED D3
 U 1 1 62718AC9
@@ -292,4 +288,8 @@ Text Label 9600 4350 0    50   ~ 0
 Vminus
 Wire Wire Line
 	9500 4350 9600 4350
+Wire Wire Line
+	7225 3425 7225 3350
+Wire Wire Line
+	7225 3825 7225 3900
 $EndSCHEMATC

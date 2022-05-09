@@ -11,12 +11,12 @@
 #///////////////////////////////////////////////
 #//
 # 
-DIGISIM_DIR = ../..
-BUILD_DIR   = BUILD
+SIMCAD_DIR = ../..
+BUILD_DIR  = BUILD
 
 TARGET_BIN_FILE = R2R-Ladder-DAC
 TARGET_NET_FILE = R2R-Ladder-DAC.net
 TARGET_SRC_DIRS = .
 TARGET_INC_DIRS = .
 
-include $(DIGISIM_DIR)/common.mk
+include $(SIMCAD_DIR)/common.mk

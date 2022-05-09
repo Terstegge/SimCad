@@ -46,17 +46,17 @@ public:
 
         // Attach handlers
         B.attach( [this](NetSet * nset) {
-            calculate(nset);
+            calculate();
         });
         E.attach( [this](NetSet * nset) {
-            calculate(nset);
+            calculate();
         });
         C.attach( [this](NetSet * nset) {
-            calculate(nset);
+            calculate();
         });
     }
 
-    void calculate(NetSet * nset) {
+    void calculate() {
         if (!calc) {
             calc = true;
             double Ib = _D_be.A.I();
@@ -87,8 +87,9 @@ public:
             } else {
                 _R_ce._R = Uce / Ice_max;
             }
-            C.update(nset);
-            E.update(nset);
+            _R_ce.update();
+//            C.update(nset);
+//            E.update(nset);
         }
     }
 

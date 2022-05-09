@@ -1,8 +1,8 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/kicad/J2K2_FF/J2K2_FF.sch)
-    (date "Do 04 Mär 2021 20:30:17 CET")
-    (tool "Eeschema 5.1.7-a382d34a8~88~ubuntu16.04.1")
+    (source /home/andreas/github/DIGISIM/parts/base_parts/J2K2_FF.sch)
+    (date "Mi 04 Mai 2022 17:23:31 CEST")
+    (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
         (title)
@@ -128,7 +128,7 @@
         (pin (num 2) (name ~) (type passive)))))
   (libraries
     (library (logical DIGISIM)
-      (uri /home/andreas/github/DIGISIM/kicad/J2K2_FF/../lib/DIGISIM.lib))
+      (uri /home/andreas/github/DIGISIM/parts/base_parts/../lib/DIGISIM.lib))
     (library (logical Device)
       (uri /usr/share/kicad/library/Device.lib)))
   (nets

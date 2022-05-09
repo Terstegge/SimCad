@@ -51,7 +51,19 @@ public:
             net1 = net2;
         }
     }
-//    void operator = (State s) {
+
+
+    void set(unsigned int val, NetSet *nset) {
+        unsigned int mask = 1;
+        for (size_t i=0; i < this->size(); ++i) {
+            (*this)[i].setDrvBool((val & mask) != 0, nset);
+            mask <<= 1;
+        }
+    }
+
+
+
+    //    void operator = (State s) {
 //        NetSet net1;
 //        // Set new drv state on all pins
 //        for (size_t i=0; i < this->size(); ++i) {
@@ -114,7 +126,7 @@ public:
     }
     friend std::ostream & operator << (std::ostream & os, const Bus & rhs) {
         os << rhs.getName() << ":";
-        os << setw(4) << setfill('0') << oct << (unsigned int)rhs;
+        os << (unsigned int)rhs;
 //        os << "(" << rhs.drv_state() << ")";
         return os;
     }

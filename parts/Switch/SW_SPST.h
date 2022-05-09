@@ -23,18 +23,11 @@
 
 class SW_SPST : public R {
 public:
-    SW_SPST(const std::string & name) : R(name, INF) {
-    }
+    SW_SPST(const std::string & name);
 
-    void setOn(bool b) {
-        _R = b ? 0 : INF;
-        update();
-    }
+    void setOn(bool b);
+    void toggle();
 
-    void toggle() {
-        setOn(true);
-        setOn(false);
-    }
 };
 
 #endif // _SW_SPST_H_

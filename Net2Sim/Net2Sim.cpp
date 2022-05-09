@@ -18,6 +18,7 @@
 #include <map>
 #include <algorithm>
 #include <regex>
+#include <codecvt>
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -239,8 +240,8 @@ int Net2Sim::main(int argc, char* argv[])
     /////////////////////////////////////////////////////
     if (verbose) cout << "Generating file " << h_file << endl;
     h_ofs << "//" << endl;
-    h_ofs << "// This file was generated with ** Net2Sim **!" << endl;
-    h_ofs << "// DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
+    h_ofs << "// !This file was generated with ** Net2Sim **!" << endl;
+    h_ofs << "// !DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
     h_ofs << "//" << endl;
     h_ofs << "#ifndef _" << classname << "_H_" << endl;
     h_ofs << "#define _" << classname << "_H_" << endl;
@@ -252,8 +253,11 @@ int Net2Sim::main(int argc, char* argv[])
         string c = comp.first;
         name2var(c);
         h_ofs << "#include \"" << c << ".h\"";
-        if (c.size() < 3) h_ofs << "\t";
-        h_ofs << "\t" << "// " << comp.second << " parts" << endl;
+        h_ofs << string(20-c.size(), ' ') << "// " << comp.second;
+        if (comp.second == 1)
+        	h_ofs  << " part" << endl;
+        else
+        	h_ofs  << " parts" << endl;
     }
     h_ofs << endl
         << "class "  << classname << " " << "{" << endl
@@ -386,8 +390,8 @@ int Net2Sim::main(int argc, char* argv[])
     /////////////////////////////////////////////////////
     if (verbose) cout << "Generating file " << c_file << endl;
     c_ofs << "//" << endl;
-    c_ofs << "// This file was generated with ** Net2Sim **!" << endl;
-    c_ofs << "// DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
+    c_ofs << "// !This file was generated with ** Net2Sim **!" << endl;
+    c_ofs << "// !DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
     c_ofs << "//" << endl;
 
     string hfile = h_file;
@@ -403,8 +407,10 @@ int Net2Sim::main(int argc, char* argv[])
         string ref = used_components[i].ref_base + used_components[i].ref_idx;
         if (used_components[i].part == "R"       ||
             used_components[i].part == "R_POT"   ||
+            used_components[i].part == "POT"     ||
             used_components[i].part == "C"       ||
             used_components[i].part == "CP"      ||
+            used_components[i].part == "CP1"     ||
             used_components[i].part == "VSOURCE" ||
             used_components[i].part == "ISOURCE")
         {
@@ -462,13 +468,14 @@ int Net2Sim::main(int argc, char* argv[])
 
 
 void Net2Sim::name2var(string & s) {
-    s = std::regex_replace(s, std::regex("\\-(?=[0-9])"), "minus_");
-    s = std::regex_replace(s, std::regex("\\+(?=[0-9])"), "plus_");
+    s = std::regex_replace(s, std::regex("^\\-(?=[0-9])"), "minus_");
+    s = std::regex_replace(s, std::regex("^\\+(?=[0-9])"), "plus_");
     std::replace(s.begin(),  s.end(), '/', '_');
     std::replace(s.begin(),  s.end(), '-', '_');
     std::replace(s.begin(),  s.end(), '~', 'n');
     std::replace(s.begin(),  s.end(), '(', '_');
     std::replace(s.begin(),  s.end(), ')', '_');
+    std::replace(s.begin(),  s.end(), ' ', '_');
     if (!(std::isalpha(s[0]) || s[0] == '_')) s = "_" + s;
 }
 
@@ -515,26 +522,29 @@ double Net2Sim::readValue(string s) {
     bool    shift_mode = true;
     double  res {0.0};
     double  factor;
-    string  units = "AVRFH";
+    string  units = "AFHRVΩ";
 
-    for(int i=0; i < s.size(); ++i) {
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
+    std::u16string utf16 = utf16conv.from_bytes(s);
+
+    for(int i=0; i < utf16.size(); ++i) {
         // Skip physical units and symbols
-		if (units.find(s[i]) != string::npos) {
+		if (units.find(utf16[i]) != string::npos) {
             continue;
         }
-		if (isdigit(s[i])) {
+		if (isdigit(utf16[i])) {
 	        if (shift_mode) {
 	            // Shift mode
 	            res *= 10.0;
-                res += (s[i]-'0');
+                res += (utf16[i]-'0');
 	        } else {
 	            // Factor mode
-	            res += (s[i]-'0') * factor;
+	            res += (utf16[i]-'0') * factor;
                 factor /= 10;
 	        }
 	        continue;
 		}
-        switch(s[i]) {
+        switch(utf16[i]) {
             // Giga: Factor 10^9
             case 'G': { res *= 1e9;  factor = 1e8;  break; }
             // Mega: Factor 10^6
@@ -547,6 +557,7 @@ double Net2Sim::readValue(string s) {
             // Milli: Factor 10^-3
             case 'm': { res *= 1e-3; factor = 1e-4; break; }
             // Micro: Factor 10^-6
+            case u'µ':
             case 'u': { res *= 1e-6; factor = 1e-7; break; }
             // Nano: Factor 10^-9
             case 'n': { res *= 1e-9; factor = 1e-10; break; }

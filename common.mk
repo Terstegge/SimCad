@@ -8,7 +8,7 @@
 #//
 #//  A simulation package for electronic circuits
 #//
-#//  (c) 2022  Andreas Terstegge
+#//  (c) Andreas Terstegge
 #//
 #///////////////////////////////////////////////
 #//
@@ -102,9 +102,10 @@ tests: all $(TEST_BIN)
 # Rule to create build directories
 .PHONY: build_dir
 build_dir :
-	$(HIDE) mkdir -p $(LIB_BUILD_DIR)
 ifneq ($(BUILD_DIR),)
 	$(HIDE) mkdir -p $(BUILD_DIR)
+else
+	$(HIDE) mkdir -p $(LIB_BUILD_DIR)
 endif
 
 # Compile rule for DigiSim library

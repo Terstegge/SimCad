@@ -1,7 +1,7 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/kicad/R_POT_skel/R_POT_skel.sch)
-    (date "So 07 Mär 2021 11:37:18 CET")
+    (source /home/andreas/github/DIGISIM/parts/Device/R_POT_skel.sch)
+    (date "Mi 04 Mai 2022 17:23:07 CEST")
     (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block

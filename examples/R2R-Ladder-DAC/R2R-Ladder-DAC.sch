@@ -130,17 +130,6 @@ F 3 "~" H 5175 4175 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:R R6
-U 1 1 60185B7D
-P 5525 4000
-F 0 "R6" H 5375 4000 50  0000 L CNN
-F 1 "2k" V 5525 3950 50  0000 L CNN
-F 2 "" V 5455 4000 50  0001 C CNN
-F 3 "~" H 5525 4000 50  0001 C CNN
-	1    5525 4000
-	1    0    0    -1  
-$EndComp
-$Comp
 L Device:R R7
 U 1 1 60185C5B
 P 5875 4175
@@ -353,10 +342,15 @@ F 3 "~" H 6850 2875 50  0001 C CNN
 	1    6850 2675
 	0    1    1    0   
 $EndComp
-Wire Wire Line
-	6225 4175 6225 4475
-Wire Wire Line
-	6225 4475 6400 4475
-Text Label 6400 4475 0    50   ~ 0
-Z
+$Comp
+L Device:R R6
+U 1 1 60185B7D
+P 5525 4000
+F 0 "R6" H 5375 4000 50  0000 L CNN
+F 1 "2k" V 5525 3950 50  0000 L CNN
+F 2 "" V 5455 4000 50  0001 C CNN
+F 3 "~" H 5525 4000 50  0001 C CNN
+	1    5525 4000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

@@ -24,18 +24,11 @@
 class SW_Push : public R {
 public:
 
-	SW_Push(const std::string & name) : R(name, INF) {
-    }
+	SW_Push(const std::string & name);
 
-	void press(bool b) {
-        _R = b ? 0 : INF;
-        update();
-    }
+	void press(bool b);
+	void toggle();
 
-	void toggle() {
-        press(true);
-        press(false);
-    }
 };
 
 #endif // _SW_Push_H_

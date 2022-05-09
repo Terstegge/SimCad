@@ -38,6 +38,7 @@ public:
     void start() {
         if (!_running) {
             _running = true;
+//            _R = 0.01;
             update();
             _t = thread([this]() {
                 auto now = system_clock::now();
@@ -65,6 +66,10 @@ public:
 
     double Ichar(double U) override {
         return (U - _U) /_R;
+    }
+
+    void setCapacity(double cap) {
+    	_cap = cap;
     }
 
 private:

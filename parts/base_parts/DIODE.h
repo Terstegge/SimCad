@@ -32,7 +32,7 @@ public:
     DIODE(const string & name, double forward_voltage) 
         : TwoPole(name), C(p[1]), A(p[2]) {
         // Saturation current
-        Is = 1e-10;
+        Is = 1e-9;
         // Calculate Ut from forward voltage at 10mA
         Ut = forward_voltage / log(0.01/Is + 1);
     }

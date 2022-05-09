@@ -63,6 +63,14 @@ public:
 		return res;
 	}
 
+    void setDrvNC(NetSet * nset = nullptr) {
+		for (size_t i=0; i < this->size(); ++i) {
+			(*this)[i]->setDrvNC(nset);
+		}
+    }
+
+
+
 	//    std::string drv_state() const {
 	//        ostringstream oss;
 	//        for (size_t i=0; i < this->size(); ++i) {
