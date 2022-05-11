@@ -3,5 +3,5 @@
 # SimCad
 Welcome! SimCad is a KiCad/C++-based tool for electronic circuit simulation.
 
-Work in Progess - first release will soon be announced ...
+Work in progess - first release will soon be announced ...
 
