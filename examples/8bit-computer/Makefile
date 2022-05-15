@@ -14,7 +14,7 @@
 SIMCAD_DIR = ../..
 BUILD_DIR  = BUILD
 
-TARGET_BIN_FILE = $(BUILD_DIR)/Computer
+TARGET_BIN_FILE = Computer
 TARGET_NET_FILE = kicad/8bit-computer.net
 TARGET_SRC_DIRS = .
 TARGET_INC_DIRS = . kicad

@@ -25,22 +25,22 @@ SW_SPDT::SW_SPDT(const std::string & name) : SW_SPDT_skel(name) {
 void SW_SPDT::set(int c) {
 	switch(c) {
 	case con21: {
-		if (R21._R == 0.0) {
+		if (R21.getR() == 0.0) {
 			return;
 		} else {
-			R23._R = INF;
-			R21._R = 0.0;
+			R23.setR( INF );
+			R21.setR( 0.0 );
 			R21.update();
 			R23.update();
 		}
 		break;
 	}
 	case con23:
-		if (R23._R == 0.0) {
+		if (R23.getR() == 0.0) {
 			return;
 		} else {
-			R21._R = INF;
-			R23._R = 0.0;
+			R21.setR( INF );
+			R23.setR( 0.0 );
 			R21.update();
 			R23.update();
 		}

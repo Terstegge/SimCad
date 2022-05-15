@@ -40,6 +40,7 @@ private:
 
 public:
     std::mutex _mutex;
+    static bool _enable_sc_exceptions;
 
     // Global counter for the number of Nets
     static int _no_nets;

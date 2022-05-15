@@ -22,7 +22,7 @@ SW_SPST::SW_SPST(const std::string & name) : R(name, INF) {
 }
 
 void SW_SPST::setOn(bool b) {
-	_R = b ? 0 : INF;
+	setR( b ? 0 : INF );
 	update();
 }
 

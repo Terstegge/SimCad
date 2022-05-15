@@ -2205,8 +2205,6 @@ Wire Wire Line
 	4025 1475 4025 1450
 Wire Wire Line
 	4375 1250 4475 1250
-Wire Wire Line
-	4475 1250 4475 1475
 Connection ~ 4475 1775
 Wire Wire Line
 	4475 1775 4475 2475
@@ -2226,8 +2224,6 @@ Wire Wire Line
 	5475 1600 5325 1600
 Connection ~ 5325 1600
 Wire Wire Line
-	4650 2125 4650 1475
-Wire Wire Line
 	4650 1250 4725 1250
 Connection ~ 4650 2125
 Wire Wire Line
@@ -2241,42 +2237,10 @@ p1
 Wire Wire Line
 	3650 925  3775 925 
 Connection ~ 3775 925 
-$Comp
-L Device:R R2
-U 1 1 62778D69
-P 4875 1475
-F 0 "R2" V 4775 1425 50  0000 C CNN
-F 1 "1M" V 4875 1475 50  0000 C CNN
-F 2 "" V 4805 1475 50  0001 C CNN
-F 3 "~" H 4875 1475 50  0001 C CNN
-	1    4875 1475
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	5025 1475 5075 1475
 Wire Wire Line
 	3775 1600 5325 1600
 Wire Wire Line
-	4725 1475 4650 1475
-Connection ~ 4650 1475
+	4475 1250 4475 1775
 Wire Wire Line
-	4650 1475 4650 1250
-$Comp
-L Device:R R1
-U 1 1 62785435
-P 4325 1475
-F 0 "R1" V 4225 1525 50  0000 C CNN
-F 1 "1M" V 4325 1475 50  0000 C CNN
-F 2 "" V 4255 1475 50  0001 C CNN
-F 3 "~" H 4325 1475 50  0001 C CNN
-	1    4325 1475
-	0    1    1    0   
-$EndComp
-Connection ~ 4475 1475
-Wire Wire Line
-	4475 1475 4475 1775
-Wire Wire Line
-	4175 1475 4025 1475
-Text Notes 4725 1900 0    39   ~ 0
-Resistors necessary during startup:\nWhen both outputs of U9 and U10\nare still NC, both directions are enabled,\nwhich can lead to short circuits... 
+	4650 1250 4650 2125
 $EndSCHEMATC

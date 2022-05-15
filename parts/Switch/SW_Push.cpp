@@ -22,7 +22,7 @@ SW_Push::SW_Push(const std::string & name) : R(name, INF) {
 }
 
 void SW_Push::press(bool b) {
-	_R = b ? 0 : INF;
+	setR( b ? 0 : INF );
 	update();
 }
 

@@ -13,8 +13,8 @@ void R_POT::setPercent(double p) {
 	if (p <   0.0) p =   0.0;
 
 	// Set R values without updating
-	R1._R = (100.0 - p) / 100.0 * _R_tot;
-	R2._R = (        p) / 100.0 * _R_tot;
+	R1.setR( (100.0 - p) / 100.0 * _R_tot );
+	R2.setR( (        p) / 100.0 * _R_tot );
 
 	// Update Nets
 	R1.update();

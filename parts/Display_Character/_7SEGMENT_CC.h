@@ -10,9 +10,10 @@ public:
 
     _7SEGMENT_CC(std::string name);
 
-    friend std::ostream & operator << (std::ostream & os, const _7SEGMENT_CC & d);
+    char to_char();
+    friend std::ostream & operator << (std::ostream & os, _7SEGMENT_CC & d);
 
-// private:
+private:
 
     LEDRef _value;
 

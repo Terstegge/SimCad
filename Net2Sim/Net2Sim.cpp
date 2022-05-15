@@ -15,6 +15,7 @@
 #include "Net2Sim.h"
 #include "NetParser.h"
 #include <iostream>
+#include <sstream>
 #include <map>
 #include <algorithm>
 #include <regex>
@@ -188,11 +189,11 @@ int Net2Sim::main(int argc, char* argv[])
                 split_name_index(ce.part, ce.part_arg);
                 // Check if part is a build-in gate
                 if ( (ce.part == "AND")  ||
-                        (ce.part == "NAND") ||
-                        (ce.part == "OR")   ||
-                        (ce.part == "NOR")  ||
-                        (ce.part == "EOR")  ||
-                        (ce.part == "INH") ) {
+                     (ce.part == "NAND") ||
+                     (ce.part == "OR")   ||
+                     (ce.part == "NOR")  ||
+                     (ce.part == "EOR")  ||
+                     (ce.part == "INH") ) {
                     // Leave the part arg entry as it is.
                     // The part argument will be the template parameter.
                 } else {
@@ -276,19 +277,20 @@ int Net2Sim::main(int argc, char* argv[])
                 return lhs.ref_base < rhs.ref_base;
         });
 
+        string line;
         // Output part attributes
         h_ofs << "    // Components" << endl;
         for (component_entry & ce : used_components) {
             name2var(ce.part);
             if (ce.part_arg == "") {
                 // Standard part without template argument
-                h_ofs << "    " << ce.part;
-                if (ce.part.size() < 4) h_ofs << "\t";
+                line = "    " + ce.part;
             } else {
                 // Build-in part with template argument
-                h_ofs << "    " << ce.part << "<" << ce.part_arg << ">";
+                line = "    " + ce.part + "<" + ce.part_arg + ">";
             }
-            h_ofs << "\t" << ce.ref_base << ce.ref_idx << ";" << endl;
+            h_ofs << line << string(25-line.size(), ' ')
+                  << ce.ref_base << ce.ref_idx << ";" << endl;
         }
 
         ///////////////
@@ -341,7 +343,7 @@ int Net2Sim::main(int argc, char* argv[])
                 return lhs.base < rhs.base;
         });
 
-        h_ofs << "    // Nets" << endl;
+        h_ofs << endl << "    // Nets" << endl;
 
         //////////////////////////////////
         // Find busses in the sorted nets.
@@ -382,7 +384,7 @@ int Net2Sim::main(int argc, char* argv[])
         // Output final endif
         /////////////////////
         h_ofs << endl;
-        h_ofs << "#endif\t// _" << classname << "_H_" << endl;
+        h_ofs << "#endif    // _" << classname << "_H_" << endl;
         h_ofs.close();
 
         /////////////////////////////////////////////////////
@@ -497,14 +499,23 @@ bool Net2Sim::split_name_index(string & name, string & idx) {
 
 
 void Net2Sim::define_bus(string base, string index, bool isBus) {
+    string line;
+    std::ostringstream oss;
     if (isBus) {
-        h_ofs << "    Bus<" << stoi(index)+1 << ">\t"
-                << base << ";" << endl;
+        oss << (stoi(index) + 1);
+        line = "    Bus<";
+        line += oss.str();
+        line += ">";
+        line += string(25-line.size(), ' ');
+        line += base + ";";
     } else {
-        h_ofs << "    Pin  \t" << base;
-        if (!index.empty()) h_ofs << index;
-        h_ofs << ";" << endl;
+        line = "    Pin";
+        line += string(25-line.size(), ' ');
+        line += base;
+        if (!index.empty()) line += index;
+        line += ";";
     }
+    h_ofs << line << endl;
 }
 
 

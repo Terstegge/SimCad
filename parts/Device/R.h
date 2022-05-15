@@ -22,6 +22,10 @@ public:
         return U /_R;
     }
 
+    inline double getR()         { return _R; }
+    inline void   setR(double r) { _R = r;    }
+
+private:
     double _R;
 };
 #endif // _INCLUDE_R_H_

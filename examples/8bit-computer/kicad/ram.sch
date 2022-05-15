@@ -598,26 +598,7 @@ Wire Wire Line
 Wire Wire Line
 	4750 4900 4750 4700
 Wire Wire Line
-	4750 4700 5050 4700
-$Comp
-L Device:C C14
-U 1 1 5B558B26
-P 4900 6750
-F 0 "C14" H 4925 6850 50  0000 L CNN
-F 1 "0.01µF" H 4925 6650 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.3mm_W1.9mm_P5.00mm" H 4938 6600 50  0001 C CNN
-F 3 "" H 4900 6750 50  0001 C CNN
-	1    4900 6750
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
 	4700 6900 3600 6900
-Wire Wire Line
-	3600 7100 4900 7100
-Wire Wire Line
-	4900 7100 4900 6900
-Wire Wire Line
-	4900 5300 4900 6600
 $Comp
 L Device:R R66
 U 1 1 5B559318
@@ -629,7 +610,6 @@ F 3 "" H 5300 7100 50  0001 C CNN
 	1    5300 7100
 	0    1    1    0   
 $EndComp
-Connection ~ 4900 7100
 $Comp
 L power:GND #PWR041
 U 1 1 5B559471
@@ -722,8 +702,6 @@ $EndComp
 Wire Wire Line
 	4100 4400 4100 4500
 Connection ~ 4850 4400
-Wire Wire Line
-	4750 4600 5050 4600
 $Comp
 L Device:LED_ALT D50
 U 1 1 5B5608D6
@@ -1046,19 +1024,6 @@ Wire Wire Line
 Wire Wire Line
 	4850 1950 4850 2700
 $Comp
-L 8bit-computer:74LS04 U26
-U 6 1 5B620B74
-P 3700 7450
-F 0 "U26" H 3895 7565 50  0000 C CNN
-F 1 "74LS04" H 3890 7325 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 3700 7450 50  0001 C CNN
-F 3 "" H 3700 7450 50  0001 C CNN
-	6    3700 7450
-	1    0    0    -1  
-$EndComp
-NoConn ~ 3250 7450
-NoConn ~ 4150 7450
-$Comp
 L 8bit-computer:74LS04 U28
 U 1 1 5B6210C2
 P 3700 7800
@@ -1082,20 +1047,7 @@ F 3 "" H 4800 7800 50  0001 C CNN
 	5    4800 7800
 	1    0    0    -1  
 $EndComp
-$Comp
-L 8bit-computer:74LS04 U28
-U 4 1 5B621679
-P 4800 7450
-F 0 "U28" H 4995 7565 50  0000 C CNN
-F 1 "74LS04" H 4990 7325 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 4800 7450 50  0001 C CNN
-F 3 "" H 4800 7450 50  0001 C CNN
-	4    4800 7450
-	1    0    0    -1  
-$EndComp
-NoConn ~ 4350 7450
 NoConn ~ 4350 7800
-NoConn ~ 5250 7450
 NoConn ~ 5250 7800
 $Comp
 L Device:C C16
@@ -1180,8 +1132,6 @@ Wire Wire Line
 Wire Wire Line
 	6500 5100 6500 6400
 Wire Wire Line
-	4900 7100 5150 7100
-Wire Wire Line
 	5550 1050 8900 1050
 Wire Wire Line
 	5450 1150 8900 1150
@@ -1239,4 +1189,54 @@ Wire Wire Line
 	10050 1000 10200 1000
 Wire Wire Line
 	10050 1500 10200 1500
+Wire Wire Line
+	4750 4600 5050 4600
+Wire Wire Line
+	4750 4700 5050 4700
+Wire Wire Line
+	4900 5300 4900 6600
+Wire Wire Line
+	4900 7100 4900 6900
+$Comp
+L Device:C C14
+U 1 1 5B558B26
+P 4900 6750
+F 0 "C14" H 4925 6850 50  0000 L CNN
+F 1 "0.01µF" H 4925 6650 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.3mm_W1.9mm_P5.00mm" H 4938 6600 50  0001 C CNN
+F 3 "" H 4900 6750 50  0001 C CNN
+	1    4900 6750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4900 7100 5150 7100
+NoConn ~ 5250 7450
+NoConn ~ 4350 7450
+$Comp
+L 8bit-computer:74LS04 U28
+U 4 1 5B621679
+P 4800 7450
+F 0 "U28" H 4995 7565 50  0000 C CNN
+F 1 "74LS04" H 4990 7325 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 4800 7450 50  0001 C CNN
+F 3 "" H 4800 7450 50  0001 C CNN
+	4    4800 7450
+	1    0    0    -1  
+$EndComp
+NoConn ~ 4150 7450
+NoConn ~ 3250 7450
+$Comp
+L 8bit-computer:74LS04 U26
+U 6 1 5B620B74
+P 3700 7450
+F 0 "U26" H 3895 7565 50  0000 C CNN
+F 1 "74LS04" H 3890 7325 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 3700 7450 50  0001 C CNN
+F 3 "" H 3700 7450 50  0001 C CNN
+	6    3700 7450
+	1    0    0    -1  
+$EndComp
+Connection ~ 4900 7100
+Wire Wire Line
+	3600 7100 4900 7100
 $EndSCHEMATC

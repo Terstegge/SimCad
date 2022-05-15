@@ -23,27 +23,28 @@
 #include "_28C16.h"
 
 _28C16::_28C16(std::string name)
-    : _28C16_skel(name), _write_addr(0), _write_started(false) {
-    
+    : _28C16_skel(name), _write_addr(0), _write_started(false), on(U1.on) {
+
     // Attach address bus listener
-    ADDR.attach([this](NetSet * nset) {
-        DATA_OUT.set(_mem[ ADDR ], nset);
+    ADDR.attach([this](NetSet *nset) {
+        if (!on) return;
+        DATA_OUT.set(_mem[ADDR], nset);
     });
     // Latch address at start of write cycle.
     // Write memory at end of write cycle
-    WRITE.attach([this](NetSet * nset) {
+    WRITE.attach([this](NetSet *nset) {
+        if (!on) return;
         if (WRITE) {
-        	// Latch address to write to
-        	_write_addr    = ADDR;
-        	_write_started = true;
+            // Latch address to write to
+            _write_addr    = ADDR;
+            _write_started = true;
         } else {
-        	// Store and output data
-        	if (!_write_started) return;
-        	_mem[ _write_addr ] = DATA_IN;
+            // Store and output data
+            if (!_write_started) return;
+            _mem[_write_addr] = DATA_IN;
             DATA_OUT.set(DATA_IN, nset);
             _write_started = false;
         }
     });
-    // Write out initial data
-    DATA_OUT = _mem[ ADDR ];
+//    DATA_OUT = _mem[ADDR];
 }

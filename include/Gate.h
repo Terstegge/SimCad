@@ -96,11 +96,11 @@ public:
         nset->insert(OUT._netPtr);
     }
 
-    void setOUTnc(NetSet *usp) {
+    void setOUTnc(NetSet *nset) {
         OUT._isVS = false;
         VCC._Idrv = nullptr;
         GND._Idrv = nullptr;
-        usp->insert(OUT._netPtr);
+        nset->insert(OUT._netPtr);
     }
 
     friend std::ostream & operator << (std::ostream & os, const Gate<N> & rhs) {

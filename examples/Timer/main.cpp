@@ -17,7 +17,7 @@ int main() {
         t.GND = 0.0;
         t.VCC = 5.0;
         // Start C-thread
-        t.C1.start();
+        C::start();
         // Put NE555 and 74LS161 in reset mode
         t.nRESET = 0.0;
 
@@ -30,8 +30,8 @@ int main() {
         	cout.flush();
         	this_thread::sleep_for(10ms);
         }
-        // Stop C-thread
-        t.C1.stop();
+	// Stop C-thread
+	C::stop();
 
     } catch (short_circuit_exception &e) {
         cerr << e << endl;

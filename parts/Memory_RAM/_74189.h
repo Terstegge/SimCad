@@ -9,6 +9,12 @@ public:
     uint8_t  _mem[16] = { 0 };
     
     _74189(std::string name);
+
+private:
+
+    bool & on;
+    int  _write_addr;
+    bool _write_started;
 };
 
 #endif	// _74189_H_

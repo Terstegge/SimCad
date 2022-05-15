@@ -20,6 +20,8 @@ int Net::_no_nets = 0;
 #include <iostream>
 #include <cmath>
 
+bool Net::_enable_sc_exceptions = true;;
+
 using entry = std::pair <Pin *, std::function<double(double)>>;
 
 int Net::sgn(double v) {
@@ -28,8 +30,8 @@ int Net::sgn(double v) {
 
 double Net::zero(std::function<double(double)> f) {
     int k = 0;
-    double low = -5.0;
-    double high = 5.0;
+    double low = -5.5;
+    double high = 5.5;
     double f_high = f(high);
     double f_low  = f(low);
     if (f_high == 0.0 && f_low != 0.0) return high;
@@ -108,7 +110,7 @@ void Net::update(NetSet * usp) {
 				ivs_ptr = p;          // Store pointer to first VS
 				continue;
 			} else {
-				if (p->_Uvs != ivs_ptr->_Uvs) {     // Did we find a different voltage source?
+				if (_enable_sc_exceptions && (p->_Uvs != ivs_ptr->_Uvs)) {     // Did we find a different voltage source?
 					short_circuit_exception e(this);
 					throw e;
 				}
@@ -142,6 +144,9 @@ void Net::update(NetSet * usp) {
 	}
 	// Check if the State of the Net has changed
 	if (_U != u || _isVS != vs || _isNC != isnc) {
+//	    std::cout << _name << " ";
+//	    std::cout << _U << " " << u << " " << _isVS << " " << vs << " " << _isNC << " " << isnc << std::endl;
+//	    std::cout << this << std::endl;
 		//        if (getName().find("__R") != std::string::npos)
 		//            std::cout << getName() << " U:" << u << "V" << std::endl;
 		_U    = u;
