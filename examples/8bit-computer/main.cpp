@@ -75,24 +75,27 @@ int main() {
         &comp.U41.p[14], // A0 
         &comp.U41.p[13]  // A1
     });
-    // 
+    // Attach a callback to the Q output of the NE555.
+    // On all rising edges, read out the address of the
+    // active segment and its content, and store the
+    // result in the Display array.
     comp.U37.p[3].attach([&](NetSet * nset) {
         if ((bool)comp.U37.p[3]) {
             Display[3-addr] = Segments[addr]->to_char();
         }
     });
 
+    // Program the EEPROMs (display and microcode)
+    prog_display pd(comp.U42._mem);
+    pd.programEEPROM();
+    prog_microcode pm(comp.U50._mem, comp.U51._mem);
+    pm.programEEPROMs();
 
     try {
-        // Program the EEPROMs (display and microcode)
-        prog_display pd(comp.U42._mem);
-        pd.programEEPROM();
-        prog_microcode pm(comp.U50._mem, comp.U51._mem);
-        pm.programEEPROMs();
 
         // Slow down the NE555 timer for display multiplexing.
         // The original frequency is approx. 718Hz, which is too
-        // fast for the siulation. With 718nF, we get approx. 10Hz.
+        // fast for the simulation. With 718nF, we get approx. 10Hz.
         comp.C19.setCapacity(718e-9);
         // Slow down the pulse generator in the RAM module. In the
         // original design we have RC=10us. With 20uF, we get 20ms.
