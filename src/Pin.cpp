@@ -19,7 +19,7 @@
 bool Pin::_show_drive_state = false;
 
 Pin::Pin(const std::string & name) : Named(name),
-    _Uvs(0.0), _isVS(false)
+    _Uvs(0.0), _Rdrv(INF)
 {
 	// Create a new Net and insert this Pin into it
     _netPtr = new Net(name);
@@ -43,8 +43,8 @@ void Pin::setIDrv(IFUNC f, NetSet * nset) {
 }
 
 void Pin::setDrvVS(double u, NetSet * nset) {
-    _isVS = true;
     _Uvs  = u;
+    _Rdrv = 0;
     setIDrv(nullptr, nset);
 }
 
@@ -53,7 +53,7 @@ void Pin::setDrvBool(bool b, NetSet * nset) {
 }
 
 void Pin::setDrvNC(NetSet * nset) {
-    _isVS = false;
+    _Rdrv = INF;
     setIDrv(nullptr, nset);
 }
 

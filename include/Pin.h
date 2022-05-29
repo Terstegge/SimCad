@@ -31,7 +31,7 @@ using IFUNC = std::function<double(double)>;
 
 class Pin : public Named {
 
-	// Net is our friend and might change _netPtr or _Uw.
+    // Net is our friend and might change _netPtr or _Uw.
     friend class Net;
     // TwoPole is our friend and might change _Idrv.
     friend class TwoPole;
@@ -51,7 +51,8 @@ private:
     // the attribute _isVS will be set to true, and _Uvs will store the
     // voltage value. _Idrv will not be used.
     double  _Uvs;
-    bool    _isVS;
+
+    double  _Rdrv;
 
     // The I(U) driving function, which describes the contribution of
     // this Pin within its Net. If the function is not set, the Pin is
@@ -94,8 +95,8 @@ public:
 
     // Getters to check if Pin is driving a voltage source
     // or is not connected.
-    inline bool isDrvVS() const { return  _isVS; }
-    inline bool isDrvNC() const { return !_isVS && !_Idrv; }
+    inline bool isDrvVS() const { return _Rdrv == 0.0; }
+    inline bool isDrvNC() const { return _Rdrv == INF; }
 
     // Operators for easily setting a voltage source by assigning
     // a double or boolean value.
@@ -138,8 +139,8 @@ public:
 
 // Manipulator to output the driving state
 inline std::ostream &drive(std::ostream &out) {
-	Pin::_show_drive_state = true;
-	return out;
+    Pin::_show_drive_state = true;
+    return out;
 }
 
 #endif // _INCLUDE_PIN_H_

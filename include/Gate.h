@@ -78,7 +78,7 @@ public:
 
     // Utility method to set the digital OUT Pin
     void setOUTbool(bool b, NetSet *nset) {
-        OUT._isVS = true;
+        OUT._Rdrv = 0.0;
         OUT._Uvs  = b ? VCC.U() : GND.U();
         if (OUT.getNet()->hasDrivers()) {
             if (b) {
@@ -97,7 +97,7 @@ public:
     }
 
     void setOUTnc(NetSet *nset) {
-        OUT._isVS = false;
+        OUT._Rdrv = INF;
         VCC._Idrv = nullptr;
         GND._Idrv = nullptr;
         nset->insert(OUT._netPtr);
