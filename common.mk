@@ -12,12 +12,19 @@
 #//
 #///////////////////////////////////////////////
 #//
-#
-# Configuration section
+
+#########################
+# Configuration section #
+#########################
+
 CXX           =  g++  # or clang++
 CXXFLAGS      = -std=c++17 -g
 LIB_BUILD_DIR = $(SIMCAD_DIR)/BUILD
 GTEST_DIR     = /usr/local/gtest-1.10.0
+
+###################
+# VARABLE SECTION #
+###################
 
 # Utility to control makefile output
 # (detailed output if VERBOSE defined).

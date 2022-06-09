@@ -50,7 +50,7 @@ private:
     // Attributes used if this Pin is a voltage source. In this case,
     // the attribute _isVS will be set to true, and _Uvs will store the
     // voltage value. _Idrv will not be used.
-    double  _Uvs;
+    double  _Udrv;
 
     double  _Rdrv;
 

@@ -41,7 +41,7 @@ public:
     {
         // Attach power signals
         Vplus.attach( [this](NetSet * nset) {
-            on  = Vplus.isVCC() && Vminus.isGND();
+            on  = Vplus.isVS() && Vminus.isVS();
             if (on) {
                 calculate(nset);
             } else {
@@ -49,7 +49,7 @@ public:
             }
         });
         Vminus.attach( [this](NetSet * nset) {
-            on  = Vplus.isVCC() && Vminus.isGND();
+            on  = Vplus.isVS() && Vminus.isVS();
             if (on) {
                 calculate(nset);
             } else {

@@ -19,7 +19,7 @@
 bool Pin::_show_drive_state = false;
 
 Pin::Pin(const std::string & name) : Named(name),
-    _Uvs(0.0), _Rdrv(INF)
+    _Udrv(0.0), _Rdrv(INF)
 {
 	// Create a new Net and insert this Pin into it
     _netPtr = new Net(name);
@@ -43,7 +43,7 @@ void Pin::setIDrv(IFUNC f, NetSet * nset) {
 }
 
 void Pin::setDrvVS(double u, NetSet * nset) {
-    _Uvs  = u;
+    _Udrv = u;
     _Rdrv = 0;
     setIDrv(nullptr, nset);
 }
@@ -62,7 +62,8 @@ double Pin::U() const {
 }
 
 double Pin::R() const {
-    return isDrvVS() ? _netPtr->R() : _netPtr->Rd();
+    return _netPtr->R();
+//    return isDrvVS() ? _netPtr->R() : _netPtr->Rd();
 }
 
 double Pin::I() const {
@@ -86,14 +87,11 @@ std::ostream& operator <<(std::ostream &os, const Pin &p) {
         if (p.isDrvNC()) {
             os << "NC]";
         } else if (p.isDrvVS()) {
-            os << p._Uvs << " V Source]";
+            os << p._Udrv << " V Source]";
         } else {
             if (p._Idrv) {
-                double dU = 0.2;
-                double U  = p.getNet()->zero(p._Idrv);
-                double R  = dU / (p._Idrv(U + dU/2.0) - p._Idrv(U - dU/2.0));
-                os << U << " V, ";
-                os << R << " Ohm";
+//                os << U << " V, ";
+                os << p._Rdrv << " Ohm]";
             } else {
                 os << "no drive]";
             }

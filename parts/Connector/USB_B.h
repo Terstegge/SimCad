@@ -10,12 +10,12 @@
 
 #include "Bus.h"
 
-class USB_B {
+class USB_B : public Named {
 public:
-    USB_B(const std::string & name) {
+    USB_B(const std::string & name) : Named(name), NAME(p) {
     }
 
-    Bus<6>	p;
+    Narray<Pin, 6> p;
 
     Pin & VBUS   = p[1];
     Pin & Dminus = p[2];

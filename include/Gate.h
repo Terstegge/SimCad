@@ -38,7 +38,7 @@ public:
     bool     on;    // true if power is switched on
 
     Gate(const std::string & name)
-        : Named(name), NAME(p), VCC(p[N+2]), GND(p[0]), OUT(p[N+1]), on(false)
+    : Named(name), NAME(p), VCC(p[N+2]), GND(p[0]), OUT(p[N+1]), on(false)
     {
         // Attach power signals
         VCC.attach( [this](NetSet * nset) {
@@ -50,8 +50,8 @@ public:
             }
         });
         GND.attach( [this](NetSet * nset) {
-        	on  = VCC.isVCC() && GND.isGND();
-        	if (on) {
+            on  = VCC.isVCC() && GND.isGND();
+            if (on) {
                 calculate(nset);
             } else {
                 setOUTnc(nset);
@@ -60,7 +60,7 @@ public:
         // Attach input signal handlers
         for(int i=1; i <= N; ++i) {
             p[i].attach( [this](NetSet * nset) {
-            	if (on) {
+                if (on) {
                     calculate(nset);
                 } else {
                     setOUTnc(nset);
@@ -78,29 +78,34 @@ public:
 
     // Utility method to set the digital OUT Pin
     void setOUTbool(bool b, NetSet *nset) {
-        OUT._Rdrv = 0.0;
-        OUT._Uvs  = b ? VCC.U() : GND.U();
+        OUT.setDrvVS(b ? VCC.U() : GND.U(), nset);
         if (OUT.getNet()->hasDrivers()) {
             if (b) {
+                VCC._Rdrv = OUT.getNet()->RwVS();
                 VCC._Idrv = [&] (double U) -> double {
-                    return OUT.getNet()->Isum(U, &OUT);
+                    return OUT.getNet()->IsumwVS(U);
                 };
+                GND._Rdrv = INF;
                 GND._Idrv = nullptr;
             } else {
+                VCC._Rdrv = INF;
                 VCC._Idrv = nullptr;
+                GND._Rdrv = OUT.getNet()->RwVS();
                 GND._Idrv = [&] (double U) -> double {
-                    return OUT.getNet()->Isum(U, &OUT);
+                    return OUT.getNet()->IsumwVS(U);
                 };
             }
+            nset->insert(VCC._netPtr);
+            nset->insert(GND._netPtr);
         }
-        nset->insert(OUT._netPtr);
     }
 
     void setOUTnc(NetSet *nset) {
-        OUT._Rdrv = INF;
-        VCC._Idrv = nullptr;
-        GND._Idrv = nullptr;
-        nset->insert(OUT._netPtr);
+        OUT.setDrvNC(nset);
+        if (OUT.getNet()->hasDrivers()) {
+            VCC.setDrvNC(nset);
+            GND.setDrvNC(nset);
+        }
     }
 
     friend std::ostream & operator << (std::ostream & os, const Gate<N> & rhs) {
@@ -111,7 +116,7 @@ public:
             os << std::endl;
         }
         os << "Output "   << rhs.OUT.getName();
-//        os << " driving " << drive << rhs.OUT;
+        //        os << " driving " << drive << rhs.OUT;
         os << std::endl;
         return os;
     }

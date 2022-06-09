@@ -19,11 +19,15 @@ public:
     }
 
     double Ichar(double U) override {
+        if (_R == 0) return INF;
         return U /_R;
     }
 
     inline double getR()         { return _R; }
-    inline void   setR(double r) { _R = r;    }
+    inline void   setR(double r) {
+        _R = r;
+        updateR();
+    }
 
 private:
     double _R;

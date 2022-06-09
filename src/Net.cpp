@@ -19,6 +19,7 @@
 int Net::_no_nets = 0;
 #include <iostream>
 #include <cmath>
+#include <cassert>
 
 bool Net::_enable_sc_exceptions = true;;
 
@@ -98,62 +99,47 @@ void Net::update(NetSet * usp) {
 
     // std:: cout << "update " << getName() << std::endl;
     Pin * ivs_ptr {nullptr};            // Pointer to first ideal voltage source
-    bool isnc = true;
     _drivers = 0;
+    double G = 0.0;
     for (Pin * p : _pins) {
         // Skip non-driving Pins
         if (p->isDrvNC()) continue;
+        // Add up Rg
+//        std::cout << "** _Rdrv: " << p->_Rdrv << std::endl;
+        G += 1 / p->_Rdrv;
         // Check for voltage source
         if (p->isDrvVS()) {
-            isnc = false;
             if (!ivs_ptr) {           // Ideal Voltage source
                 ivs_ptr = p;          // Store pointer to first VS
                 continue;
             } else {
-                if (_enable_sc_exceptions && (p->_Uvs != ivs_ptr->_Uvs)) {     // Did we find a different voltage source?
+                if (_enable_sc_exceptions && (p->_Udrv != ivs_ptr->_Udrv)) {     // Did we find a different voltage source?
                     short_circuit_exception e(this);
                     throw e;
                 }
             }
         } else {
-            isnc = false;
             _drivers++;
         }
     }
-    //	if (/*!ivs_ptr  &&*/ _drivers) {
-    //		for (Pin * p : _pins) {
-    //			double ud = zero( [&](double U) -> double { return Isum(U, p); } );
-    //			if (p->_Uw != ud) {
-    //				p->_Uw = ud;
-    //				p->update(usp);
-    //			}
-    //		}
-    //	}
 
-    double u {0};
-    bool   vs{false};
+    double Rg = 1 / G;
+    double U = 0;
     if (ivs_ptr) {
-        u = ivs_ptr->_Uvs;
-        vs = true;
+        U = ivs_ptr->_Udrv;
     } else {
         if (_drivers) {
-            u  = zero( [&](double U) -> double { return Isum(U); } );
+            U  = zero( [&](double U) -> double { return Isum(U); } );
             //            std::cout << "**** Calculate new U for " << getName() << ": " << u << "V" << std::endl;
         }
-        vs = false;
     }
-    // Check if the State of the Net has changed
-    if (_U != u || _isVS != vs || _isNC != isnc) {
-        //	    std::cout << _name << " ";
-        //	    std::cout << _U << " " << u << " " << _isVS << " " << vs << " " << _isNC << " " << isnc << std::endl;
-        //	    std::cout << this << std::endl;
-        //        if (getName().find("__R") != std::string::npos)
-        //            std::cout << getName() << " U:" << u << "V" << std::endl;
-        _U    = u;
-        _isVS = vs;
-        _isNC = isnc;
+
+    // Check if the State of the Net has changed,
+    // and update all Pins in the Net in this case
+    if (_U != U || _Rg != Rg) {
+        _U    = U;
+        _Rg   = Rg;
         for (Pin * p : _pins) {
-            //            std::cout << "--------- Calling update on " << p->getName() << std::endl;
             p->update(usp);
         }
     }
@@ -170,23 +156,57 @@ double Net::Isum(double U, Pin * p) const {
     return res;
 }
 
-//double Net::R(Net *net=nullptr) {
-//	Net *n = net ? net : this;
-//	double R = 0.0;
-//	for (Pin * pin : _pins) {
-//		if (!pin->isDrvNC() && !pin->isDrvVS()) {
-//			G +=
-//		}
-//	}
-//}
+double Net::IsumwVS(double U) const {
+    double res = 0;
+    for (Pin * pin : _pins) {
+        if (pin->isDrvNC()) continue;
+        if (pin->isDrvVS()) continue;
+        if (pin->_Idrv) {
+            res += pin->_Idrv(U);
+        }
+    }
+    return res;
+}
+
+
+double Net::Rw(const Pin * p) const {
+//    std::cout << std::endl << "Rw on" << p->getName() << std::endl;
+//    return _R;
+    if (isNC()) return INF;
+//    if (isVS() && !p->isDrvVS()) return 0;
+
+    double G = 0;
+    for (Pin * pin : _pins) {
+        if (pin != p) {
+//            std::cout << "Adding " << p->getName() << std::endl;
+            if (pin->isDrvNC()) continue;
+            if (pin->isDrvVS()) return 0;
+            G += 1/pin->_Rdrv;
+        } else {
+//            std::cout << "Skipping " << p->getName() << std::endl;
+        }
+    }
+    return 1/G;
+}
+
+double Net::RwVS() const {
+    if (isNC()) return INF;
+    double G = 0;
+    for (Pin * pin : _pins) {
+        if (pin->isDrvNC()) continue;
+        if (pin->isDrvVS()) continue;
+        G += 1/pin->_Rdrv;
+    }
+    return 1/G;
+}
 
 ostream & operator << (ostream & os, const Net * net)
 {
     os << "Net " << net->getName();
-    if (net->_isNC) os << " NC ";
-    if (net->_isVS) os << " VS ";
+    if (net->isNC()) os << " NC ";
+    if (net->isVS()) os << " VS ";
     os << "[" << net->U     << " V, "
-            << net->Rd()  << " Ohm]"
+            << net->R()  << " Ohm]"
             << std::endl;
     for (Pin * p : net->_pins) {
         if (p->isDrvNC()) continue;

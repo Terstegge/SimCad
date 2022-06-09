@@ -32,9 +32,8 @@ class Net : public Named {
 
 private:
     std::vector<Pin *>  _pins;
-    bool    _isNC;
     double  _U;
-    bool    _isVS;
+    double  _Rg;
     int     _drivers;
 
 
@@ -45,7 +44,7 @@ public:
     // Global counter for the number of Nets
     static int _no_nets;
     Net(const std::string & name) : Named(name),
-          U(_U), _U(0.0), _isVS(false), _isNC(true), _drivers(0)
+          U(_U), _U(0.0), _Rg(INF), _drivers(0)
     {
         ++_no_nets;
     }
@@ -71,16 +70,16 @@ public:
     void update();
 
     inline bool isGND() const {
-        return (_U == 0.0) && _isVS;
+        return (_U == 0.0) && isVS();
     }
     inline bool isVCC() const {
-        return (_U == SUPPLY_VOLTAGE) && _isVS;
+        return (_U == SUPPLY_VOLTAGE) && isVS();
     }
     inline bool isNC() const {
-        return _isNC && !_isVS;
+        return _Rg == INF;
     }
     inline bool isVS() const {
-        return _isVS;
+        return _Rg == 0.0;
     }
     inline operator bool () const {
         return isNC() ? true : _U > (SUPPLY_VOLTAGE/2);
@@ -93,20 +92,27 @@ public:
 
     const double &  U;
     double Isum(double U, Pin * p = nullptr) const;
+    double IsumwVS(double U) const;
+
     int sgn(double v);
     double zero(std::function<double(double)> f);
     void show_driver();
 
     inline double R() const {
-        return U / Isum(U);
+        return _Rg;
+//        return U / Isum(U);
     }
+
+    double Rw(const Pin * p) const;
+
+    double RwVS() const;
 
 //    double R(Net *net=nullptr);
 
-    inline double Rd() const {
-        double dU = 0.2;
-        return dU / (Isum(U + dU/2.0) - Isum(U - dU/2.0));
-    }
+//    inline double Rd() const {
+//        double dU = 0.2;
+//        return dU / (Isum(U + dU/2.0) - Isum(U - dU/2.0));
+//    }
 };
 
 #endif // _NET_H_
