@@ -37,8 +37,8 @@ public:
     LED &   ZF;
     LEDRef ALU;
     LEDRef RAM;
-    LEDRef PC;
     LEDRef MAR;
+    LEDRef PC;
     LEDRef MS;
     LEDRef CTRL;
 

@@ -180,24 +180,25 @@ int main() {
         // End manual program  mode
         comp.PRGM_MODE.set(PROG_MODE_OFF);
         // Run the program ... let the party begin
+        cout << "Run the program ..." << endl;
         comp.CLK_MODE.set(CLK_MODE_RUN);
         // Set unsigned display mode
-        //OUT_MODE.set(OUT_MODE_SIGNED);
+        //comp.OUT_MODE.set(OUT_MODE_SIGNED);
 
 
         // Our main loop. Do nothing else than wait until
         // the computer generates a HLT signal (see above).
         // Since the simulation is triggered by an internal
         // NE555 timer, we do not have to provide a clock
-        // signal from this simulation application.
+        // signal here.
         while (running) {
             this_thread::sleep_for(200ms);
         }
-        // End the thread for capacitor handling.
-        C::stop();
-
         // Show the final CPU state
         cout << comp << "OUT:'" << Display << "'" << endl;
+
+        // End the thread for capacitor handling.
+        C::stop();
 
     } catch (short_circuit_exception &e) {
         cerr << e << endl;

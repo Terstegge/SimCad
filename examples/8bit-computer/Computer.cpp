@@ -24,8 +24,8 @@ Computer::Computer(std::string name) : _8bit_computer(name) ,
     ZF   ( D35 ),
     ALU  ({ &D43, &D42, &D41, &D40, &D39, &D38, &D37, &D36 }),
     RAM  ({ &D51, &D50, &D49, &D48, &D47, &D46, &D45, &D44 }),
-    PC   ({ &D61, &D60, &D59, &D58 }),
     MAR  ({ &D57, &D56, &D55, &D54 }),
+    PC   ({ &D61, &D60, &D59, &D58 }),
     MS   ({ &D67, &D68, &D69 }),
     CTRL ({ &D85, &D84, &D83, &D82, &D81, &D80, &D79, &D78,
             &D77, &D76, &D75, &D74, &D73, &D72, &D71, &D70 })
@@ -44,8 +44,8 @@ ostream & operator <<(ostream & os, const Computer & c) {
     os << "PC:0x"   << hex << setw(1) << setfill('0') << (unsigned int)c.PC   << " ";
     os << "A:0x"    << hex << setw(2) << setfill('0') << (unsigned int)c.A    << " ";
     os << "B:0x"    << hex << setw(2) << setfill('0') << (unsigned int)c.B    << " ";
-    os << "C:"      << c.CF.on() << " ";
-    os << "Z:"      << c.ZF.on() << "  ";
+    os << "CF:"      << c.CF.on() << " ";
+    os << "ZF:"      << c.ZF.on() << "  ";
     return os;
 }
 
