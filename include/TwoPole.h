@@ -13,6 +13,8 @@
 #define _INCLUDE_TWOPOLE_H_
 #include <functional>
 #include <memory>
+#include <cmath>
+
 #include "Pin.h"
 #include "Narray.h"
 
