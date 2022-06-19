@@ -15,9 +15,6 @@ private:
 public:
     prog_display(uint8_t *eeprom);
 
-    // Read a byte from the EEPROM at the specified address.
-    uint8_t readEEPROM(int address);
-
     //Write a byte to the EEPROM at the specified address.
     void writeEEPROM(int address, uint8_t data);
 

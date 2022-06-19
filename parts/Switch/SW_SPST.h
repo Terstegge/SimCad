@@ -1,14 +1,14 @@
 ///////////////////////////////////////////////
 //
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 //
-//  A simulation package for digital circuits
-//
-//  (c) 2020  A. Terstegge
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -19,9 +19,9 @@
 #ifndef _SW_SPST_H_
 #define _SW_SPST_H_
 
-#include "R.h"
+#include "Wire.h"
 
-class SW_SPST : public R {
+class SW_SPST : public Wire {
 public:
     SW_SPST(const std::string & name);
 

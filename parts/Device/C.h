@@ -33,6 +33,7 @@ public:
     //virtual ~C();
 
     double Ichar(double U) override;
+    double Rchar(double U) override;
 
     void setCapacity(double cap);
 

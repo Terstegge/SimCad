@@ -1,49 +1,49 @@
 ///////////////////////////////////////////////
 //
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 //
-//  A simulation package for digital circuits
-//
-//  (c) 2020  A. Terstegge
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
-// Low-level implementation of a simple switch.
-// When on, both input states are propagated
-// to the respective 'other' side.
-//
 #include "SW_SPDT.h"
 
-
-SW_SPDT::SW_SPDT(const std::string & name) : SW_SPDT_skel(name) {
+SW_SPDT::SW_SPDT(const std::string & name)
+: NAME(p), NAME(_wire21), NAME(_wire23) {
+    p[2].connect_to(_wire21.p[1]);
+    p[2].connect_to(_wire23.p[1]);
+    p[1].connect_to(_wire21.p[2]);
+    p[3].connect_to(_wire23.p[2]);
 }
 
 void SW_SPDT::set(int c) {
-	switch(c) {
-	case con21: {
-		if (R21.getR() == 0.0) {
-			return;
-		} else {
-			R23.setR( INF );
-			R21.setR( 0.0 );
-			R21.update();
-			R23.update();
-		}
-		break;
-	}
-	case con23:
-		if (R23.getR() == 0.0) {
-			return;
-		} else {
-			R21.setR( INF );
-			R23.setR( 0.0 );
-			R21.update();
-			R23.update();
-		}
-		break;
-	}
+    switch(c) {
+        case con21: {
+            if (_wire21.connected) {
+                return;
+            } else {
+                _wire23.connected = false;
+                _wire21.connected = true;;
+                _wire21.update();
+                _wire23.update();
+            }
+            break;
+        }
+        case con23:
+            if (_wire23.connected) {
+                return;
+            } else {
+                _wire21.connected = false;
+                _wire23.connected = true;;
+                _wire21.update();
+                _wire23.update();
+            }
+            break;
+    }
 }

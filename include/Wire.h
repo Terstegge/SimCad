@@ -12,28 +12,27 @@
 //
 ///////////////////////////////////////////////
 //
-// Implementation of an ideal voltage source.
+// Class for a simple wire connection. The attribute
+// 'connected' controls if the Wire is electrically
+// connecting the two Pins p[1] and p[2] or not.
+// A Wire is basically a resistor with only two
+// possible value, 0 and INF.
 //
-#ifndef _INCLUDE_VSOURCE_H_
-#define _INCLUDE_VSOURCE_H_
+#ifndef _INCLUDE_WIRE_H_
+#define _INCLUDE_WIRE_H_
 
 #include "TwoPole.h"
 
-class VSOURCE : public TwoPole {
+class Wire : public TwoPole {
 public:
+    bool connected;
 
-    VSOURCE(const std::string & name, double u) : TwoPole(name) {
-        _Uoffset = u;
+    Wire(const std::string & name) : TwoPole(name), connected(false) {
     }
 
     double Rchar(double U) {
-        return 0;
-    }
-
-    void setU(double u) {
-        _Uoffset = u;
-        update();
+        return connected ? 0 : INF;
     }
 };
 
-#endif // _INCLUDE_VSOURCE_H_
+#endif // _INCLUDE_WIRE_H_

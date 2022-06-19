@@ -1,18 +1,18 @@
 ///////////////////////////////////////////////
 //
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 //
-//  A simulation package for digital circuits
-//
-//  (c) 2020  A. Terstegge
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
-// Implementation of a ideal current source.
+// Implementation of an ideal current source.
 //
 #ifndef _INCLUDE_ISOURCE_H_
 #define _INCLUDE_ISOURCE_H_
@@ -21,15 +21,16 @@
 
 class ISOURCE : public TwoPole {
 public:
+
     ISOURCE(const std::string & name, double i) : TwoPole(name), _I(i) {
-        _G = 0;
     }
 
-    void p1_callback() override {
-        p[2].setId( p[2].Id -_I );
+    double Rchar(double U) {
+        return MAX_DBL;
     }
-    void p2_callback() override {
-        p[1].setId( p[1].Id +_I );
+
+    double Ichar(double) {
+        return _I;
     }
 
     void setI(double i) {
@@ -41,4 +42,4 @@ private:
     double _I;
 };
 
-#endif // _INCLUDE_VSOURCE_H_
+#endif // _INCLUDE_ISOURCE_H_

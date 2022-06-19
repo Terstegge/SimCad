@@ -1,31 +1,29 @@
 ///////////////////////////////////////////////
 //
 //  This file is part of
-//     ___  ____  __  __  ___    __    ____
-//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
-//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
-//    (___/(____)(_/\/\_)\___)(__)(__)(____/
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 //
-//  A simulation package for electronic circuits
-//
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
 //  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
-// This is a complete simulation of the (famous)
-// 8-bit computer designed by Ben Eater, based on
-// the original KiCad-schematics
+// This is a complete simulation of the (famous) 8-bit computer
+// designed by Ben Eater, based on the original KiCad-schematics
 // (see https://eater.net/8bit)
-// The unique thing about this simulation is, that
-// every single component (ever R, C, LED, 74LSxx)
-// is simulated in real-time and with realistic
-// voltage and current values.
+// The unique thing about this simulation is, that every single
+// component (ever R, C, LED, 74LSxx, NE555) is simulated in
+// real-time and with realistic voltage and current values.
 //
-// The program running on this 8-bit computer is
-// the Fibonacci number calculation (see below).
+// The program running on this 8-bit computer is the Fibonacci
+// number calculation (see below).
 //
 #include "Computer.h"
-#include "ShortCircuitEx.h"
+#include "SimCadException.h"
 #include "BusRef.h"
 
 #include "prog_display.h"
@@ -92,7 +90,6 @@ int main() {
     pm.programEEPROMs();
 
     try {
-
         // Slow down the NE555 timer for display multiplexing.
         // The original frequency is approx. 718Hz, which is too
         // fast for the simulation. With 718nF, we get approx. 10Hz.
@@ -157,34 +154,32 @@ int main() {
         cout << "Reset ..." << endl;
         comp.RESET.toggle();
 
-
         // Attach a handler to the HLT line, because we
         // also want to stop the simulation in this situation
         // by setting the variable 'running' to false.
         bool running = true;
-        comp.Clock_HLT.attach([&](NetSet * nset){
-            running = false;
+        comp.Clock_HLT.attach([&] (NetSet * nset) {
+            if (comp.Clock_HLT) running = false;
         });
 
         // For every falling edge of our main CLK signal,
         // show the CPU state
-        comp.A_Register_CLK.attach([&](NetSet * nset){
+        comp.A_Register_CLK.attach([&] (NetSet * nset) {
             if (!(bool)comp.A_Register_CLK) {
                 cout << comp << "OUT:'" << Display << "'" << endl;
             }
         });
 
-
         // Set the speed of the main clock
-        comp.RV1.setPercent(95.34);
+        comp.RV1.setPercent(95);
         // End manual program  mode
         comp.PRGM_MODE.set(PROG_MODE_OFF);
-        // Run the program ... let the party begin
+        // Set signed/unsigned display mode
+        comp.OUT_MODE.set(OUT_MODE_UNSIGNED);
+
+        // Run the program ... let the party begin :)
         cout << "Run the program ..." << endl;
         comp.CLK_MODE.set(CLK_MODE_RUN);
-        // Set unsigned display mode
-        //comp.OUT_MODE.set(OUT_MODE_SIGNED);
-
 
         // Our main loop. Do nothing else than wait until
         // the computer generates a HLT signal (see above).
@@ -200,7 +195,7 @@ int main() {
         // End the thread for capacitor handling.
         C::stop();
 
-    } catch (short_circuit_exception &e) {
+    } catch (SimCadException &e) {
         cerr << e << endl;
     }
 }

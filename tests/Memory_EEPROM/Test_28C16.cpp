@@ -16,7 +16,7 @@
 #include "TestUtils.h"
 #include "_28C16.h"
 #include "BusRef.h"
-#include "ShortCircuitEx.h"
+#include "SimCadException.h"
 
 TEST(Memory_EEPROM, 28C16)
 {
@@ -60,7 +60,7 @@ TEST(Memory_EEPROM, 28C16)
         // Power down
         ic.p[24] = SUPPLY_GROUND;
 
-    } catch (short_circuit_exception &e) {
+    } catch (SimCadException &e) {
         std::cerr << e << std::endl;
     }
 }

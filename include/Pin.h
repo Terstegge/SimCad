@@ -1,43 +1,47 @@
 ///////////////////////////////////////////////
+//
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
-//  A simulation package for digital circuits
-//  (c) 2021  A. Terstegge
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
+//
 ///////////////////////////////////////////////
+//
 // The class 'Pin' models a single pin (either as part
 // of an electronic component  or stand-alone). It is
 // always associated to a Net (a new Net is created in
-// the constructor). A Pin can either be an ideal voltage
-// source or a Pin driving a specific I(U) characteristic.
-// A Pin can have an update-function, which is always
-// called when the associated Net changes its state.
+// the constructor). A Pin can have different states:
+//
+//    * not connected           (_Rdrv == INF)
+//    * ideal voltage source    (_Rdrv == 0.0)
+//    * driving a specific I(U) characteristic.
+//
+// An update-function can be registered to a Pin, which
+// is typically called when the associated Net changes
+// its state.
 //
 #ifndef _INCLUDE_PIN_H_
 #define _INCLUDE_PIN_H_
 
-// DIGISIM includes
 #include "Net.h"
-// Base classes
 #include "Named.h"
-// Standard includes
 #include <functional>
-#include <string>
+#include <iostream>
 
 // Type definition for a I(U) characteristic
 using IFUNC = std::function<double(double)>;
 
 class Pin : public Named {
 
-    // Net is our friend and might change _netPtr or _Uw.
+    // Our friends
     friend class Net;
-    // TwoPole is our friend and might change _Idrv.
     friend class TwoPole;
-    // Gate is our friend and might change _Idrv, _Uvs, _isVS.
     template<int N> friend class Gate;
-    friend class ISOURCE;
 
 private:
     // Pointer to the associated Net. Note that this pointer is always
@@ -47,24 +51,23 @@ private:
     // function), so there is no public setter.
     Net * _netPtr;
 
-    // Attributes used if this Pin is a voltage source. In this case,
-    // the attribute _isVS will be set to true, and _Uvs will store the
-    // voltage value. _Idrv will not be used.
-    double  _Udrv;
+    // This attribute holds the driving voltage, if this Pin is an
+    // ideal voltage source (_Rdrv == 0.0, see below).
+    double _Udrv;
 
-    double  _Rdrv;
+    // This attribute reflects the electrical resistance 'behind' this Pin.
+    // If the value is INF, this pin is not connected.
+    // If the value is 0.0, this Pin is an ideal voltage source.
+    double _Rdrv;
 
     // The I(U) driving function, which describes the contribution of
     // this Pin within its Net. If the function is not set, the Pin is
     // either not connected or a voltage source.
-    IFUNC   _Idrv;
-
-    // Helper method to set _Idrv and to update the Net afterwards.
-    void setIDrv(IFUNC f, NetSet * nset = nullptr);
+    IFUNC  _Idrv;
 
     // The associated update function, which is called when the associated
     // Net changes its voltage/state.
-    UFUNC   _update;
+    UFUNC  _update;
 
 public:
 
@@ -83,14 +86,14 @@ public:
     // Getter for the Net pointer
     inline Net * getNet() const { return _netPtr; }
 
-    // Set this Pin to drive an ideal Voltage Source (VS).
+    // Set this Pin to drive an ideal Voltage Source.
     void setDrvVS(double u, NetSet * nset = nullptr);
 
     // Set this Pin to drive an ideal Voltage Source with either
     // SUPPLY_VOLTAGE or 0 volts. This method is used in digital circuits.
     void setDrvBool(bool b, NetSet * nset = nullptr);
 
-    // Set this Pin to a 'not connected' state (NC).
+    // Set this Pin to a 'not connected' state.
     void setDrvNC(NetSet * nset = nullptr);
 
     // Getters to check if Pin is driving a voltage source
@@ -105,9 +108,7 @@ public:
 
     // Attach a processing function to this Pin. This method will be
     // called when the associated Net has changed its value/state.
-    inline void attach(UFUNC u) {
-        _update = u;
-    }
+    void attach(UFUNC u);
 
     // Safely call the _update() method.
     inline void update(NetSet * nset) {
@@ -115,7 +116,6 @@ public:
     }
 
     // Methods checking the Net state
-    /////////////////////////////////
     inline bool isGND()     const { return _netPtr->isGND(); }
     inline bool isVCC()     const { return _netPtr->isVCC(); }
     inline bool isNC()      const { return _netPtr->isNC();  }
@@ -123,9 +123,8 @@ public:
     inline operator bool () const { return _netPtr->operator bool(); }
 
     // Electrical values
-    ////////////////////
-    double U() const;
-    double R() const;
+    inline double U() const { return _netPtr->U; }
+    inline double R() const { return _netPtr->R; }
     double I() const;
 
     // Stream output operator

@@ -49,6 +49,15 @@ double C::Ichar(double U) {
     return (U - _U) / _R;
 }
 
+double C::Rchar(double U) {
+    if (U == 0 && _U == 0) {
+        return _R;
+    } else {
+        return U / Ichar(U);
+    }
+}
+
+
 void C::setCapacity(double cap) {
     _cap = cap;
     _Q = 0;

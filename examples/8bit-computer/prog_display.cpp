@@ -12,10 +12,6 @@ prog_display::prog_display(uint8_t *eeprom) :
         _eeprom(eeprom) {
 }
 
-uint8_t prog_display::readEEPROM(int address) {
-    return _eeprom[address];
-}
-
 void prog_display::writeEEPROM(int address, uint8_t data) {
     _eeprom[address] = data;
 }

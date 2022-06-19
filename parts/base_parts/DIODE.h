@@ -1,20 +1,19 @@
 ///////////////////////////////////////////////
 //
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 //
-//  A simulation package for digital circuits
-//
-//  (c) 2022  A. Terstegge
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
-// Low-level implementation of a diode based
-// on the shockley equation. The forward 
-// voltage at 10mA is a CTOR parameter.
+// Low-level implementation of a diode based on the shockley equation.
+// The forward voltage at 10mA is a CTOR parameter.
 //
 #ifndef _INCLUDE_DIODE_H_
 #define _INCLUDE_DIODE_H_
@@ -39,7 +38,15 @@ public:
     
     double Ichar(double U) override {
         // Shockley equation
-        return Is * (exp(U / Ut) -1);
+        return Is * (exp(U / Ut) - 1);
+    }
+
+    double Rchar(double U) override {
+        if (U == 0) {
+            return Ut / Is;
+        } else {
+            return U / Ichar(U);
+        }
     }
 
 private:

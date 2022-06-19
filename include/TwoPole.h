@@ -1,16 +1,26 @@
 ///////////////////////////////////////////////
+//
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
-//  A simulation package for digital circuits
-//  (c) 2020  A. Terstegge
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
+//
 ///////////////////////////////////////////////
-// Base class for all kinds of two-poles (e.g.
-// voltage/current sources or resistors and diodes).
+//
+// Base class for various kinds of two-poles, e.g.
+//  - resistors
+//  - diodes
+//  - (ideal) current/voltage sources
+//  - ...
+//
 #ifndef _INCLUDE_TWOPOLE_H_
 #define _INCLUDE_TWOPOLE_H_
+
 #include <functional>
 #include <memory>
 #include <cmath>
@@ -20,20 +30,25 @@
 
 class TwoPole : public Named {
 public:
-    // TwoPole Pins, only p[1] and p[2] are used
-    Narray<Pin, 3> p;
-    TwoPole(const std::string & name) : Named(name), NAME(p) {
 
+    Narray<Pin, 3> p;    // TwoPole Pins, only p[1] and p[2] are used
+    double _Uoffset;     // Voltage offset if the TwoPole is a voltage source
+
+    TwoPole(const std::string & name) : Named(name), NAME(p), _Uoffset(0) {
         // Attach handlers
         p[1].attach([this](NetSet * nset) {
-            double r = p[1].getNet()->Rw(&p[1]) + R();
-            p[2]._Rdrv = r;
-            if (R() == 0) {
-                p[2]._Udrv = p[1].U();
+            double R = Rchar(p[2].U() - p[1].U());
+            if (R == 0) {
+                p[2]._Udrv = p[1].U() + _Uoffset;
+                p[2]._Rdrv = p[1].getNet()->Rw(&p[1]);
                 p[2]._Idrv = [&] (double U) -> double {
                     return p[1].getNet()->Isum(U, &p[1]);
                 };
+            } else if (R == INF) {
+                p[2]._Rdrv = INF;
+                p[2]._Idrv = nullptr;
             } else {
+                p[2]._Rdrv = p[1].getNet()->Rw(&p[1]) + R;
                 p[2]._Idrv = [&] (double U) -> double {
                     return Ichar(U - p[1].U());
                 };
@@ -46,14 +61,18 @@ public:
         });
 
         p[2].attach([this](NetSet * nset) {
-            double r = p[2].getNet()->Rw(&p[2]) + R();
-            p[1]._Rdrv = r;
-            if (R() == 0) {
-                p[1]._Udrv = p[2].U();
+            double R = Rchar(p[2].U() - p[1].U());
+            if (R == 0) {
+                p[1]._Udrv = p[2].U() - _Uoffset;
+                p[1]._Rdrv = p[2].getNet()->Rw(&p[2]);
                 p[1]._Idrv = [&] (double U) -> double {
                     return p[2].getNet()->Isum(U, &p[2]);
                 };
+            } else if (R == INF) {
+                p[1]._Rdrv = INF;
+                p[1]._Idrv = nullptr;
             } else {
+                p[1]._Rdrv = p[2].getNet()->Rw(&p[2]) + R;
                 p[1]._Idrv = [&] (double U) -> double {
                     return -Ichar(p[2].U() - U);
                 };
@@ -69,29 +88,22 @@ public:
     virtual ~TwoPole() {
     }
 
-    double R() {
-        double U = p[2].U() - p[1].U();
-        double I = Ichar( U );
-        if (I == INF) {
-            return 0;
-        }
-        if (I == 0.0) {
-            double dI = Ichar(U+0.1) - Ichar(U-0.1);
-            if (dI == 0) return INF;
-            return fabs(0.2 / dI);
-        }
-        return fabs(U / I);
-
+    // The R(U) characteristic of the TwoPole. Normally this
+    // characteristic can be calculated as U / Ichar(U), but
+    // in same cases the case U==0, Ichar(0)==0 has to get
+    // special attention to not generate a NAN result or to
+    // calculate the correct R value at this point.
+    // Default is INF (Pin is not connected).
+    virtual double Rchar(double U) {
+        return INF;
     }
 
-    // The I(U) characteristic of the twopole. The voltage
+    // The I(U) characteristic of the TwoPole. The voltage
     // U is calculated as U = p[2].U - p[1].U. This is important
-    // for parts with non-linar behavior.
-    virtual double Ichar(double) = 0;
-
-    void updateR() {
-        p[1]._Rdrv = p[2].getNet()->Rw(&p[2]) + R();;
-        p[2]._Rdrv = p[1].getNet()->Rw(&p[1]) + R();
+    // for parts with non-linar behavior. Default is 0, so no
+    // current at all voltages (Pin is not connected).
+    virtual double Ichar(double U) {
+        return 0;
     }
 
     void update() {
@@ -101,9 +113,7 @@ public:
         while (set1.size()) {
             set2.clear();
             for (Net * net : set1) {
-                //                net->_mutex.lock();
                 net->update(&set2);
-                //                net->_mutex.unlock();
             }
             set1 = set2;
         }

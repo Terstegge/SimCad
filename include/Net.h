@@ -1,12 +1,17 @@
 ///////////////////////////////////////////////
+//
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
-//  A simulation package for digital circuits
-//  (c) 2021  A. Terstegge
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
+//
 ///////////////////////////////////////////////
+//
 #ifndef _INCLUDE_NET_H_
 #define _INCLUDE_NET_H_
 
@@ -44,7 +49,7 @@ public:
     // Global counter for the number of Nets
     static int _no_nets;
     Net(const std::string & name) : Named(name),
-          U(_U), _U(0.0), _Rg(INF), _drivers(0)
+          U(_U), _U(0.0), _Rg(INF), R(_Rg), _drivers(0)
     {
         ++_no_nets;
     }
@@ -91,17 +96,18 @@ public:
     friend std::ostream & operator << (std::ostream & os, const Net *  net);
 
     const double &  U;
-    double Isum(double U, Pin * p = nullptr) const;
+    const double &  R;
+
+    double Isum(double U, const Pin * p = nullptr) const;
     double IsumwVS(double U) const;
 
-    int sgn(double v);
     double zero(std::function<double(double)> f);
     void show_driver();
 
-    inline double R() const {
-        return _Rg;
-//        return U / Isum(U);
-    }
+//    inline double R() const {
+//        return _Rg;
+////        return U / Isum(U);
+//    }
 
     double Rw(const Pin * p) const;
 
