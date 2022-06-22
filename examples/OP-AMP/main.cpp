@@ -1,5 +1,5 @@
 #include "OP_AMP.h"
-#include "ShortCircuitEx.h"
+#include "SimCadException.h"
 
 #include <iostream>
 #include <thread>
@@ -40,7 +40,7 @@ int main() {
         cout << endl;
 
 
-    } catch (short_circuit_exception &e) {
+    } catch (SimCadException &e) {
         cerr << e << endl;
     }
 }

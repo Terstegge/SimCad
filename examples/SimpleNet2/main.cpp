@@ -1,5 +1,5 @@
 #include "SimpleNet2.h"
-#include "ShortCircuitEx.h"
+#include "SimCadException.h"
 
 #include <iostream>
 using namespace std;
@@ -12,6 +12,9 @@ int main() {
         // Power up
         cout << "********** Setting GND" << endl;
         sn2.GND = SUPPLY_GROUND;
+        sn2.V1.update();
+        sn2.V2.update();
+        sn2.I1.update();
 
         cout << "Pin status:" << endl;
         cout << sn2.V1.p[1] << endl;
@@ -64,7 +67,7 @@ int main() {
         cout << drive << sn2.R8.p[2] << endl;
         cout << drive << sn2.GND     << endl;
 
-    } catch (short_circuit_exception &e) {
+    } catch (SimCadException &e) {
         cerr << e << endl;
     }
 }

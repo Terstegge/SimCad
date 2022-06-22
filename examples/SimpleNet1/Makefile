@@ -11,12 +11,12 @@
 #///////////////////////////////////////////////
 #//
 # 
-DIGISIM_DIR = ../..
-BUILD_DIR   = BUILD
+SIMCAD_DIR = ../..
+BUILD_DIR  = BUILD
 
 TARGET_BIN_FILE = SimpleNet1
 TARGET_NET_FILE = SimpleNet1.net
 TARGET_SRC_DIRS = .
 TARGET_INC_DIRS = .
 
-include $(DIGISIM_DIR)/common.mk
+include $(SIMCAD_DIR)/common.mk

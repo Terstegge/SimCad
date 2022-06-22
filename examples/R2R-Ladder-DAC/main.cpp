@@ -1,5 +1,5 @@
 #include "R2R-Ladder-DAC.h"
-#include "ShortCircuitEx.h"
+#include "SimCadException.h"
 
 #include <iostream>
 using namespace std;
@@ -25,7 +25,7 @@ int main() {
             cout << r2r.Q << "  " << r2r.OUT << endl;
         }
 
-    } catch (short_circuit_exception &e) {
+    } catch (SimCadException &e) {
         cerr << e << endl;
     }
 }

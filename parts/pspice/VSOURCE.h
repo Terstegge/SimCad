@@ -23,7 +23,7 @@ class VSOURCE : public TwoPole {
 public:
 
     VSOURCE(const std::string & name, double u) : TwoPole(name) {
-        _Uoffset = u;
+        _Usrc = u;
     }
 
     double Rchar(double U) {
@@ -31,7 +31,7 @@ public:
     }
 
     void setU(double u) {
-        _Uoffset = u;
+        _Usrc = u;
         update();
     }
 };

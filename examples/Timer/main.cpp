@@ -1,5 +1,5 @@
 #include "Timer.h"
-#include "ShortCircuitEx.h"
+#include "SimCadException.h"
 
 #include <iostream>
 #include <thread>
@@ -33,7 +33,7 @@ int main() {
 	// Stop C-thread
 	C::stop();
 
-    } catch (short_circuit_exception &e) {
+    } catch (SimCadException &e) {
         cerr << e << endl;
     }
 }

@@ -99,7 +99,7 @@ public:
     // Getters to check if Pin is driving a voltage source
     // or is not connected.
     inline bool isDrvVS() const { return _Rdrv == 0.0; }
-    inline bool isDrvNC() const { return _Rdrv == INF; }
+    inline bool isDrvNC() const { return _Rdrv == INF && _Idrv == nullptr; }
 
     // Operators for easily setting a voltage source by assigning
     // a double or boolean value.

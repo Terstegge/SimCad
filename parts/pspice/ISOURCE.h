@@ -22,24 +22,18 @@
 class ISOURCE : public TwoPole {
 public:
 
-    ISOURCE(const std::string & name, double i) : TwoPole(name), _I(i) {
+    ISOURCE(const std::string & name, double i) : TwoPole(name) {
+        _Isrc = i;
     }
 
     double Rchar(double U) {
-        return MAX_DBL;
-    }
-
-    double Ichar(double) {
-        return _I;
+        return INF;
     }
 
     void setI(double i) {
-        _I = i;
+        _Isrc = i;
         update();
     }
-
-private:
-    double _I;
 };
 
 #endif // _INCLUDE_ISOURCE_H_

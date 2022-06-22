@@ -80,11 +80,11 @@ std::ostream& operator <<(std::ostream &os, const Pin &p) {
         if (p.isDrvNC()) {
             os << "NC]";
         } else if (p.isDrvVS()) {
-            os << p._Udrv << "V Source]";
+            os << p._Udrv << " V Source]";
         } else {
-            os << p._Rdrv << "Ω";
+            os << p._Rdrv << " Ω";
             if (p._Idrv) {
-                os << ", " << p._Idrv(p.U()) << "A";
+                os << ", " << p._Idrv(p.U()) << " A";
             }
             os << "]";
         }

@@ -25,17 +25,50 @@ bool Net::_enable_sc_exceptions = true;;
 
 using entry = std::pair <Pin *, std::function<double(double)>>;
 
-// Find a zero in function f using Newton's method
+
+int sgn(double v) {
+    return (v > 0) - (v < 0);
+}
+
+// Find a zero in function f(x) using a combination of
+// the bisection and secant method. Both methods need
+// to evaluate f(x) only once per iteration. The bisection
+// method is used to get a first rough estimate of the
+// interval [x1,x2] in which the zero is located. The
+// second step is using the secant method because of
+// better convergence. Using only the secant method
+// leads to problems in cases where f(x) has a very
+// small or high slope.
 double Net::zero(std::function<double(double)> f) {
-    double x  = 0;
-    double fx = f(x);
-    while (fabs(fx) > 1e-10) {
-        double df = (f(x+0.01) - f(x-0.01)) / 0.02;
-        x = x - fx/df;
-        fx = f(x);
+    double x1  = 0.0;
+    double fx1 = f(x1);
+    double x2  = 5.0;
+    double fx2 = f(x2);
+    double x3, fx3;
+
+    // Handle special case when f(x) has slope 0
+    if (fx1 == fx2) return 0;
+
+    while ( (x2-x1) > 0.1 ) {
+        x3  = (x2+x1) / 2.0;
+        fx3 = f(x3);
+        if (sgn(fx1) == sgn(fx3)) {
+            x1 = x3;
+        } else {
+            x2 = x3;
+        }
+    }
+    fx1 = f(x1);
+    fx2 = f(x2);
+    while (fabs(fx2) > 1e-10) {
+        x3 = x2 - ((x2 - x1) / (fx2 - fx1)) * fx2;
+        x1 = x2;
+        x2 = x3;
+        fx1 = fx2;
+        fx2 = f(x3);
     }
     // Truncate after 8 decimal places
-    return trunc(x * 10e8) / 10e8;
+    return trunc(x2 * 10e8) / 10e8;
 }
 
 void Net::merge_net(Net * n, Net * o) {

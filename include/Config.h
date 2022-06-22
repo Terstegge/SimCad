@@ -18,7 +18,6 @@
 #include <limits>
 
 #define INF     std::numeric_limits<double>::infinity()
-#define MAX_DBL std::numeric_limits<double>::max()
 
 #define SUPPLY_VOLTAGE (double)5.0
 #define SUPPLY_GROUND  (double)0.0
