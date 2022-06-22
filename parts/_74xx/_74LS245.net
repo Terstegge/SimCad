@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/andreas/github/SimCad/parts/_74xx/_74LS245.sch)
-    (date "So 15 Mai 2022 19:37:00 CEST")
+    (date "Mi 22 Jun 2022 16:26:23 CEST")
     (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block

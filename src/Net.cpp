@@ -49,7 +49,7 @@ double Net::zero(std::function<double(double)> f) {
     // Handle special case when f(x) has slope 0
     if (fx1 == fx2) return 0;
 
-    while ( (x2-x1) > 0.1 ) {
+    while ((x2-x1) > 0.1) {
         x3  = (x2+x1) / 2.0;
         fx3 = f(x3);
         if (sgn(fx1) == sgn(fx3)) {

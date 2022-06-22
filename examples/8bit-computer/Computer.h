@@ -1,12 +1,24 @@
-/*
- * Computer.h
- *
- *  Created on: 14.05.2022
- *      Author: andreas
- */
-
-#ifndef _COMPUTER_H_
-#define _COMPUTER_H_
+///////////////////////////////////////////////
+//
+//  This file is part of
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
+//
+///////////////////////////////////////////////
+//
+// This class is only a small wrapper around the generated
+// class _8_bit_computer. Main purpose is easier use of the
+// generated class by defining some names for LEDs and buttons
+// as well as providing an ostream operator.
+//
+#ifndef _EXAMPLES_8_BIT_COMPUTER_H_
+#define _EXAMPLES_8_BIT_COMPUTER_H_
 
 #include "8bit-computer.h"
 
@@ -45,4 +57,4 @@ public:
     friend ostream & operator <<(ostream & os, const Computer & c);
 };
 
-#endif // _COMPUTER_H_
+#endif // _EXAMPLES_8_BIT_COMPUTER_H_

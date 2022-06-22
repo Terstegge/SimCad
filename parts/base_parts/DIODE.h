@@ -12,11 +12,12 @@
 //
 ///////////////////////////////////////////////
 //
-// Low-level implementation of a diode based on the shockley equation.
-// The forward voltage at 10mA is a CTOR parameter.
+// Low-level implementation of a diode based on the
+// shockley equation. The forward voltage at 10mA is
+// a CTOR parameter.
 //
-#ifndef _INCLUDE_DIODE_H_
-#define _INCLUDE_DIODE_H_
+#ifndef _PARTS_BASE_PARTS_DIODE_H_
+#define _PARTS_BASE_PARTS_DIODE_H_
 
 #include "TwoPole.h"
 #include <cmath>
@@ -55,4 +56,4 @@ private:
     double Is;  // 10e-6...10e-12
 };
 
-#endif // _INCLUDE_DIODE_H_
+#endif // _PARTS_BASE_PARTS_DIODE_H_

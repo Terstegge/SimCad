@@ -18,12 +18,11 @@
 //
 #include "SW_SPST.h"
 
-SW_SPST::SW_SPST(const std::string & name) : Wire(name) {
+SW_SPST::SW_SPST(const std::string & name) : R(name, INF) {
 }
 
 void SW_SPST::setOn(bool b) {
-    connected = b;
-    update();
+    setR(b ? 0 : INF);
 }
 
 void SW_SPST::toggle() {

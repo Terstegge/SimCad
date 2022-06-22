@@ -15,12 +15,12 @@
 // Low-level implementation of a push button.
 // The button is simply a Wire ...
 //
-#ifndef _SW_Push_H_
-#define _SW_Push_H_
+#ifndef _PARTS_SWITCH_SW_PUSH_H_
+#define _PARTS_SWITCH_SW_PUSH_H_
 
-#include "Wire.h"
+#include "R.h"
 
-class SW_Push : public Wire {
+class SW_Push : public R {
 public:
 
     SW_Push(const std::string & name);
@@ -30,4 +30,4 @@ public:
 
 };
 
-#endif // _SW_Push_H_
+#endif // _PARTS_SWITCH_SW_PUSH_H_

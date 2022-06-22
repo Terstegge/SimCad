@@ -12,8 +12,8 @@
 //
 ///////////////////////////////////////////////
 //
-#ifndef INCLUDE_GATES_OPAMP_H_
-#define INCLUDE_GATES_OPAMP_H_
+#ifndef _PARTS_PSPICE_OPAMP_H_
+#define _PARTS_PSPICE_OPAMP_H_
 
 #include "Pin.h"
 #include "Narray.h"
@@ -98,4 +98,4 @@ private:
     const double EPS = 1e-5;
 };
 
-#endif /* INCLUDE_GATES_OPAMP_H_ */
+#endif // _PARTS_PSPICE_OPAMP_H_

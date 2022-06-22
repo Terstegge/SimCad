@@ -1,22 +1,22 @@
 ///////////////////////////////////////////////
 //
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 //
-//  A simulation package for digital circuits
-//
-//  (c) 2020  A. Terstegge
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
 // Low-level implementation of a NAND gate
 // with N inputs (p[1]...p[N]).
 //
-#ifndef _INCLUDE_NAND_H_
-#define _INCLUDE_NAND_H_
+#ifndef _PARTS_BASE_PARTS_NAND_H_
+#define _PARTS_BASE_PARTS_NAND_H_
 
 #include "Gate.h"
 
@@ -37,4 +37,4 @@ public:
     }
 };
 
-#endif // _INCLUDE_NAND_H_
+#endif // _PARTS_BASE_PARTS_NAND_H_

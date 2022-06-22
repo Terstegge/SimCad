@@ -1,8 +1,8 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/kicad/_74LS27/_74LS27.sch)
-    (date "Sa 01 Aug 2020 10:27:12 CEST")
-    (tool "Eeschema 5.1.6-c6e7f7d~86~ubuntu16.04.1")
+    (source /home/andreas/github/SimCad/parts/_74xx/_74LS27.sch)
+    (date "Mi 22 Jun 2022 16:26:51 CEST")
+    (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
         (title)
@@ -44,7 +44,7 @@
         (pin (num 5) (name VCC) (type input)))))
   (libraries
     (library (logical DIGISIM)
-      (uri /home/andreas/github/DIGISIM/kicad/_74LS27/../lib/DIGISIM.lib)))
+      (uri /home/andreas/github/SimCad/parts/_74xx/../lib/DIGISIM.lib)))
   (nets
     (net (code 1) (name /p2)
       (node (ref U1) (pin 2)))

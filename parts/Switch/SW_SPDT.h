@@ -16,11 +16,11 @@
 // When on, both input states are propagated
 // to the respective 'other' side.
 //
-#ifndef _SW_SPDT_H_
-#define _SW_SPDT_H_
+#ifndef _PARTS_SWITCH_SW_SPDT_H_
+#define _PARTS_SWITCH_SW_SPDT_H_
 
 #include "Bus.h"
-#include "Wire.h"
+#include "R.h"
 
 class SW_SPDT {
 public:
@@ -33,8 +33,8 @@ public:
     void set(int c);
 
 private:
-    Wire _wire21;
-    Wire _wire23;
+    R _r21;
+    R _r23;
 };
 
-#endif // _SW_SPDT_H_
+#endif // _PARTS_SWITCH_SW_SPDT_H_

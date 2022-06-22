@@ -1,7 +1,7 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/parts/_74xx/_74LS139.sch)
-    (date "Fr 06 Mai 2022 21:55:48 CEST")
+    (source /home/andreas/github/SimCad/parts/_74xx/_74LS139.sch)
+    (date "Mi 22 Jun 2022 16:24:54 CEST")
     (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -137,7 +137,7 @@
         (pin (num 5) (name VCC) (type input)))))
   (libraries
     (library (logical DIGISIM)
-      (uri /home/andreas/github/DIGISIM/parts/_74xx/../lib/DIGISIM.lib)))
+      (uri /home/andreas/github/SimCad/parts/_74xx/../lib/DIGISIM.lib)))
   (nets
     (net (code 1) (name /p8)
       (node (ref U2) (pin 0))

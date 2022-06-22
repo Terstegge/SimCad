@@ -14,12 +14,11 @@
 //
 #include "SW_Push.h"
 
-SW_Push::SW_Push(const std::string & name) : Wire(name) {
+SW_Push::SW_Push(const std::string & name) : R(name, INF) {
 }
 
 void SW_Push::press(bool b) {
-    connected = b;
-    update();
+    setR(b ? 0 : INF);
 }
 
 void SW_Push::toggle() {

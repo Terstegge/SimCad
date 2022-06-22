@@ -14,8 +14,8 @@
 //
 // Implementation of an ideal voltage source.
 //
-#ifndef _INCLUDE_VSOURCE_H_
-#define _INCLUDE_VSOURCE_H_
+#ifndef _PARTS_PSPICE_VSOURCE_H_
+#define _PARTS_PSPICE_VSOURCE_H_
 
 #include "TwoPole.h"
 
@@ -36,4 +36,4 @@ public:
     }
 };
 
-#endif // _INCLUDE_VSOURCE_H_
+#endif // _PARTS_PSPICE_VSOURCE_H_

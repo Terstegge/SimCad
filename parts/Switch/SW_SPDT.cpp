@@ -15,34 +15,30 @@
 #include "SW_SPDT.h"
 
 SW_SPDT::SW_SPDT(const std::string & name)
-: NAME(p), NAME(_wire21), NAME(_wire23) {
-    p[2].connect_to(_wire21.p[1]);
-    p[2].connect_to(_wire23.p[1]);
-    p[1].connect_to(_wire21.p[2]);
-    p[3].connect_to(_wire23.p[2]);
+: NAME(p), NAME(_r21, INF), NAME(_r23, INF) {
+    p[2].connect_to(_r21.p[1]);
+    p[2].connect_to(_r23.p[1]);
+    p[1].connect_to(_r21.p[2]);
+    p[3].connect_to(_r23.p[2]);
 }
 
 void SW_SPDT::set(int c) {
     switch(c) {
         case con21: {
-            if (_wire21.connected) {
+            if (_r21.getR() == 0) {
                 return;
             } else {
-                _wire23.connected = false;
-                _wire21.connected = true;;
-                _wire21.update();
-                _wire23.update();
+                _r23.setR(INF);
+                _r21.setR(0.0);
             }
             break;
         }
         case con23:
-            if (_wire23.connected) {
+            if (_r23.getR() == 0) {
                 return;
             } else {
-                _wire21.connected = false;
-                _wire23.connected = true;;
-                _wire21.update();
-                _wire23.update();
+                _r21.setR(INF);
+                _r23.setR(0.0);
             }
             break;
     }

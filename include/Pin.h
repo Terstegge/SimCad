@@ -17,7 +17,7 @@
 // always associated to a Net (a new Net is created in
 // the constructor). A Pin can have different states:
 //
-//    * not connected           (_Rdrv == INF)
+//    * not connected           (_Rdrv == INF && _Idrv==nullptr)
 //    * ideal voltage source    (_Rdrv == 0.0)
 //    * driving a specific I(U) characteristic.
 //

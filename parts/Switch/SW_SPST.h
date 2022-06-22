@@ -16,12 +16,12 @@
 // When on, both input states are propagated
 // to the respective 'other' side.
 //
-#ifndef _SW_SPST_H_
-#define _SW_SPST_H_
+#ifndef _PARTS_SWITCH_SW_SPST_H_
+#define _PARTS_SWITCH_SW_SPST_H_
 
-#include "Wire.h"
+#include "R.h"
 
-class SW_SPST : public Wire {
+class SW_SPST : public R {
 public:
     SW_SPST(const std::string & name);
 
@@ -30,4 +30,4 @@ public:
 
 };
 
-#endif // _SW_SPST_H_
+#endif // _PARTS_SWITCH_SW_SPST_H_
