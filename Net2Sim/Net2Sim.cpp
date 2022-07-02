@@ -240,10 +240,11 @@ int Net2Sim::main(int argc, char* argv[])
         // Output include guards, components and class header
         /////////////////////////////////////////////////////
         if (verbose) cout << "Generating file " << h_file << endl;
-        h_ofs << "//" << endl;
-        h_ofs << "// !This file was generated with ** Net2Sim **!" << endl;
-        h_ofs << "// !DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
-        h_ofs << "//" << endl;
+        h_ofs << "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+        h_ofs << "// !! This file was generated with ** Net2Sim ** !!" << endl;
+        h_ofs << "// !! DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN !!" << endl;
+        h_ofs << "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+        h_ofs << endl;
         h_ofs << "#ifndef _" << classname << "_H_" << endl;
         h_ofs << "#define _" << classname << "_H_" << endl;
         h_ofs << endl;
@@ -391,10 +392,11 @@ int Net2Sim::main(int argc, char* argv[])
         // Output include guards, components and class header
         /////////////////////////////////////////////////////
         if (verbose) cout << "Generating file " << c_file << endl;
-        c_ofs << "//" << endl;
-        c_ofs << "// !This file was generated with ** Net2Sim **!" << endl;
-        c_ofs << "// !DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN!" << endl;
-        c_ofs << "//" << endl;
+        c_ofs << "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+        c_ofs << "// !! This file was generated with ** Net2Sim ** !!" << endl;
+        c_ofs << "// !! DO NOT EDIT - CHANGES MIGHT BE OVERWRITTEN !!" << endl;
+        c_ofs << "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+        c_ofs << endl;
 
         string hfile = h_file;
         const size_t last_slash_idx = hfile.find_last_of("/");
@@ -408,13 +410,13 @@ int Net2Sim::main(int argc, char* argv[])
         for (size_t i = 0; i < used_components.size(); ++i) {
             string ref = used_components[i].ref_base + used_components[i].ref_idx;
             if (used_components[i].part == "R"       ||
-                    used_components[i].part == "R_POT"   ||
-                    used_components[i].part == "POT"     ||
-                    used_components[i].part == "C"       ||
-                    used_components[i].part == "CP"      ||
-                    used_components[i].part == "CP1"     ||
-                    used_components[i].part == "VSOURCE" ||
-                    used_components[i].part == "ISOURCE")
+                used_components[i].part == "R_POT"   ||
+                used_components[i].part == "POT"     ||
+                used_components[i].part == "C"       ||
+                used_components[i].part == "CP"      ||
+                used_components[i].part == "CP1"     ||
+                used_components[i].part == "VSOURCE" ||
+                used_components[i].part == "ISOURCE")
             {
                 c_ofs << "    NAME(" << ref << ", "
                         << readValue(used_components[i].value) << ")";

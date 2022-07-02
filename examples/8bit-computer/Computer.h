@@ -54,6 +54,9 @@ public:
     LEDRef MS;
     LEDRef CTRL;
 
+    // The 3-digit Display. Values are set in main.cpp
+    char Display[5] = { ' ', ' ', ' ', ' ', 0 };
+
     friend ostream & operator <<(ostream & os, const Computer & c);
 };
 

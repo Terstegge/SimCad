@@ -51,8 +51,9 @@ ostream & operator <<(ostream & os, const Computer & c) {
     os << "PC:0x"   << hex << setw(1) << setfill('0') << (unsigned int)c.PC   << " ";
     os << "A:0x"    << hex << setw(2) << setfill('0') << (unsigned int)c.A    << " ";
     os << "B:0x"    << hex << setw(2) << setfill('0') << (unsigned int)c.B    << " ";
-    os << "CF:"      << c.CF.on() << " ";
-    os << "ZF:"      << c.ZF.on() << "  ";
+    os << "CF:"     << c.CF.on() << " ";
+    os << "ZF:"     << c.ZF.on() << "  ";
+    os << "OUT:'"   << c.Display << "'";
     return os;
 }
 

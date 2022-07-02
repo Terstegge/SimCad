@@ -144,7 +144,7 @@ $(TEST_BIN) : $(TEST_OBJS) $(SIMCAD_LIB)
 
 $(TARGET_BIN_FILE) : $(TARGET_OBJS) $(SIMCAD_LIB)
 	@echo "LD   $@"
-	$(HIDE) $(CXX) $(CXXFLAGS)  -o $@ $^ $(SIMCAD_LIB_OPTS) $(GTEST_LIB_OPTS)
+	$(HIDE) $(CXX) $(CXXFLAGS)  -o $@ $^ $(SIMCAD_LIB_OPTS)
 
 # Build rule for SIMCAD library
 %.a : $(SIMCAD_OBJS)

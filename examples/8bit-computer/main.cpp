@@ -52,34 +52,32 @@ int main() {
 
     Computer comp("comp");
 
-    // For the multiplexed 7-segment display, we attach a callback to
-    // the Q output of U37 (the NE555 timer for multiplex clocking).
-    // Whenever we have a rising edge on Q, we read out the segment
-    // address (p13/p14 of U41), decoded the content of the selected
-    // segment using the to_char() method and write the result to the
-    // char-array 'Display'. Due to this process, the value of the
-    // display is delayed and not immediately shown after the
-    // OUT-command.
-    char Display[5] = { ' ', ' ', ' ', ' ', 0 };
-    //
+    // Array of the 4 seven segment displays
     _7SEGMENT_CC * Segments[4] = {
         &comp.U46,  // Segment with addr 0 (ones)
         &comp.U45,  // Segment with addr 1 (tens)
         &comp.U44,  // Segment with addr 2 (hundreds)
         &comp.U43,  // Segment with addr 3 (sign)
     };
-    // 
+
+    // Define a Bus with the adress-lines selecting
+    // one of the 4 seven segment displays
     BusRef addr({
         &comp.U41.p[14], // A0 
         &comp.U41.p[13]  // A1
     });
-    // Attach a callback to the Q output of the NE555.
-    // On all rising edges, read out the address of the
-    // active segment and its content, and store the
-    // result in the Display array.
+
+    // For the multiplexed 7-segment display, we attach a callback to
+    // the Q output of U37 (the NE555 timer for multiplex clocking).
+    // Whenever we have a rising edge on Q, we read out the segment
+    // address (p13/p14 of U41, see above), decoded the content of the
+    // selected segment using the to_char() method and write the result
+    // to the char-array 'Display'.  Due to this process, the correct
+    // value of the display is only shown after 4 clock cycles of the
+    // NE555 timer U37 - there might be wrong values in between!
     comp.U37.p[3].attach([&](NetSet * nset) {
         if ((bool)comp.U37.p[3]) {
-            Display[3-addr] = Segments[addr]->to_char();
+            comp.Display[3-addr] = Segments[addr]->to_char();
         }
     });
 
@@ -155,10 +153,12 @@ int main() {
         comp.RESET.toggle();
 
         // Attach a handler to the HLT line, because we
-        // also want to stop the simulation in this situation
-        // by setting the variable 'running' to false.
+        // also want to stop the simulation when the computer
+        // is halted. The handler simply sets the variable
+        // 'running' to false.
         bool running = true;
         comp.Clock_HLT.attach([&] (NetSet * nset) {
+            // Check for rising edge on HLT
             if (comp.Clock_HLT) running = false;
         });
 
@@ -166,11 +166,11 @@ int main() {
         // show the CPU state
         comp.A_Register_CLK.attach([&] (NetSet * nset) {
             if (!(bool)comp.A_Register_CLK) {
-                cout << comp << "OUT:'" << Display << "'" << endl;
+                cout << comp << endl;
             }
         });
 
-        // Set the speed of the main clock
+        // Set the speed of the main clock to 95%
         comp.RV1.setPercent(95);
         // End manual program  mode
         comp.PRGM_MODE.set(PROG_MODE_OFF);
@@ -190,7 +190,7 @@ int main() {
             this_thread::sleep_for(200ms);
         }
         // Show the final CPU state
-        cout << comp << "OUT:'" << Display << "'" << endl;
+        cout << comp << endl;
 
         // End the thread for capacitor handling.
         C::stop();

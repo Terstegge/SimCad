@@ -1,8 +1,8 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/kicad/D_LATCH/D_LATCH.sch)
-    (date "Mi 05 Aug 2020 09:06:36 CEST")
-    (tool "Eeschema 5.1.6-c6e7f7d~86~ubuntu16.04.1")
+    (source /home/andreas/github/SimCad/parts/base_parts/D_LATCH.sch)
+    (date "Sa 02 Jul 2022 14:25:53 CEST")
+    (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
         (title)
@@ -59,7 +59,7 @@
         (pin (num 5) (name VCC) (type input)))))
   (libraries
     (library (logical DIGISIM)
-      (uri /home/andreas/github/DIGISIM/kicad/D_LATCH/../lib/DIGISIM.lib)))
+      (uri /home/andreas/github/SimCad/parts/base_parts/../lib/DIGISIM.lib)))
   (nets
     (net (code 1) (name /p0)
       (node (ref U4) (pin 0))
