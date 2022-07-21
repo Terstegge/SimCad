@@ -1,5 +1,6 @@
 #include "R2R-Ladder-DAC.h"
 #include "SimCadException.h"
+#include "PowerSupply.h"
 
 #include <iostream>
 using namespace std;
@@ -11,19 +12,32 @@ int main() {
     try {
         // Power up
         cout << "**** Power up..." << endl;
-        r2r.GND = SUPPLY_GROUND;
-        r2r.VCC = SUPPLY_VOLTAGE;
+        PowerSupply ps(r2r.VCC, r2r.GND);
+        ps.setVoltage(5.0);
+        ps.switchOn();
 
         // Reset 74LS161
         cout << "**** Reset..." << endl;
         r2r.SW_CLR1.toggle();
 
         // Iterate over all 16 voltage steps
-        cout << r2r.Q << "  " << r2r.OUT << endl;
         for (int i=0; i < 16; ++i) {
-            r2r.SW_CLK1.toggle();
             cout << r2r.Q << "  " << r2r.OUT << endl;
+            r2r.SW_CLK1.toggle();
         }
+        cout << r2r.Q << "  " << r2r.OUT << endl;
+
+        // Set a specific value
+        cout << "**** Set value to 13..." << endl;
+        r2r.IN = 13;
+        r2r.SW_LOAD1.press(true);
+        r2r.SW_CLK1.toggle();
+        r2r.SW_LOAD1.press(false);
+        cout << r2r.Q << "  " << r2r.OUT << endl;
+
+        // Power down
+        cout << "**** Power down..." << endl;
+        ps.switchOff();
 
     } catch (SimCadException &e) {
         cerr << e << endl;

@@ -379,6 +379,7 @@ int Net2Sim::main(int argc, char* argv[])
         ////////////////////////////
         h_ofs << endl << "public:" << endl;
         h_ofs << "    " << classname << "(std::string name);" <<endl;
+        h_ofs << "    virtual ~" << classname << "() { }" <<endl;
         h_ofs << "};" << endl;
 
         /////////////////////

@@ -78,33 +78,44 @@ public:
 
     // Utility method to set the digital OUT Pin
     void setOUTbool(bool b, NetSet *nset) {
-        OUT.setDrvVS(b ? VCC.U() : GND.U(), nset);
-        if (OUT.getNet()->hasDrivers()) {
-            if (b) {
-                VCC._Rdrv = OUT.getNet()->RwVS();
-                VCC._Idrv = [&] (double U) -> double {
-                    return OUT.getNet()->IsumwVS(U);
-                };
-                GND._Rdrv = INF;
-                GND._Idrv = nullptr;
-            } else {
-                VCC._Rdrv = INF;
-                VCC._Idrv = nullptr;
-                GND._Rdrv = OUT.getNet()->RwVS();
-                GND._Idrv = [&] (double U) -> double {
-                    return OUT.getNet()->IsumwVS(U);
-                };
+        if (b) {
+            if (!OUT.isDrvVS(VCC.U())) {
+                OUT.setDrvVS(VCC.U(), nset);
+                if (OUT.getNet()->hasLoad()) {
+                    VCC._Rdrv = OUT.getNet()->Rload();
+                    VCC._Idrv = [&] (double U) -> double {
+                        return OUT.getNet()->Isum(U);
+                    };
+                    GND._Rdrv = INF;
+                    GND._Idrv = nullptr;
+                    nset->insert(VCC._netPtr);
+                    nset->insert(GND._netPtr);
+                }
             }
-            nset->insert(VCC._netPtr);
-            nset->insert(GND._netPtr);
+        } else {
+            if (!OUT.isDrvVS(GND.U())) {
+                OUT.setDrvVS(GND.U(), nset);
+                if (OUT.getNet()->hasLoad()) {
+                    VCC._Rdrv = INF;
+                    VCC._Idrv = nullptr;
+                    GND._Rdrv = OUT.getNet()->Rload();
+                    GND._Idrv = [&] (double U) -> double {
+                        return OUT.getNet()->Isum(U);
+                    };
+                    nset->insert(VCC._netPtr);
+                    nset->insert(GND._netPtr);
+                }
+            }
         }
     }
 
     void setOUTnc(NetSet *nset) {
-        OUT.setDrvNC(nset);
-        if (OUT.getNet()->hasDrivers()) {
-            VCC.setDrvNC(nset);
-            GND.setDrvNC(nset);
+        if (!OUT.isDrvNC()) {
+            OUT.setDrvNC(nset);
+            if (OUT.getNet()->hasLoad()) {
+                VCC.setDrvNC(nset);
+                GND.setDrvNC(nset);
+            }
         }
     }
 

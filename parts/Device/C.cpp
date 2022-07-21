@@ -1,14 +1,14 @@
 ///////////////////////////////////////////////
 //
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 //
-//  A simulation package for digital circuits
-//
-//  (c) 2020  A. Terstegge
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -71,10 +71,12 @@ void C::start() {
         _thread = thread([]() {
             auto startTime = system_clock::now();
             while (_running) {
+                // Wait for another dt_millis
+                startTime += milliseconds(dt_millis);
+                sleep_until(startTime);
+                // Update the charge of the capacitors
                 _capacitors_mutex.lock();
                 for (auto c : _capacitors) {
-                    if (c->p[1].isNC()) continue;
-                    if (c->p[2].isNC()) continue;
                     // Get current through capacitor
                     double I = c->p[2].I();
                     double Iabs = fabs(I);
@@ -87,9 +89,6 @@ void C::start() {
                     c->update();
                 }
                 _capacitors_mutex.unlock();
-                // Wait for another dt_millis
-                startTime += milliseconds(dt_millis);
-                sleep_until(startTime);
             }
         });
     }

@@ -1,12 +1,19 @@
-/*
- * USB_B.h
- *
- *  Created on: 07.05.2022
- *      Author: andreas
- */
-
-#ifndef PARTS_CONNECTOR_USB_B_H_
-#define PARTS_CONNECTOR_USB_B_H_
+///////////////////////////////////////////////
+//
+//  This file is part of
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
+//
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
+//
+///////////////////////////////////////////////
+//
+#ifndef _PARTS_CONNECTOR_USB_B_H_
+#define _PARTS_CONNECTOR_USB_B_H_
 
 #include "Bus.h"
 

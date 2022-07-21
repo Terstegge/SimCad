@@ -12,7 +12,7 @@
 //
 ///////////////////////////////////////////////
 //
-// This is a complete simulation of the (famous) 8-bit computer
+// This is a complete simulation of the 'famous' 8-bit computer
 // designed by Ben Eater, based on the original KiCad-schematics
 // (see https://eater.net/8bit)
 // The unique thing about this simulation is, that every single
@@ -23,6 +23,7 @@
 // number calculation (see below).
 //
 #include "Computer.h"
+#include "PowerSupply.h"
 #include "SimCadException.h"
 #include "BusRef.h"
 
@@ -75,7 +76,7 @@ int main() {
     // to the char-array 'Display'.  Due to this process, the correct
     // value of the display is only shown after 4 clock cycles of the
     // NE555 timer U37 - there might be wrong values in between!
-    comp.U37.p[3].attach([&](NetSet * nset) {
+    comp.U37.p[3].attach([&](NetSet *) {
         if ((bool)comp.U37.p[3]) {
             comp.Display[3-addr] = Segments[addr]->to_char();
         }
@@ -93,8 +94,11 @@ int main() {
         // fast for the simulation. With 718nF, we get approx. 10Hz.
         comp.C19.setCapacity(718e-9);
         // Slow down the pulse generator in the RAM module. In the
-        // original design we have RC=10us. With 20uF, we get 20ms.
-        comp.C14.setCapacity(20e-6);
+        // original design we have RC=10us. With 100uF, we get 100ms.
+        comp.C14.setCapacity(100e-6);
+        // The simulation does not need the pulse generator at all,
+        // so we could also simply short-circuit C14
+        //comp.C14.p[1].connect_to( comp.C14.p[2] );
 
         // Set single step clock mode
         comp.CLK_MODE.set(CLK_MODE_STEP);
@@ -103,18 +107,11 @@ int main() {
         // Set unsigned display mode
         comp.OUT_MODE.set(OUT_MODE_UNSIGNED);
 
+        // Create a power supply and switch it on
         cout << "Power up ..." << endl;
-        // We have to disable short circuit exceptions during
-        // startup, because several 74LS245 buffers might write
-        // to the bus simultaneously before the whole power-up
-        // process is complete.
-        Net::_enable_sc_exceptions = false;
-        comp.J1.GND  = SUPPLY_GROUND;
-        comp.J1.VBUS = SUPPLY_VOLTAGE;
-        Net::_enable_sc_exceptions = true;
-        // Start C thread (the thread which will handle the
-        // (de)charging process of all capacitors in the schematic.
-        C::start();
+        PowerSupply ps(comp.J1.VBUS, comp.J1.GND);
+        ps.setVoltage(5.0);
+        ps.switchOn();
 
         /////////////////
         // The program //
@@ -165,7 +162,7 @@ int main() {
         // For every falling edge of our main CLK signal,
         // show the CPU state
         comp.A_Register_CLK.attach([&] (NetSet * nset) {
-            if (!(bool)comp.A_Register_CLK) {
+            if (!(bool)comp.A_Register_CLK && running) {
                 cout << comp << endl;
             }
         });
@@ -183,17 +180,17 @@ int main() {
 
         // Our main loop. Do nothing else than wait until
         // the computer generates a HLT signal (see above).
-        // Since the simulation is triggered by an internal
+        // Since the simulation is clocked by an internal
         // NE555 timer, we do not have to provide a clock
-        // signal here.
+        // signal from here.
         while (running) {
             this_thread::sleep_for(200ms);
         }
         // Show the final CPU state
         cout << comp << endl;
 
-        // End the thread for capacitor handling.
-        C::stop();
+        // Switch off power
+        ps.switchOff();
 
     } catch (SimCadException &e) {
         cerr << e << endl;

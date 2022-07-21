@@ -1,14 +1,14 @@
 ///////////////////////////////////////////////
 //
 //  This file is part of
-//   ____  ____  ___  ____  ___  ____  __  __
-//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 //
-//  A simulation package for digital circuits
-//
-//  (c) 2020  A. Terstegge
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
+//  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
 //
@@ -17,8 +17,8 @@
 // The method on() checks if current is flowing
 // and the LED is on.
 //
-#ifndef _INCLUDE_LED_H_
-#define _INCLUDE_LED_H_
+#ifndef _PARTS_DEVICE_LED_H_
+#define _PARTS_DEVICE_LED_H_
 
 #include "DIODE.h"
 
@@ -31,4 +31,4 @@ public:
     }
 };
 
-#endif // _INCLUDE_LED_H_
+#endif // _PARTS_DEVICE_LED_H_

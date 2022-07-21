@@ -34,13 +34,15 @@ using NetSet = std::set<Net *>;
 using UFUNC  = std::function<void(NetSet *)>;
 
 class Net : public Named {
+public:
+    const double &  U;
+    const double &  R;
 
 private:
-    std::vector<Pin *>  _pins;
-    double  _U;
-    double  _Rg;
-    int     _drivers;
-
+    std::vector<Pin *>  _pins;  // All Pins contributing to this Net
+    double              _U;     // The voltage level of this Net
+    double              _Rtot;  // Total resistance of this Net
+    double              _Rload; // Load resistance, producing a current
 
 public:
     std::mutex _mutex;
@@ -48,12 +50,15 @@ public:
 
     // Global counter for the number of Nets
     static int _no_nets;
+
     Net(const std::string & name) : Named(name),
-          U(_U), _U(0.0), _Rg(INF), R(_Rg), _drivers(0)
+          U(_U), R(_Rtot), _U(0.0), _Rtot(INF), _Rload(INF)
     {
         ++_no_nets;
     }
-    ~Net() {
+
+    ~Net()
+    {
         --_no_nets;
     }
     // Merge two Nets. The second parameter is the 'old' Net,
@@ -74,51 +79,27 @@ public:
     // Update the current Net and all Subnets
     void update();
 
-    inline bool isGND() const {
-        return (_U == 0.0) && isVS();
-    }
-    inline bool isVCC() const {
-        return (_U == SUPPLY_VOLTAGE) && isVS();
-    }
-    inline bool isNC() const {
-        return _Rg == INF;
-    }
-    inline bool isVS() const {
-        return _Rg == 0.0;
-    }
+    inline bool isNC()  const { return (_Rtot == INF); }
+    inline bool isVS()  const { return (_Rtot == 0.0); }
+    inline bool isGND() const { return (_U == SUPPLY_GROUND)  && isVS(); }
+    inline bool isVCC() const { return (_U == SUPPLY_VOLTAGE) && isVS(); }
+
     inline operator bool () const {
         return isNC() ? true : _U > (SUPPLY_VOLTAGE/2);
     }
-    inline bool hasDrivers() { return _drivers != 0; }
+    inline bool hasLoad() { return _Rload != INF; }
 
     // Output operator for a Net
     friend class Pin;
     friend std::ostream & operator << (std::ostream & os, const Net *  net);
 
-    const double &  U;
-    const double &  R;
-
     double Isum(double U, const Pin * p = nullptr) const;
-    double IsumwVS(double U) const;
-
-    double zero(std::function<double(double)> f);
-    void show_driver();
-
-//    inline double R() const {
-//        return _Rg;
-////        return U / Isum(U);
-//    }
 
     double Rw(const Pin * p) const;
+    inline double Rload() const { return _Rload; }
 
-    double RwVS() const;
-
-//    double R(Net *net=nullptr);
-
-//    inline double Rd() const {
-//        double dU = 0.2;
-//        return dU / (Isum(U + dU/2.0) - Isum(U - dU/2.0));
-//    }
+    int    sgn(double v);
+    double zero(std::function<double(double)> f);
 };
 
-#endif // _NET_H_
+#endif // _INCLUDE_NET_H_

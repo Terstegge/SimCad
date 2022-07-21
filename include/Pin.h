@@ -56,8 +56,9 @@ private:
     double _Udrv;
 
     // This attribute reflects the electrical resistance 'behind' this Pin.
-    // If the value is INF, this pin is not connected.
-    // If the value is 0.0, this Pin is an ideal voltage source.
+    // If the value is INF, this pin is not connected or an ideal current source.
+    // If the value is 0.0, this Pin is an ideal voltage source (including a
+    // GND connection).
     double _Rdrv;
 
     // The I(U) driving function, which describes the contribution of
@@ -97,9 +98,10 @@ public:
     void setDrvNC(NetSet * nset = nullptr);
 
     // Getters to check if Pin is driving a voltage source
-    // or is not connected.
-    inline bool isDrvVS() const { return _Rdrv == 0.0; }
-    inline bool isDrvNC() const { return _Rdrv == INF && _Idrv == nullptr; }
+    // (also with a specific voltage) or is not connected.
+    inline bool isDrvVS()         const { return _Rdrv == 0.0;                     }
+    inline bool isDrvVS(double u) const { return isDrvVS() && _Udrv == u;          }
+    inline bool isDrvNC()         const { return _Rdrv == INF && _Idrv == nullptr; }
 
     // Operators for easily setting a voltage source by assigning
     // a double or boolean value.

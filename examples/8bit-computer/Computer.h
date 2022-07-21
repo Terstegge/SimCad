@@ -29,6 +29,7 @@ enum { OUT_MODE_UNSIGNED = SW_SPDT::con21, OUT_MODE_SIGNED = SW_SPDT::con23 };
 class Computer : public _8bit_computer {
 public:
     Computer(std::string name );
+    virtual ~Computer() { }
 
     // Alias names for the control elements
     SW_Push    & STEP;

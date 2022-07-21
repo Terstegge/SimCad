@@ -1,13 +1,13 @@
 ///////////////////////////////////////////////
 //
 //  This file is part of
-//     ___  ____  __  __  ___    __    ____
-//    / __)(_  _)(  \/  )/ __)  /__\  (  _ \
-//    \__ \ _)(_  )    (( (__  /(__)\  )(_) )
-//    (___/(____)(_/\/\_)\___)(__)(__)(____/
+//      ___  ____  __  __  ___    __    ____
+//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 //
-//  A simulation package for electronic circuits
-//
+//  A simulation library for electronic circuits
+//  See also https://github.com/Terstegge/SimCad
 //  (c) Andreas Terstegge
 //
 ///////////////////////////////////////////////
@@ -30,7 +30,7 @@ using namespace std::this_thread;
 class C: public TwoPole {
 public:
     C(const std::string &name, double c);
-    //virtual ~C();
+    virtual ~C() { }
 
     double Ichar(double U) override;
     double Rchar(double U) override;
@@ -57,35 +57,3 @@ private:
 };
 
 #endif // _INCLUDE_C_H_
-
-
-//
-//
-//void start() {
-//    if (!_running) {
-//        _running = true;
-//        //            _R = 0.01;
-//        update();
-//        _t = thread([this]() {
-//            auto now = system_clock::now();
-//            while (_running) {
-//                // Add I * delta_t to charge
-//                _Q += p[2].I() * (double) dt_millis;
-//                // Calculate new voltage
-//                _U = _Q / (_cap * 1000);
-//                // Update the connected Nets
-//                update();
-//                // Wait for another delta_t
-//                now += milliseconds(dt_millis);
-//                sleep_until(now);
-//            }
-//        });
-//    }
-//}
-//
-//void stop() {
-//    if (_running) {
-//        _running = false;
-//        _t.join();
-//    }
-//}
