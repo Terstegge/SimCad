@@ -13,7 +13,7 @@
 /////////////////////////////////////////////////
 //
 #include "RS-flipflop.h"
-#include "ShortCircuitEx.h"
+#include "SimCadException.h"
 
 #include <iostream>
 using namespace std;
@@ -52,7 +52,7 @@ int main() {
     cout << ff.B.getNet() << endl;
 
 
-    } catch (short_circuit_exception & e) {
+    } catch (SimCadException & e) {
         cerr << e << endl;
     }
     

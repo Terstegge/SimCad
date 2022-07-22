@@ -11,6 +11,6 @@
 #//  (c) Andreas Terstegge
 #//
 #/////////////////////////////////////////////////
-#//
+
 SIMCAD_DIR = .
 include $(SIMCAD_DIR)/common.mk

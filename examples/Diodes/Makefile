@@ -1,22 +1,23 @@
-#///////////////////////////////////////////////
+#/////////////////////////////////////////////////
 #//
 #//  This file is part of
-#//   ____  ____  ___  ____  ___  ____  __  __
-#//  (  _ \(_  _)/ __)(_  _)/ __)(_  _)(  \/  )
-#//   )(_) )_)(_( (_-. _)(_ \__ \ _)(_  )    (
-#//  (____/(____)\___/(____)(___/(____)(_/\/\_)
+#//      ___  ____  __  __  ___    __    ____
+#//     / __)(_  _)(  \/  )/ __)  /__\  (  _ \
+#//     \__ \ _)(_  )    (( (__  /(__)\  )(_) )
+#//     (___/(____)(_/\/\_)\___)(__)(__)(____/
 #//
-#//  (c) 2020  A. Terstegge
+#//  A simulation library for electronic circuits
+#//  See also https://github.com/Terstegge/SimCad
+#//  (c) Andreas Terstegge
 #//
-#///////////////////////////////////////////////
-#//
-# 
-DIGISIM_DIR = ../..
-BUILD_DIR   = BUILD
+#/////////////////////////////////////////////////
+
+SIMCAD_DIR = ../..
+BUILD_DIR  = BUILD
 
 TARGET_BIN_FILE = Diodes
 TARGET_NET_FILE = Diodes.net
 TARGET_SRC_DIRS = .
 TARGET_INC_DIRS = .
 
-include $(DIGISIM_DIR)/common.mk
+include $(SIMCAD_DIR)/common.mk

@@ -13,7 +13,7 @@
 /////////////////////////////////////////////////
 //
 #include "Diodes.h"
-#include "ShortCircuitEx.h"
+#include "SimCadException.h"
 
 #include <iostream>
 using namespace std;
@@ -68,7 +68,7 @@ int main() {
         d.Vminus = -5.0;
         cout << d.Ur << endl;
 
-    } catch (short_circuit_exception &e) {
+    } catch (SimCadException &e) {
         cerr << e << endl;
     }
 }
