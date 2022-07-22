@@ -1,4 +1,4 @@
-///////////////////////////////////////////////
+/////////////////////////////////////////////////
 //
 //  This file is part of
 //      ___  ____  __  __  ___    __    ____
@@ -10,7 +10,7 @@
 //  See also https://github.com/Terstegge/SimCad
 //  (c) Andreas Terstegge
 //
-///////////////////////////////////////////////
+/////////////////////////////////////////////////
 //
 // This is a complete simulation of the 'famous' 8-bit computer
 // designed by Ben Eater, based on the original KiCad-schematics

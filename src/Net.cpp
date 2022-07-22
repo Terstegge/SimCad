@@ -110,7 +110,11 @@ void Net::update(NetSet * nset) {
     }
 }
 
-// Calculate the current flowing to/from this Net.
+// Calculate the current flowing to/from this Net at a
+// specific voltage. According to Kirchhoffs law, the
+// sum of all currents within a single Net has to be zero,
+// so find the zero of this functions gives us the current
+// voltage of this Net.
 // Positive currents flow into this Net, negative
 // currents flow out of the Net. If the second parameter
 // is used, a specific Pin is excluded from the calculation.
