@@ -16,14 +16,14 @@
 #define _INCLUDE_BC107_H_
 
 #include "Pin.h"
+#include "TwoPole.h"
 #include "Narray.h"
 
 #include <iostream>
 #include <string>
 #include <cmath>
 
-#include "_1N4148.h"
-#include "R.h"
+#include "DIODE.h"
 
 class BC107 : public Named {
 public:
@@ -35,101 +35,57 @@ public:
     BC107(const std::string & name)
     : Named(name), NAME(p),
       B(p[2]), E(p[1]), C(p[3]),
-      NAME(_D_be), NAME(_R_ce, 50), calc(false)
+      NAME(_Dbe, Ube_f), NAME(_Pce, this)
     {
+        _Ice_sat = 0;
+
         // Setup the Basis-Emitter Diode
-        B.connect_to(_D_be.A);
-        E.connect_to(_D_be.C);
+        B.connect_to(_Dbe.A);
+        E.connect_to(_Dbe.C);
         // Setup Collector-Emitter Resistor
-        C.connect_to(_R_ce.p[1]);
-        E.connect_to(_R_ce.p[2]);
+        C.connect_to(_Pce.p[2]);
+        E.connect_to(_Pce.p[1]);
 
-        // Attach handlers
+        // Attach Basis-handler
         B.attach( [this](NetSet * nset) {
-            calculate();
-        });
-        E.attach( [this](NetSet * nset) {
-            calculate();
-        });
-        C.attach( [this](NetSet * nset) {
-            calculate();
+            _Ice_sat  = _Dbe.A.I() * beta;
+            _Pce.update(nset);
         });
     }
-
-    void calculate() {
-        if (!calc) {
-            calc = true;
-            double Ib = _D_be.A.I();
-            Ice_max   = Ib * beta;
-
-            double Uce = C.U() - E.U();
-            double Ice = _R_ce.p[1].I();
-
-            if (Ice < 0.0) {
-                _R_ce._R = 100000;
-            } else if (Ice <= Ice_max) {
-                _R_ce._R = 50;
-            } else {
-                _R_ce._R = Uce / Ice_max;
-            }
-            _R_ce.update();
-            calc = false;
-        } else {
-            double Uce = C.U() - E.U();
-            double Ice = _R_ce.p[1].I();
-
-            if (fabs(Ice - Ice_max) < 1E-2) return;
-
-            if (Ice < 0.0) {
-                _R_ce._R = 100000;
-            } else if (Ice <= Ice_max) {
-                _R_ce._R = 50;
-            } else {
-                _R_ce._R = Uce / Ice_max;
-            }
-            _R_ce.update();
-//            C.update(nset);
-//            E.update(nset);
-        }
-    }
-
-    //    	double Ib      = _D_be.A.I();
-    //    	double Ice_max = Ib * beta;
-    //    	double Uce_max = 50 * Ice_max;
-    //
-    //    	double Uce = C.U() - E.U();
-    //    	double Ice = _R_ce.p[1].I();
-    //
-    ////    	cout << "Ib: " << Ib << "    Ice: " << Ice << endl;
-    //
-    //    	if (Ice < 0.0) {
-    //    		_R_ce.setR(100000);
-    //    	} else if (Ice <= Ice_max) {
-    //    		_R_ce.setR(50);
-    ////    		cout << getName() << " Rce set to" << 50 << endl ;
-    //    	} else {
-    //    		// double Rearly = (Uearly + Uce_max) / Ice_max;
-    //    		double Rold = _R_ce.getR();
-    //    		double Rnew = Uce / Ice_max; // (Ice_max + (Uce-Uce_max) / Rearly);
-    //
-    //    		if (fabs(Ice - Ice_max) > 1e-4) {
-    ////        		cout << getName() << " Rce set to " << Rnew << endl ;
-    //    			_R_ce.setR( Rnew );
-    ////            	_R_ce.update();
-    //    		}
-    //    	}
-    //
-    ////    	cout << "Basis     current: " << Ib  << endl;
-    ////    	cout << "Collector current: " << Ice << endl;
-    //    }
 
 private:
-    _1N4148 _D_be;
-    R       _R_ce;
-    const double beta = 400;
-    const double Uearly = 150;
-    bool calc;
-    double Ice_max;
+    // Internal class to model the
+    // Collector-Emitter path as a TwoPole
+    class CEpath : public TwoPole {
+
+    public:
+        CEpath(const std::string & name, BC107 * owner) : TwoPole(name), o(owner) {
+        }
+    private:
+        double Rchar(double U) {
+            if (U == 0.0) {
+                return o->Uearly / o->_Ice_sat * (1 + exp(50 * 0.15))  / (1 + 50 * o->Uearly);
+            } else {
+                return U / Ichar(U);
+            }
+        }
+
+        double Ichar(double U) {
+            return o->_Ice_sat * (U / o->Uearly + 1) / (1 + exp(-50 * (U - 0.15)));
+        }
+        BC107   *o;
+    };
+
+    // Configuration items
+    const double Ube_f  = 0.725;
+    const double beta   = 200;
+    const double Uearly = 100;
+
+    DIODE   _Dbe;
+    CEpath  _Pce;
+
+    // Calculated values
+    double _Ice_sat;
 };
 
 #endif // _INCLUDE_BC107_H_

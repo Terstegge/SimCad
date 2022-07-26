@@ -15,6 +15,7 @@
 // See https://dk4ek.de/elektronik/netzw_l.pdf
 //
 #include "SimpleNet1.h"
+#include "PowerSupply.h"
 #include "SimCadException.h"
 
 #include <iostream>
@@ -26,6 +27,8 @@ int main() {
 
     try {
         // Power up
+        PowerSupply::MIN_VOLTAGE = 0.0;
+        PowerSupply::MAX_VOLTAGE = 15.0;
         sn1.GND = 0.0;
         sn1.V1.update();
         sn1.I1.update();

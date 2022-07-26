@@ -15,6 +15,7 @@
 #include "Net.h"
 #include "Pin.h"
 #include "TwoPole.h"
+#include "PowerSupply.h"
 #include "SimCadException.h"
 #include <iostream>
 #include <cmath>
@@ -179,15 +180,18 @@ int Net::sgn(double v) {
 // leads to problems in cases where f(x) has a very
 // small or high slope.
 double Net::zero(std::function<double(double)> f) {
-    double x1  = SUPPLY_GROUND;
+    double x1  = PowerSupply::MIN_VOLTAGE;
     double fx1 = f(x1);
-    double x2  = SUPPLY_VOLTAGE;
+    double x2  = PowerSupply::MAX_VOLTAGE;
     double fx2 = f(x2);
     double x3, fx3;
+    // Handle edge cases
+    if (fabs(fx1) <= 1e-10) return x1;
+    if (fabs(fx2) <= 1e-10) return x2;
     // Handle special case when f(x) has slope 0
     if (fx1 == fx2) return 0;
     // bisection algorithm
-    while ((x2-x1) > 0.3) {
+    while ((x2-x1) > 0.05) {
         x3  = (x2+x1) / 2.0;
         fx3 = f(x3);
         if (sgn(fx1) == sgn(fx3)) {

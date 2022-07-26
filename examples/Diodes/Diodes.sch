@@ -103,17 +103,6 @@ Wire Wire Line
 Text Label 6325 4300 2    50   ~ 0
 TP_C
 $Comp
-L Transistor_BJT:BC107 Q1
-U 1 1 6270DE45
-P 7575 3900
-F 0 "Q1" H 7766 3946 50  0000 L CNN
-F 1 "BC107" H 7766 3855 50  0000 L CNN
-F 2 "Package_TO_SOT_THT:TO-18-3" H 7775 3825 50  0001 L CIN
-F 3 "http://www.b-kainka.de/Daten/Transistor/BC108.pdf" H 7575 3900 50  0001 L CNN
-	1    7575 3900
-	1    0    0    -1  
-$EndComp
-$Comp
 L Switch:SW_SPST SW1
 U 1 1 6270E8F5
 P 7225 3625
@@ -292,4 +281,15 @@ Wire Wire Line
 	7225 3425 7225 3350
 Wire Wire Line
 	7225 3825 7225 3900
+$Comp
+L Transistor_BJT:BC107 Q1
+U 1 1 62DBCEC0
+P 7575 3900
+F 0 "Q1" H 7766 3946 50  0000 L CNN
+F 1 "BC107" H 7766 3855 50  0000 L CNN
+F 2 "Package_TO_SOT_THT:TO-18-3" H 7775 3825 50  0001 L CIN
+F 3 "http://www.b-kainka.de/Daten/Transistor/BC108.pdf" H 7575 3900 50  0001 L CNN
+	1    7575 3900
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

@@ -112,17 +112,21 @@ public:
         return 0;
     }
 
-
-    void update() {
-        NetSet set1, set2;
-        p[1].update(&set1);
-        p[2].update(&set1);
-        while (set1.size()) {
-            set2.clear();
-            for (Net * net : set1) {
-                net->update(&set2);
+    void update(NetSet * nset = nullptr) {
+        if (nset) {
+            p[1].update(nset);
+            p[2].update(nset);
+        } else {
+            NetSet set1, set2;
+            p[1].update(&set1);
+            p[2].update(&set1);
+            while (set1.size()) {
+                set2.clear();
+                for (Net * net : set1) {
+                    net->update(&set2);
+                }
+                set1 = set2;
             }
-            set1 = set2;
         }
     }
 };

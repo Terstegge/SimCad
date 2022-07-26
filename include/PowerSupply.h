@@ -23,33 +23,14 @@
 
 class PowerSupply {
 public:
-    PowerSupply(Pin & out, Pin & gnd) : _out(out), _gnd(gnd), _voltage(0) {
-    }
+    PowerSupply(Pin & out, Pin & gnd);
 
-    void setVoltage(double v) {
-        _voltage = v;
-    }
+    void setVoltage(double v);
+    void switchOn(bool startCThread = true);
+    void switchOff(bool stopCThread = true);
 
-    void switchOn(bool startCThread = true) {
-        // We have to disable short circuit exceptions during
-        // startup, because there might be transient short
-        // circuits during this phase.
-        Net::_enable_sc_exceptions = false;
-        _gnd = 0.0;
-        _out = _voltage;
-        Net::_enable_sc_exceptions = true;
-        // Start the thread for capacity charge calculations
-        if (startCThread) C::start();
-    }
-
-    void switchOff(bool stopCThread = true) {
-        // Stop the thread for capacity charge calculations
-        if (stopCThread) C::stop();
-        // Disconnect the power
-        NetSet nset;
-        _out.setDrvNC(&nset);
-        _gnd.setDrvNC(&nset);
-    }
+    static double MAX_VOLTAGE;
+    static double MIN_VOLTAGE;
 
 private:
     Pin &   _out;

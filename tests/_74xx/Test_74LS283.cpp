@@ -37,7 +37,7 @@ TEST(_74xx, LS283)
         for (int b=0; b < 16; b++) {
             A = a;
             B = b;
-            ASSERT_TRUE( Q == (a+b));
+            ASSERT_TRUE(Q == (a+b));
         }
     }
 
@@ -47,7 +47,7 @@ TEST(_74xx, LS283)
         for (int b=0; b < 16; b++) {
             A = a;
             B = b;
-            ASSERT_TRUE( Q == (a+b+1));
+            ASSERT_TRUE(Q == (a+b+1));
         }
     }
 
