@@ -15,6 +15,7 @@
 #include "TransistorBlinker.h"
 #include "PowerSupply.h"
 #include "SimCadException.h"
+#include "plotRealTime.h"
 #include <iostream>
 #include <thread>
 
@@ -22,20 +23,27 @@ using namespace std;
 
 int main() {
 
-    TransistorBlinker tb("Diodes");
+    TransistorBlinker tb("TransistorBlinker");
+
+    plotRealTime prt(0.01, 300);
+    prt.addEntry([&] () {return tb.R1.p[1].I();}, "R1 current", "blue");
+    prt.addEntry([&] () {return tb.R4.p[1].I();}, "R4 current", "red" );
+//    prt.addEntry([&] () {return tb.Q1.B.U();}, "Q1 Basis", "blue");
+//    prt.addEntry([&] () {return tb.Q2.B.U();}, "Q2 Basis", "red" );
+
 
     try {
         PowerSupply ps(tb.VCC, tb.GND);
         ps.setVoltage(9.0);
-        //PowerSupply::MIN_VOLTAGE = -9.0;
         ps.switchOn();
 
+        prt.start();
 
-        cout << tb.OUT << endl;
 
-        for (int i=0; i < 1000; ++i) {
+        for (int i=0; i < 100; ++i) {
             //cout << tb.D1.p[2].I() << " " << tb.D2.p[2].I() << "      ";
             cout << tb.D1.on() << " " << tb.D2.on() << endl;
+            //cout << tb.Q2.B.U() << endl;
             this_thread::sleep_for(100ms);
         }
 
@@ -43,5 +51,7 @@ int main() {
     } catch (SimCadException &e) {
         cerr << e << endl;
     }
+
+    prt.stop();
 }
 

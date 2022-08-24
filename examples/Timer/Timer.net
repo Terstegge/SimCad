@@ -1,7 +1,7 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/examples/Timer/Timer.sch)
-    (date "Do 05 Mai 2022 19:15:39 CEST")
+    (source /home/andreas/github/SimCad/examples/Timer/Timer.sch)
+    (date "Di 23 Aug 2022 23:05:50 CEST")
     (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block

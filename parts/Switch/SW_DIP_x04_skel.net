@@ -1,7 +1,7 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/parts/Switch/SW_DIP_x04_skel.sch)
-    (date "Sa 07 Mai 2022 21:24:28 CEST")
+    (source /home/andreas/github/SimCad/parts/Switch/SW_DIP_x04_skel.sch)
+    (date "Di 23 Aug 2022 23:01:01 CEST")
     (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block

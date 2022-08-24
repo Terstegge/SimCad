@@ -1,6 +1,6 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/examples/OP-AMP/OP_AMP.sch)
+    (source /home/andreas/github/SimCad/examples/OP-AMP/OP_AMP.sch)
     (date "Di 03 Mai 2022 21:25:47 CEST")
     (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)

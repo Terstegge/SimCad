@@ -1,7 +1,7 @@
 (export (version D)
   (design
-    (source /home/andreas/github/DIGISIM/parts/Display_Character/_7SEGMENT_CC_skel.sch)
-    (date "So 08 Mai 2022 18:19:04 CEST")
+    (source /home/andreas/github/SimCad/parts/Display_Character/_7SEGMENT_CC_skel.sch)
+    (date "Di 23 Aug 2022 22:59:11 CEST")
     (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block

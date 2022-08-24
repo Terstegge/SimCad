@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/andreas/github/SimCad/parts/_74xx/_74LS08.sch)
-    (date "Mi 22 Jun 2022 16:24:31 CEST")
+    (date "Di 23 Aug 2022 22:52:25 CEST")
     (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -17,26 +17,26 @@
   (components
     (comp (ref U2)
       (value AND2)
-      (libsource (lib DIGISIM) (part AND2) (description ""))
+      (libsource (lib SimCad) (part AND2) (description ""))
       (sheetpath (names /) (tstamps /))
       (tstamp 5F16EA88))
     (comp (ref U3)
       (value AND2)
-      (libsource (lib DIGISIM) (part AND2) (description ""))
+      (libsource (lib SimCad) (part AND2) (description ""))
       (sheetpath (names /) (tstamps /))
       (tstamp 5F16F520))
     (comp (ref U4)
       (value AND2)
-      (libsource (lib DIGISIM) (part AND2) (description ""))
+      (libsource (lib SimCad) (part AND2) (description ""))
       (sheetpath (names /) (tstamps /))
       (tstamp 5F16FA77))
     (comp (ref U1)
       (value AND2)
-      (libsource (lib DIGISIM) (part AND2) (description ""))
+      (libsource (lib SimCad) (part AND2) (description ""))
       (sheetpath (names /) (tstamps /))
       (tstamp 5F17019F)))
   (libparts
-    (libpart (lib DIGISIM) (part AND2)
+    (libpart (lib SimCad) (part AND2)
       (fields
         (field (name Reference) U)
         (field (name Value) AND2))
@@ -47,8 +47,8 @@
         (pin (num 3) (name ~) (type output))
         (pin (num 4) (name VCC) (type input)))))
   (libraries
-    (library (logical DIGISIM)
-      (uri /home/andreas/github/SimCad/parts/_74xx/../lib/DIGISIM.lib)))
+    (library (logical SimCad)
+      (uri /home/andreas/github/SimCad/parts/_74xx/../../SimCad.lib)))
   (nets
     (net (code 1) (name /p8)
       (node (ref U3) (pin 3)))

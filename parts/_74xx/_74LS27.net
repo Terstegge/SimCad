@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/andreas/github/SimCad/parts/_74xx/_74LS27.sch)
-    (date "Mi 22 Jun 2022 16:26:51 CEST")
+    (date "Di 23 Aug 2022 22:54:39 CEST")
     (tool "Eeschema 5.1.5+dfsg1-2build2")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -17,21 +17,21 @@
   (components
     (comp (ref U3)
       (value NOR3)
-      (libsource (lib DIGISIM) (part NOR3) (description ""))
+      (libsource (lib SimCad) (part NOR3) (description ""))
       (sheetpath (names /) (tstamps /))
       (tstamp 5F1B8612))
     (comp (ref U1)
       (value NOR3)
-      (libsource (lib DIGISIM) (part NOR3) (description ""))
+      (libsource (lib SimCad) (part NOR3) (description ""))
       (sheetpath (names /) (tstamps /))
       (tstamp 5F1B9779))
     (comp (ref U2)
       (value NOR3)
-      (libsource (lib DIGISIM) (part NOR3) (description ""))
+      (libsource (lib SimCad) (part NOR3) (description ""))
       (sheetpath (names /) (tstamps /))
       (tstamp 5F1B9DED)))
   (libparts
-    (libpart (lib DIGISIM) (part NOR3)
+    (libpart (lib SimCad) (part NOR3)
       (fields
         (field (name Reference) U)
         (field (name Value) NOR3))
@@ -43,8 +43,8 @@
         (pin (num 4) (name ~) (type output))
         (pin (num 5) (name VCC) (type input)))))
   (libraries
-    (library (logical DIGISIM)
-      (uri /home/andreas/github/SimCad/parts/_74xx/../lib/DIGISIM.lib)))
+    (library (logical SimCad)
+      (uri /home/andreas/github/SimCad/parts/_74xx/../../SimCad.lib)))
   (nets
     (net (code 1) (name /p2)
       (node (ref U1) (pin 2)))

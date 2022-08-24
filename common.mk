@@ -64,7 +64,7 @@ SIMCAD_SRC_FILES = $(wildcard $(SIMCAD_SRC_DIR)/*.cpp)
 SIMCAD_OBJS      = $(MODELS_OBJS)
 SIMCAD_OBJS     += $(foreach obj, $(SIMCAD_SRC_FILES), $(LIB_BUILD_DIR)/$(notdir $(obj)).o)
 SIMCAD_LIB       = $(SIMCAD_DIR)/libSIMCAD.a
-SIMCAD_LIB_OPTS  = -L$(SIMCAD_DIR) -lSIMCAD -pthread
+SIMCAD_LIB_OPTS  = -L$(SIMCAD_DIR) -lSIMCAD -lboost_iostreams -pthread
 SRC_DIRS         += $(SIMCAD_SRC_DIR)
 
 # Tests

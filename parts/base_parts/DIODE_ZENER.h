@@ -36,8 +36,8 @@ public:
         // Calculate n from forward voltage at 10mA
         nf  = forward_voltage / (Ut * log(0.01/Is + 1));
         Ub  = breakdown_voltage;    // breakdown voltage
-        Ib  = 0.1;                  // breakdown current
-        nb  = 0.5;                  // breakdown emission/stretch coefficient
+        Ib  = 0.1;                  // breakdown current stretch
+        nb  = 0.5;                  // breakdown emission coefficient
     }
     
     double Ichar(double U) override {
@@ -61,7 +61,7 @@ protected:
     double nf;  // forward emission coefficient
     // Breakdown configuration
     double Ub;  // breakdown voltage
-    double Ib;  // breakdown current
+    double Ib;  // breakdown current stretch
     double nb;  // breakdown emission coefficient
 };
 

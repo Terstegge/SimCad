@@ -54,12 +54,12 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="DIGISIM.null.10237786" name="DIGISIM"/>
+		<project id="SimCad.null.10237786" name="SimCad"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Default">
-			<resource resourceType="PROJECT" workspacePath="/DIGISIM"/>
+			<resource resourceType="PROJECT" workspacePath="/SimCad"/>
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="scannerConfiguration">

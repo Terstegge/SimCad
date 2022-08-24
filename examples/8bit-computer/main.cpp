@@ -53,6 +53,8 @@ int main() {
 
     Computer comp("comp");
 
+    cout << "Number of Nets: " << Net::_no_nets << endl;
+
     // Array of the 4 seven segment displays
     _7SEGMENT_CC * Segments[4] = {
         &comp.U46,  // Segment with addr 0 (ones)

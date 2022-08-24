@@ -1,3 +1,4 @@
 (sym_lib_table
-  (lib (name DIGISIM)(type Legacy)(uri ${KIPRJMOD}/../lib/DIGISIM.lib)(options "")(descr ""))
+  (lib (name SimCad)(type Legacy)(uri ${KIPRJMOD}/../../SimCad.lib)(options "")(descr "SimCad Symbols"))
 )
+
