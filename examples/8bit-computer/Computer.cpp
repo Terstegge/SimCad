@@ -13,8 +13,9 @@
 /////////////////////////////////////////////////
 //
 #include "Computer.h"
+#include <utility>
 
-Computer::Computer(std::string name) : _8bit_computer(name) ,
+Computer::Computer(std::string name) : _8bit_computer(std::move(name)) ,
     STEP     (SW1),
     CLK_MODE (SW2),
     STORE    (SW3),

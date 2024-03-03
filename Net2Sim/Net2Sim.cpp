@@ -220,8 +220,8 @@ int Net2Sim::main(int argc, char* argv[])
         // Delete all unneeded nodes in all nets
         ////////////////////////////////////////
         Node * nets = tree.find_Node("nets");
-        for(auto net = nets->_children.begin(); net != nets->_children.end(); ++net) {
-            for (auto node = net->_children.begin(); node != net->_children.end();) {
+        for(auto & net : nets->_children) {
+            for (auto node = net._children.begin(); node != net._children.end();) {
                 if (node->_name != "node") {
                     ++node;
                     continue;
@@ -229,7 +229,7 @@ int Net2Sim::main(int argc, char* argv[])
                 string ref = node->get_attr("ref");
                 name2var( ref );
                 if(needed_refs.count( ref ) == 0) {
-                    node = net->_children.erase(node);
+                    node = net._children.erase(node);
                 } else {
                     ++node;
                 }
@@ -251,7 +251,7 @@ int Net2Sim::main(int argc, char* argv[])
         h_ofs << "#include <string>"  << endl;
         h_ofs << "#include \"Pin.h\"" << endl;
         h_ofs << "#include \"Bus.h\"" << endl;
-        for (auto comp : included_components) {
+        for (const auto& comp : included_components) {
             string c = comp.first;
             name2var(c);
             h_ofs << "#include \"" << c << ".h\"";
@@ -283,7 +283,7 @@ int Net2Sim::main(int argc, char* argv[])
         h_ofs << "    // Components" << endl;
         for (component_entry & ce : used_components) {
             name2var(ce.part);
-            if (ce.part_arg == "") {
+            if (ce.part_arg.empty()) {
                 // Standard part without template argument
                 line = "    " + ce.part;
             } else {
@@ -312,7 +312,7 @@ int Net2Sim::main(int argc, char* argv[])
                 continue;
             }
             // Check if net name can be shortened
-            int pos_subsheet = name.find(subsheet);
+            auto pos_subsheet = name.find(subsheet);
             if (pos_subsheet == 0) {
                 name = name.substr(subsheet.size());
             }
@@ -322,7 +322,7 @@ int Net2Sim::main(int argc, char* argv[])
             net.set_attr("name", name.c_str());
 
             // Divide Net into base name and index, if possible
-            int i = name.size()-1;
+            auto i = name.size()-1;
             bool index_found = false;
             while(isdigit(name[i]) && (i >= 0)) {
                 index_found = true;
@@ -400,7 +400,7 @@ int Net2Sim::main(int argc, char* argv[])
         c_ofs << endl;
 
         string hfile = h_file;
-        const size_t last_slash_idx = hfile.find_last_of("/");
+        const size_t last_slash_idx = hfile.find_last_of('/');
         if (string::npos != last_slash_idx)  hfile.erase(0, last_slash_idx + 1);
         c_ofs << "#include \"" << hfile << "\""<< endl;
 
@@ -424,7 +424,7 @@ int Net2Sim::main(int argc, char* argv[])
             } else {
                 c_ofs << "    NAME(" << ref << ")";
             }
-            if ((i+1 != used_components.size()) || base_names.size()) c_ofs << ",";
+            if ((i+1 != used_components.size()) || !base_names.empty()) c_ofs << ",";
             c_ofs << endl;
         }
         for (size_t i = 0; i < base_names.size(); ++i) {
@@ -459,7 +459,7 @@ int Net2Sim::main(int argc, char* argv[])
             }
         }
         std::sort(net_output.begin(), net_output.end());
-        for (string s : net_output) c_ofs << s;
+        for (const string& s : net_output) c_ofs << s;
         c_ofs << "}" << endl;
         c_ofs.close();
 
@@ -486,7 +486,7 @@ void Net2Sim::name2var(string & s) {
 
 
 bool Net2Sim::split_name_index(string & name, string & idx) {
-    int i = name.size()-1;
+    auto i = name.size()-1;
     bool index_found = false;
     while(isdigit(name[i]) && (i >= 0)) {
         index_found = true;
@@ -501,7 +501,7 @@ bool Net2Sim::split_name_index(string & name, string & idx) {
 }
 
 
-void Net2Sim::define_bus(string base, string index, bool isBus) {
+void Net2Sim::define_bus(const string& base, const string& index, bool isBus) {
     string line;
     std::ostringstream oss;
     if (isBus) {
@@ -523,7 +523,7 @@ void Net2Sim::define_bus(string base, string index, bool isBus) {
 
 
 void Net2Sim::change_to_bus(string & net, vector<net_entry> & found_nets) {
-    for(auto entry : found_nets) {
+    for(const auto& entry : found_nets) {
         if (net == (entry.base + entry.index)) {
             if (entry.isBus) {
                 net = entry.base + "[" + entry.index + "]";
@@ -532,7 +532,7 @@ void Net2Sim::change_to_bus(string & net, vector<net_entry> & found_nets) {
     }
 }
 
-double Net2Sim::readValue(string s) {
+double Net2Sim::readValue(const string& s) {
     bool    shift_mode = true;
     double  res {0.0};
     double  factor;
@@ -541,24 +541,24 @@ double Net2Sim::readValue(string s) {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
     std::u16string utf16 = utf16conv.from_bytes(s);
 
-    for(int i=0; i < utf16.size(); ++i) {
+    for(auto c : utf16) {
         // Skip physical units and symbols
-        if (units.find(utf16[i]) != string::npos) {
+        if (units.find(c) != string::npos) {
             continue;
         }
-        if (isdigit(utf16[i])) {
+        if (isdigit(c)) {
             if (shift_mode) {
                 // Shift mode
                 res *= 10.0;
-                res += (utf16[i]-'0');
+                res += (c - '0');
             } else {
                 // Factor mode
-                res += (utf16[i]-'0') * factor;
+                res += (c - '0') * factor;
                 factor /= 10;
             }
             continue;
         }
-        switch(utf16[i]) {
+        switch(c) {
             // Giga: Factor 10^9
             case 'G': { res *= 1e9;  factor = 1e8;  break; }
             // Mega: Factor 10^6

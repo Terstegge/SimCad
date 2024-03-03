@@ -55,15 +55,15 @@ public:
 private:
     // Convert a string to a valid
     // C++ identifier.
-    void name2var(string & s);
+    static void name2var(string & s);
 
     // The value in name is split into a trailing
     // index number (stored in idx) and the remainder
     // (stored in name).
-    bool split_name_index(string & name, string & idx);
+    static bool split_name_index(string & name, string & idx);
 
-    void define_bus(string base, string index, bool isBus);
-    void change_to_bus(string & net, vector<net_entry> & found_nets);
+    void define_bus(const string& base, const string& index, bool isBus);
+    static void change_to_bus(string & net, vector<net_entry> & found_nets);
 
     // Read a physical value (e.g. voltage, current, resistance) and
     // convert it to a double number.
@@ -72,7 +72,7 @@ private:
     // 20mA  -> 0.02
     // 4k7   -> 4700
     // 2.4M  ->2400000
-    double readValue(string s);
+    static double readValue(const string& s);
 
     ofstream h_ofs, c_ofs;
 };
