@@ -14,6 +14,7 @@
 //
 #include "SimpleNet2.h"
 #include "SimCadException.h"
+#include "PowerSupply.h"
 
 #include <iostream>
 using namespace std;
@@ -25,6 +26,8 @@ int main() {
     try {
         // Power up
         cout << "********** Setting GND" << endl;
+        PowerSupply::MIN_VOLTAGE = 0.0;
+        PowerSupply::MAX_VOLTAGE = 15.0;
         sn2.GND = SUPPLY_GROUND;
         sn2.V1.update();
         sn2.V2.update();

@@ -46,7 +46,8 @@ SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(name) {
         });
         // Write out initial data
         DATA_OUT = _mem[A];
-    } 	
+    }
+
     void SST39SF040::run_state_machine(int addr, int data) {
         switch (_state) {
             case wait1: {

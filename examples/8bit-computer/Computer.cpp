@@ -54,6 +54,25 @@ ostream & operator <<(ostream & os, const Computer & c) {
     os << "CF:"     << c.CF.on() << " ";
     os << "ZF:"     << c.ZF.on() << "  ";
     os << "OUT:'"   << c.Display << "'";
+    
+    // Output disassembly after first micro step
+    if (c.MS == 0) {
+        os << "  ";
+        switch(c.RAM & 0xf0) {
+            case 0x00: cout << "NOP"; break;
+            case 0x10: cout << "LDA (" << dec << (c.RAM & 0xf) << ")"; break;
+            case 0x20: cout << "ADD (" << dec << (c.RAM & 0xf) << ")"; break;
+            case 0x30: cout << "SUB (" << dec << (c.RAM & 0xf) << ")"; break;
+            case 0x40: cout << "STA (" << dec << (c.RAM & 0xf) << ")"; break;
+            case 0x50: cout << "LDI (" << dec << (c.RAM & 0xf) << ")"; break;
+            case 0x60: cout << "JMP (" << dec << (c.RAM & 0xf) << ")"; break;
+            case 0x70: cout << "JC ("  << dec << (c.RAM & 0xf) << ")"; break;
+            case 0x80: cout << "JZ ("  << dec << (c.RAM & 0xf) << ")"; break;
+            case 0xE0: cout << "OUT"; break;
+            case 0xF0: cout << "HLT"; break;
+            default:   cout << "???"; break;
+        }
+    }
     return os;
 }
 

@@ -52,6 +52,7 @@ void Net::update() {
 }
 
 void Net::update(NetSet * nset) {
+    //std::cout << "update " << getName() << std::endl;
     Pin * ivsPtr = nullptr;     // Pointer to first ideal voltage source
     double Gtot  = 0.0;         // Total Net conductivity
     double Gload = 0.0;         // Net conductivity excluding voltage sources
