@@ -17,6 +17,7 @@ include(.cmake-functions)
 
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_FLAGS "-O3")
+set (CMAKE_CXX_FLAGS "-fno-var-tracking")
 
 project(SimCad CXX)
 
