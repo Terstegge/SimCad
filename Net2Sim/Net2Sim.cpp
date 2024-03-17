@@ -378,8 +378,8 @@ int Net2Sim::main(int argc, char* argv[])
         // Generate CTOR declaration
         ////////////////////////////
         h_ofs << endl << "public:" << endl;
-        h_ofs << "    " << classname << "(std::string name);" <<endl;
-        h_ofs << "    virtual ~" << classname << "() { }" <<endl;
+        h_ofs << "    explicit " << classname << "(std::string name);" << endl;
+        h_ofs << "    virtual ~" << classname << "() = default;" << endl;
         h_ofs << "};" << endl;
 
         /////////////////////

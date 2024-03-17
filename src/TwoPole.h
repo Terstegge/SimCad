@@ -48,8 +48,10 @@ public:
             } else if (R == INF) {
                 p[2]._Rdrv = INF;
                 p[2]._Idrv = nullptr;
-                if (_Isrc) {
-                    p[2]._Idrv = [&](double){ return _Isrc; };
+                if (_Isrc != 0.0) {
+                    p[2]._Idrv = [&](double) {
+                        return _Isrc;
+                    };
                 }
             } else {
                 p[2]._Rdrv = p[1].getNet()->Rw(&p[1]) + R;
@@ -75,8 +77,10 @@ public:
             } else if (R == INF) {
                 p[1]._Rdrv = INF;
                 p[1]._Idrv = nullptr;
-                if (_Isrc) {
-                    p[1]._Idrv = [&](double){ return -_Isrc; };
+                if (_Isrc != 0.0) {
+                    p[1]._Idrv = [&](double){
+                        return -_Isrc;
+                    };
                 }
             } else {
                 p[1]._Rdrv = p[2].getNet()->Rw(&p[2]) + R;
