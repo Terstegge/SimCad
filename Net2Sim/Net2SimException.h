@@ -20,9 +20,9 @@
 #include <string>
 using std::string;
 
-struct Net2SimException {
+struct Net2SimException : public std::exception {
     std::string info;
-    Net2SimException(string s) : info(s) { }
+    explicit Net2SimException(string s) : info(s) { }
 };
 
 #endif // _NET2SIM_EXCEPTION_H_

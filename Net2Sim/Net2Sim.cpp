@@ -46,10 +46,10 @@ int Net2Sim::main(int argc, char* argv[])
         string c_file;
         string h_file;
         string subsheet = "/";
-        bool   read_c_file   = false;
-        bool   read_h_file   = false;
-        bool   read_subsheet = false;
-        bool   verbose       = false;
+        bool read_c_file   = false;
+        bool read_h_file   = false;
+        bool read_subsheet = false;
+        bool verbose       = false;
 
         for (int i=1; i < argc; ++i) {
             if (read_c_file)      { c_file   = argv[i]; read_c_file   = false; continue; }

@@ -30,7 +30,12 @@ add_executable(simcad-tests
 target_include_directories(simcad-tests PRIVATE _74xx)
 
 # pull in needed libraries
-target_link_libraries(simcad-tests SimCad gtest_main pthread)
+target_link_libraries(simcad-tests
+    SimCad 
+    gtest_main
+    pthread
+    boost_iostreams
+)
 
 include(GoogleTest)
 gtest_discover_tests(simcad-tests)

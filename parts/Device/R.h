@@ -34,7 +34,7 @@ public:
         return U /_R;
     }
 
-    inline double getR() {
+    inline double getR() const {
         return _R;
     }
 
