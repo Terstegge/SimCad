@@ -5,6 +5,18 @@ function(net2cpp TARGET NETFILE)
     # Paramters are all relative to current CMakeList.txt
     get_filename_component(NAME_WE   ${NETFILE} NAME_WE)
     get_filename_component(DIRECTORY ${NETFILE} DIRECTORY)
+
+    # Convert base name to C++-compatible class name
+    string(REPLACE "-" "_" NAME_WE ${NAME_WE})
+    string(REPLACE "(" "_" NAME_WE ${NAME_WE})
+    string(REPLACE ")" "_" NAME_WE ${NAME_WE})
+    string(REPLACE " " "_" NAME_WE ${NAME_WE})
+    string(REGEX MATCH "^[0-9]" START_DIGIT ${NAME_WE})
+    if (NOT "${START_DIGIT}" STREQUAL "")
+        string(PREPEND NAME_WE "_")
+    endif()
+
+    # Set the file names
     set(NETFILE "${CMAKE_CURRENT_LIST_DIR}/${NETFILE}")
     set(CPPFILE "${CMAKE_CURRENT_LIST_DIR}/${DIRECTORY}/${NAME_WE}.cpp")
     set(HFILE   "${CMAKE_CURRENT_LIST_DIR}/${DIRECTORY}/${NAME_WE}.h")

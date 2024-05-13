@@ -20,6 +20,8 @@
 #include <algorithm>
 #include <regex>
 #include <codecvt>
+#include <filesystem>
+
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -36,30 +38,34 @@ int Net2Sim::main(int argc, char* argv[])
             cout << "Usage:" << endl;
             cout << argv[0] << " <options> netfile.net" << endl;
             cout << "Options:" << endl;
-            cout << " -c <filename> : Name of generated .cpp-file (default netfile.cpp)" << endl;
-            cout << " -h <filename> : Name of generated .h-file   (default netfile.h)"   << endl;
-            cout << " -s <subsheet> : Generate code for specific subsheet (default /)"   << endl;
+            cout << " -n <basename> : Basename of generated .h/cpp-files"      << endl;
+            cout << "                 (default is <classname>.h/cpp)"          << endl;
+            cout << " -d <directory>: Output directory of the generated files" << endl;
+            cout << "                 (default is same folder as netfile.net)" << endl;
+            cout << " -s <subsheet> : Generate code for specific subsheet"     << endl;
+            cout << "                 (default is /)" << endl;
             cout << " -v            : Verbose output" << endl;
             exit(1);
         }
         string net_file;
-        string c_file;
-        string h_file;
+        string basename;
+        string directory;
         string subsheet = "/";
-        bool read_c_file   = false;
-        bool read_h_file   = false;
-        bool read_subsheet = false;
-        bool verbose       = false;
+        bool read_basename  = false;
+        bool read_directory = false;
+        bool read_subsheet  = false;
+        bool verbose        = false;
 
         for (int i=1; i < argc; ++i) {
-            if (read_c_file)      { c_file   = argv[i]; read_c_file   = false; continue; }
-            if (read_h_file)      { h_file   = argv[i]; read_h_file   = false; continue; }
-            if (read_subsheet)    { subsheet = argv[i]; read_subsheet = false; continue; }
+            if (read_basename)  { basename = argv[i]; read_basename = false; continue; }
+            if (read_directory) { directory= argv[i]; read_directory= false; continue; }
+            if (read_subsheet)  { subsheet = argv[i]; read_subsheet = false; continue; }
+
             string arg = argv[i];
-            if      (arg == "-c") { read_c_file   = true; }
-            else if (arg == "-h") { read_h_file   = true; }
-            else if (arg == "-s") { read_subsheet = true; }
-            else if (arg == "-v") { verbose       = true; }
+            if      (arg == "-n") { read_basename  = true; }
+            else if (arg == "-d") { read_directory = true; }
+            else if (arg == "-s") { read_subsheet  = true; }
+            else if (arg == "-v") { verbose        = true; }
             else {
                 net_file = argv[i];
                 if ((i+1) != argc) {
@@ -73,59 +79,18 @@ int Net2Sim::main(int argc, char* argv[])
             exit(1);
         }
 
-        /////////////////////////////////////
-        // Fill filenames with default values
-        /////////////////////////////////////
-        size_t colon_pos = net_file.find('.');
-        if (h_file.empty()) {
-            if (colon_pos != string::npos) {
-                h_file = net_file.substr(0, colon_pos) + ".h";
-            } else {
-                h_file = net_file + ".h";
-            }
-        }
-        if (c_file.empty()) {
-            if (colon_pos != string::npos) {
-                c_file = net_file.substr(0, colon_pos) + ".cpp";
-            } else {
-                c_file = net_file + ".cpp";
-            }
-        }
-
-        //////////////////////
-        // Open the input file
-        //////////////////////
+        // Open the net file and parse its content
+        Node tree;
+        NetParser parser;
         ifstream net_ifs(net_file);
         if (!net_ifs.good()) {
             cerr << "Could not open input file " << net_file << " -> Exit!" << endl;
             exit(1);
         }
-
-        ////////////////////////
-        // Open the output files
-        ////////////////////////
-        h_ofs.open(h_file);
-        if (!h_ofs.good()) {
-            cerr << "Could not open output file " << h_file << " -> Exit!" << endl;
-            exit(1);
-        }
-        c_ofs.open(c_file);
-        if (!c_ofs.good()) {
-            cerr << "Could not open output file " << c_file << " -> Exit!" << endl;
-            exit(1);
-        }
-
-        ///////////////////////
-        // Parse the *.net file
-        ///////////////////////
-        Node      tree;
-        NetParser parser;
         if (verbose) cout << "Parsing file " << net_file << endl;
         parser.parse(net_ifs, tree);
 
-        ////////////////
-        // Find subsheet
-        ////////////////
+        // Locate the subsheet if given
         if (verbose) cout << "Locating subsheet " << subsheet << endl;
         string classname;
         Node * design = tree.find_Node("design");
@@ -158,9 +123,38 @@ int Net2Sim::main(int argc, char* argv[])
             exit(1);
         }
 
-        //////////////////////////////
+        // Generate the output filenames
+        std::filesystem::path filepath{net_file};
+        string stem = filepath.stem();
+        string path = filepath.parent_path();
+        // If no output directory was given, use default (which might be empty!)
+        if (directory.empty()) {
+            directory = path;
+        }
+        // If we have a directory, add a separating slash
+        if (!directory.empty()) {
+            directory += "/";
+        }
+        // If no basename was given, use default (classname)
+        if (basename.empty()) {
+            basename = classname;
+        }
+        string h_file = directory + basename + ".h";
+        string c_file = directory + basename + ".cpp";
+
+        // Open the output files
+        h_ofs.open(h_file);
+        if (!h_ofs.good()) {
+            cerr << "Could not open output file " << h_file << " -> Exit!" << endl;
+            exit(1);
+        }
+        c_ofs.open(c_file);
+        if (!c_ofs.good()) {
+            cerr << "Could not open output file " << c_file << " -> Exit!" << endl;
+            exit(1);
+        }
+
         // Store all needed components
-        //////////////////////////////
         vector<component_entry> used_components;
         map<string, int>        needed_refs;
         // Loop over all components
@@ -208,17 +202,13 @@ int Net2Sim::main(int argc, char* argv[])
             }
         }
 
-        //////////////////////////////
         // Calculate all include files
-        //////////////////////////////
         map<string, int> included_components;
         for (component_entry & ce: used_components) {
             included_components[ ce.part ]++;
         }
 
-        ////////////////////////////////////////
         // Delete all unneeded nodes in all nets
-        ////////////////////////////////////////
         Node * nets = tree.find_Node("nets");
         for(auto & net : nets->_children) {
             for (auto node = net._children.begin(); node != net._children.end();) {
@@ -236,9 +226,7 @@ int Net2Sim::main(int argc, char* argv[])
             }
         }
 
-        /////////////////////////////////////////////////////
         // Output include guards, components and class header
-        /////////////////////////////////////////////////////
         if (verbose) cout << "Generating file " << h_file << endl;
         h_ofs << "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
         h_ofs << "// !! This file was generated with ** Net2Sim ** !!" << endl;
@@ -265,10 +253,7 @@ int Net2Sim::main(int argc, char* argv[])
                 << "class "  << classname << " " << "{" << endl
                 << "public:" << endl;
 
-        ///////////////////////////////////////////
         // Generate private attributes (components)
-        ///////////////////////////////////////////
-
         // Sort the components by reference
         std::sort(used_components.begin(), used_components.end(),
                 [] (component_entry & lhs, component_entry & rhs) {
@@ -294,9 +279,7 @@ int Net2Sim::main(int argc, char* argv[])
                   << ce.ref_base << ce.ref_idx << ";" << endl;
         }
 
-        ///////////////
         // Prepare Nets
-        ///////////////
         vector<net_entry> found_nets;
         nets = tree.find_Node("nets");
         for (Node & net : nets->_children) {
@@ -346,10 +329,8 @@ int Net2Sim::main(int argc, char* argv[])
 
         h_ofs << endl << "    // Nets" << endl;
 
-        //////////////////////////////////
         // Find busses in the sorted nets.
-        // Generate Pins and Busses
-        //////////////////////////////////
+        // Generate Pins and Buses
         vector<string> base_names;
         auto it     = found_nets.begin();
         auto first  = *it;
@@ -374,24 +355,18 @@ int Net2Sim::main(int argc, char* argv[])
         define_bus(first.base, first.index, isBus);
         base_names.push_back(first.base);
 
-        ////////////////////////////
         // Generate CTOR declaration
-        ////////////////////////////
         h_ofs << endl << "public:" << endl;
         h_ofs << "    explicit " << classname << "(std::string name);" << endl;
         h_ofs << "    virtual ~" << classname << "() = default;" << endl;
         h_ofs << "};" << endl;
 
-        /////////////////////
         // Output final endif
-        /////////////////////
         h_ofs << endl;
         h_ofs << "#endif    // _" << classname << "_H_" << endl;
         h_ofs.close();
 
-        /////////////////////////////////////////////////////
         // Output include guards, components and class header
-        /////////////////////////////////////////////////////
         if (verbose) cout << "Generating file " << c_file << endl;
         c_ofs << "// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
         c_ofs << "// !! This file was generated with ** Net2Sim ** !!" << endl;
@@ -404,9 +379,7 @@ int Net2Sim::main(int argc, char* argv[])
         if (string::npos != last_slash_idx)  hfile.erase(0, last_slash_idx + 1);
         c_ofs << "#include \"" << hfile << "\""<< endl;
 
-        ///////////////////////////
         // Generate CTOR definition
-        ///////////////////////////
         c_ofs << endl << classname << "::" << classname << "(std::string name) :" <<endl;
         for (size_t i = 0; i < used_components.size(); ++i) {
             string ref = used_components[i].ref_base + used_components[i].ref_idx;
@@ -433,9 +406,7 @@ int Net2Sim::main(int argc, char* argv[])
             c_ofs << endl;
         }
 
-        ///////////////////////
         // Generate connections
-        ///////////////////////
         c_ofs << "{" << endl;
         vector<string> net_output;
         for (Node & net : nets->_children) {

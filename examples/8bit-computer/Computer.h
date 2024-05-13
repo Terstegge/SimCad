@@ -20,7 +20,7 @@
 #ifndef _EXAMPLES_8_BIT_COMPUTER_H_
 #define _EXAMPLES_8_BIT_COMPUTER_H_
 
-#include "8bit-computer.h"
+#include "_8bit_computer.h"
 
 enum { CLK_MODE_RUN      = SW_SPDT::con21, CLK_MODE_STEP   = SW_SPDT::con23 };
 enum { PROG_MODE_ON      = SW_SPDT::con21, PROG_MODE_OFF   = SW_SPDT::con23 };
