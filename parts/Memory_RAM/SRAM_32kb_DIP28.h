@@ -23,6 +23,9 @@ public:
     uint8_t  _mem[32768] = { 0 };
 
     SRAM_32kb_DIP28(std::string name);
+private:
+    int  _write_addr;
+    bool _write_started;
 };
 
 #endif	// _PARTS_MEMORY_RAM_SRAM_32kb_DIP28_H_

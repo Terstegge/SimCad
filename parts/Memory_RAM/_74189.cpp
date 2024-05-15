@@ -15,17 +15,17 @@
 #include "_74189.h"
 
 _74189::_74189(std::string name)
-    : _74189_skel(name), _write_addr(0), _write_started(false), on(U1.on) {
+    : _74189_skel(name), _write_addr(0), _write_started(false) {
 
     // Attach address bus listener
     ADDR.attach([this](NetSet * nset) {
-        if (!on) return;
+        if (!U1.on) return;
         nOUT.set(_mem[ ADDR ], nset);
     });
     // Latch address at start of write cycle.
     // Write memory at end of write cycle
     WRITE.attach([this](NetSet * nset) {
-        if (!on) return;
+        if (!U1.on) return;
         if (WRITE) {
             // Latch address to write to
             _write_addr    = ADDR;
@@ -38,5 +38,4 @@ _74189::_74189(std::string name)
             _write_started = false;
         }
     });
-//    nOUT = _mem[ADDR];
 }

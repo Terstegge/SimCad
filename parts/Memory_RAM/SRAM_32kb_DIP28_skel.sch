@@ -690,36 +690,36 @@ B3 D3 EB F5 E2 8E CA 64 32 2B 2B 2B D7 D7 D7 F3 98 12 3C 1B B6 6D DB B6 1D 77 D4
 D1 7B 00 00 00 00 49 45 4E 44 AE 42 60 82 
 EndData
 $EndBitmap
-Text Label 2700 1000 2    50   ~ 0
-A0
-Text Label 2700 1450 2    50   ~ 0
-A1
-Text Label 2700 1900 2    50   ~ 0
-A2
-Text Label 2700 2350 2    50   ~ 0
-A3
-Text Label 2700 2800 2    50   ~ 0
-A4
-Text Label 2700 3250 2    50   ~ 0
-A5
-Text Label 2700 3700 2    50   ~ 0
-A6
-Text Label 2700 4150 2    50   ~ 0
-A7
-Text Label 2700 4600 2    50   ~ 0
-A8
-Text Label 2700 5050 2    50   ~ 0
-A9
-Text Label 2700 5500 2    50   ~ 0
-A10
-Text Label 2700 5950 2    50   ~ 0
-A11
-Text Label 2700 6400 2    50   ~ 0
-A12
-Text Label 2700 6850 2    50   ~ 0
-A13
-Text Label 2700 7300 2    50   ~ 0
-A14
+Text Label 2800 1000 2    50   ~ 0
+ADDR0
+Text Label 2800 1450 2    50   ~ 0
+ADDR1
+Text Label 2800 1900 2    50   ~ 0
+ADDR2
+Text Label 2800 2350 2    50   ~ 0
+ADDR3
+Text Label 2800 2800 2    50   ~ 0
+ADDR4
+Text Label 2800 3250 2    50   ~ 0
+ADDR5
+Text Label 2800 3700 2    50   ~ 0
+ADDR6
+Text Label 2800 4150 2    50   ~ 0
+ADDR7
+Text Label 2800 4600 2    50   ~ 0
+ADDR8
+Text Label 2800 5050 2    50   ~ 0
+ADDR9
+Text Label 2800 5500 2    50   ~ 0
+ADDR10
+Text Label 2800 5950 2    50   ~ 0
+ADDR11
+Text Label 2800 6400 2    50   ~ 0
+ADDR12
+Text Label 2800 6850 2    50   ~ 0
+ADDR13
+Text Label 2800 7300 2    50   ~ 0
+ADDR14
 Text Label 1150 4600 2    50   ~ 0
 p25
 Text Label 1150 5050 2    50   ~ 0
@@ -1515,37 +1515,19 @@ Wire Wire Line
 Wire Wire Line
 	1150 1450 1850 1450
 Wire Wire Line
-	2100 1000 2700 1000
-Wire Wire Line
-	2450 1450 2700 1450
-Wire Wire Line
 	1150 1900 1500 1900
-Wire Wire Line
-	2100 1900 2700 1900
 Wire Wire Line
 	1150 2350 1850 2350
 Wire Wire Line
-	2450 2350 2700 2350
-Wire Wire Line
 	1150 2800 1500 2800
-Wire Wire Line
-	2100 2800 2700 2800
 Wire Wire Line
 	1150 3250 1850 3250
 Wire Wire Line
-	2450 3250 2700 3250
-Wire Wire Line
 	1150 3700 1500 3700
-Wire Wire Line
-	2100 3700 2700 3700
-Wire Wire Line
-	2450 4150 2700 4150
 Wire Wire Line
 	1150 4150 1850 4150
 Wire Wire Line
 	1150 4600 1500 4600
-Wire Wire Line
-	2100 4600 2700 4600
 Wire Wire Line
 	1150 5050 1850 5050
 Wire Wire Line
@@ -1558,18 +1540,36 @@ Wire Wire Line
 	1150 6850 1850 6850
 Wire Wire Line
 	1150 7300 1500 7300
-Wire Wire Line
-	2450 5950 2700 5950
-Wire Wire Line
-	2100 5500 2700 5500
-Wire Wire Line
-	2450 5050 2700 5050
-Wire Wire Line
-	2100 6400 2700 6400
-Wire Wire Line
-	2450 6850 2700 6850
-Wire Wire Line
-	2100 7300 2700 7300
 Text Label 6300 6550 1    50   ~ 0
 WRITE
+Wire Wire Line
+	2100 1000 2800 1000
+Wire Wire Line
+	2450 1450 2800 1450
+Wire Wire Line
+	2100 1900 2800 1900
+Wire Wire Line
+	2450 2350 2800 2350
+Wire Wire Line
+	2100 2800 2800 2800
+Wire Wire Line
+	2450 3250 2800 3250
+Wire Wire Line
+	2100 3700 2800 3700
+Wire Wire Line
+	2450 4150 2800 4150
+Wire Wire Line
+	2100 4600 2800 4600
+Wire Wire Line
+	2100 5500 2800 5500
+Wire Wire Line
+	2450 5950 2800 5950
+Wire Wire Line
+	2100 6400 2800 6400
+Wire Wire Line
+	2450 6850 2800 6850
+Wire Wire Line
+	2100 7300 2800 7300
+Wire Wire Line
+	2450 5050 2800 5050
 $EndSCHEMATC

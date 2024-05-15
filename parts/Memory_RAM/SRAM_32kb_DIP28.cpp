@@ -23,19 +23,27 @@
 #include "SRAM_32kb_DIP28.h"
 
 SRAM_32kb_DIP28::SRAM_32kb_DIP28(std::string name) 
-      : SRAM_32kb_DIP28_skel(name) {
+      : SRAM_32kb_DIP28_skel(name), _write_addr(0), _write_started(false) {
     
     // Attach address bus listener
-    A.attach([this](NetSet * nset) {
-        DATA_OUT = _mem[ A ];
+    ADDR.attach([this](NetSet * nset) {
+        if (!U1.on) return;
+        DATA_OUT.set(_mem[ ADDR ], nset);
     });
+    // Latch address at start of write cycle.
     // Write memory at end of write cycle
     WRITE.attach([this](NetSet * nset) {
-        if (WRITE == LOW) {
-            _mem[ A ] = DATA_IN;
-            DATA_OUT  = DATA_IN;
+        if (!U1.on) return;
+        if (WRITE) {
+            // Latch address to write to
+            _write_addr    = ADDR;
+            _write_started = true;
+        } else {
+            // Store and output data
+            if (!_write_started) return;
+            _mem[_write_addr] = DATA_IN;
+            DATA_OUT.set(DATA_IN, nset);
+            _write_started = false;
         }
     });
-    // Write out initial data
-    DATA_OUT = _mem[A];
 }

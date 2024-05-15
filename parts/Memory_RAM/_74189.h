@@ -25,8 +25,6 @@ public:
     _74189(std::string name);
 
 private:
-
-    bool & on;
     int  _write_addr;
     bool _write_started;
 };

@@ -299,6 +299,10 @@ int Net2Sim::main(int argc, char* argv[])
             if (pos_subsheet == 0) {
                 name = name.substr(subsheet.size());
             }
+            // In any case, remove a leading slash
+            if (name[0] == '/') {
+                name = name.substr(1);
+            }
 
             string index;
             name2var(name);
