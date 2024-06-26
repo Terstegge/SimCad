@@ -448,12 +448,16 @@ int Net2Sim::main(int argc, char* argv[])
 void Net2Sim::name2var(string & s) {
     s = std::regex_replace(s, std::regex("^\\-(?=[0-9])"), "minus_");
     s = std::regex_replace(s, std::regex("^\\+(?=[0-9])"), "plus_");
-    std::replace(s.begin(),  s.end(), '/', '_');
-    std::replace(s.begin(),  s.end(), '-', '_');
-    std::replace(s.begin(),  s.end(), '~', 'n');
-    std::replace(s.begin(),  s.end(), '(', '_');
-    std::replace(s.begin(),  s.end(), ')', '_');
-    std::replace(s.begin(),  s.end(), ' ', '_');
+    std::replace(s.begin(), s.end(), '/', '_');
+    std::replace(s.begin(), s.end(), '-', '_');
+    std::replace(s.begin(), s.end(), '~', 'n');
+    std::replace(s.begin(), s.end(), '(', '_');
+    std::replace(s.begin(), s.end(), ')', '_');
+    std::replace(s.begin(), s.end(), ' ', '_');
+    // Remove multiple underscores. The trailing underscore
+    // must not be removed, because the Nets could change to
+    // buses, which will result in wrong connections!
+    s = std::regex_replace(s, std::regex("_+"), "_");
     if (!(std::isalpha(s[0]) || s[0] == '_')) s = "_" + s;
 }
 
