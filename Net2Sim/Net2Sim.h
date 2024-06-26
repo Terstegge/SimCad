@@ -62,7 +62,7 @@ private:
     // (stored in name).
     static bool split_name_index(string & name, string & idx);
 
-    void define_bus(const string& base, const string& index, bool isBus);
+    void define_bus(vector<string> & names, const string& base, const string& index, bool isBus);
     static void change_to_bus(string & net, vector<net_entry> & found_nets);
 
     // Read a physical value (e.g. voltage, current, resistance) and

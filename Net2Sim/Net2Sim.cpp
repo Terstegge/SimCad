@@ -351,13 +351,11 @@ int Net2Sim::main(int argc, char* argv[])
                 first = next;
                 continue;
             }
-            define_bus(first.base, first.index, isBus);
-            base_names.push_back(first.base);
+            define_bus(base_names, first.base, first.index, isBus);
             first = next;
             isBus = false;
         }
-        define_bus(first.base, first.index, isBus);
-        base_names.push_back(first.base);
+        define_bus(base_names, first.base, first.index, isBus);
 
         // Generate CTOR declaration
         h_ofs << endl << "public:" << endl;
@@ -476,7 +474,7 @@ bool Net2Sim::split_name_index(string & name, string & idx) {
 }
 
 
-void Net2Sim::define_bus(const string& base, const string& index, bool isBus) {
+void Net2Sim::define_bus(vector<string> & names, const string& base, const string& index, bool isBus) {
     string line;
     std::ostringstream oss;
     if (isBus) {
@@ -486,12 +484,15 @@ void Net2Sim::define_bus(const string& base, const string& index, bool isBus) {
         line += ">";
         line += string(25-line.size(), ' ');
         line += base + ";";
+        names.push_back(base);
     } else {
         line = "    Pin";
         line += string(25-line.size(), ' ');
-        line += base;
-        if (!index.empty()) line += index;
+        string name = base;
+        if (!index.empty()) name += index;
+        line += name;
         line += ";";
+        names.push_back(name);
     }
     h_ofs << line << endl;
 }
