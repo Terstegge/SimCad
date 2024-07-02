@@ -250,8 +250,8 @@ int Net2Sim::main(int argc, char* argv[])
                 h_ofs  << " parts" << endl;
         }
         h_ofs << endl
-                << "class "  << classname << " " << "{" << endl
-                << "public:" << endl;
+              << "class "  << classname << " " << "{" << endl
+              << "public:" << endl;
 
         // Generate private attributes (components)
         // Sort the components by reference
@@ -308,18 +308,9 @@ int Net2Sim::main(int argc, char* argv[])
             name2var(name);
             net.set_attr("name", name.c_str());
 
-            // Divide Net into base name and index, if possible
-            auto i = name.size()-1;
-            bool index_found = false;
-            while(isdigit(name[i]) && (i >= 0)) {
-                index_found = true;
-                --i;
-            }
-            // Check if index was found
-            if (index_found) {
-                index = name.substr(i+1);
-                name  = name.substr(0,i+1);
-            }
+            // Divide Net into base name and index, if possible.
+            // Store the entry as isBus=false
+            split_name_index(name, index);
             found_nets.emplace_back(name, index, false);
         }
 
@@ -350,11 +341,11 @@ int Net2Sim::main(int argc, char* argv[])
                 (it-1)->isBus = true;
                 first = next;
                 continue;
-            }
+                        }
             define_bus(base_names, first.base, first.index, isBus);
             first = next;
             isBus = false;
-        }
+                        }
         define_bus(base_names, first.base, first.index, isBus);
 
         // Generate CTOR declaration
