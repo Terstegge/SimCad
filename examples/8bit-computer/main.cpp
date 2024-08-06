@@ -56,37 +56,37 @@ int main() {
 
     // Array of the 4 seven segment displays
     _7SEGMENT_CC * Segments[4] = {
-        &comp.U46,  // Segment with addr 0 (ones)
-        &comp.U45,  // Segment with addr 1 (tens)
-        &comp.U44,  // Segment with addr 2 (hundreds)
-        &comp.U43,  // Segment with addr 3 (sign)
+        &comp.SEG1,  // Segment with addr 0 (ones)
+        &comp.SEG2,  // Segment with addr 1 (tens)
+        &comp.SEG3,  // Segment with addr 2 (hundreds)
+        &comp.SEG4,  // Segment with addr 3 (sign)
     };
 
-    // Define a Bus with the adress-lines selecting
+    // Define a Bus with the address-lines selecting
     // one of the 4 seven segment displays
     BusRef addr({
-        &comp.U41.p[14], // A0 
-        &comp.U41.p[13]  // A1
+        &comp.U40.p[14], // A0
+        &comp.U40.p[13]  // A1
     });
 
     // For the multiplexed 7-segment display, we attach a callback to
-    // the Q output of U37 (the NE555 timer for multiplex clocking).
+    // the Q output of U36 (the NE555 timer for multiplex clocking).
     // Whenever we have a rising edge on Q, we read out the segment
     // address (p13/p14 of U41, see above), decoded the content of the
     // selected segment using the to_char() method and write the result
     // to the char-array 'Display'.  Due to this process, the correct
     // value of the display is only shown after 4 clock cycles of the
-    // NE555 timer U37 - there might be wrong values in between!
-    comp.U37.p[3].attach([&](NetSet *) {
-        if ((bool)comp.U37.p[3]) {
+    // NE555 timer U36 - there might be wrong values in between!
+    comp.U36.p[3].attach([&](NetSet *) {
+        if ((bool)comp.U36.p[3]) {
             comp.Display[3-addr] = Segments[addr]->to_char();
         }
     });
 
     // Program the EEPROMs (display and microcode)
-    prog_display pd(comp.U42._mem);
+    prog_display pd(comp.ROM_DISP1._mem);
     pd.programEEPROM();
-    prog_microcode pm(comp.U50._mem, comp.U51._mem);
+    prog_microcode pm(comp.ROM_HIGH1._mem, comp.ROM_LOW1._mem);
     pm.programEEPROMs();
 
     try {
@@ -96,10 +96,10 @@ int main() {
         comp.C19.setCapacity(718e-9);
         // Slow down the pulse generator in the RAM module. In the
         // original design we have RC=10us. With 100uF, we get 100ms.
-        comp.C14.setCapacity(100e-6);
+        comp.C5.setCapacity(100e-6);
         // The simulation does not need the pulse generator at all,
         // so we could also simply short-circuit C14
-        //comp.C14.p[1].connect_to( comp.C14.p[2] );
+        //comp.C5.p[1].connect_to( comp.C5.p[2] );
 
         // Set single step clock mode
         comp.CLK_MODE.set(CLK_MODE_STEP);
