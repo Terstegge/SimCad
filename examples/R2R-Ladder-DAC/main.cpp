@@ -12,7 +12,7 @@
 //
 /////////////////////////////////////////////////
 //
-#include "R2R-Ladder-DAC.h"
+#include "R2R_Ladder_DAC.h"
 #include "SimCadException.h"
 #include "PowerSupply.h"
 
