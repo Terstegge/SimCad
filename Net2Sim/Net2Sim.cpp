@@ -103,8 +103,8 @@ int Net2Sim::main(int argc, char* argv[])
                     // remove the .sch ending and set
                     // the remainder as the class name
                     classname = sheet.find_Node("source")->_value;
-                    size_t pos = classname.find(".sch");
-                    classname.erase(pos);
+                    size_t pos = classname.find(".");
+                    if (pos != string::npos) classname.erase(pos);
                     name2var(classname);
                     break;
                 }
@@ -211,6 +211,8 @@ int Net2Sim::main(int argc, char* argv[])
         // Delete all unneeded nodes in all nets
         Node * nets = tree.find_Node("nets");
         for(auto & net : nets->_children) {
+            string net_name  = net.get_attr("name");
+            bool unconnected = net_name.starts_with("unconnected-");
             for (auto node = net._children.begin(); node != net._children.end();) {
                 if (node->_name != "node") {
                     ++node;
@@ -218,7 +220,7 @@ int Net2Sim::main(int argc, char* argv[])
                 }
                 string ref = node->get_attr("ref");
                 name2var( ref );
-                if(needed_refs.count( ref ) == 0) {
+                if((needed_refs.count( ref ) == 0) || unconnected) {
                     node = net._children.erase(node);
                 } else {
                     ++node;
@@ -445,6 +447,8 @@ void Net2Sim::name2var(string & s) {
     std::replace(s.begin(), s.end(), '(', '_');
     std::replace(s.begin(), s.end(), ')', '_');
     std::replace(s.begin(), s.end(), ' ', '_');
+    std::replace(s.begin(), s.end(), '{', '_');
+    std::replace(s.begin(), s.end(), '}', '_');
     // Remove multiple underscores. The trailing underscore
     // must not be removed, because the Nets could change to
     // buses, which will result in wrong connections!

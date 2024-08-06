@@ -43,6 +43,16 @@ void NetParser::parse_node(std::vector<Node> & nodes,
         }
         // Get Value
         n._value = get_word(fs);
+        // In KiCad 7, the tstamps element can have multiple values...
+        // So read as many words until we find the closing bracket
+        c = fs.peek();
+        if (n._name == "tstamps" && c != ')') {
+            while (c != ')') {
+                fs >> c;
+                get_word(fs);
+                c = fs.peek();
+            }
+        }
         fs >> c;
         if (c != ')') {
             throw Net2SimException("Expected ')'");
