@@ -5,16 +5,15 @@ project(TransistorBlinker C CXX ASM)
 add_subdirectory(../.. SimCad)
 
 add_executable(TransistorBlinker
-    main.cpp
+        main.cpp
 )
 
 net2cpp(TransistorBlinker TransistorBlinker.net)
 
 # pull in needed libraries
 target_link_libraries(TransistorBlinker 
-    SimCad
-    boost_iostreams
-    boost_filesystem 
-    pthread
+        SimCad
+        boost_iostreams
+        boost_filesystem
+        pthread
 )
-
