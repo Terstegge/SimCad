@@ -14,12 +14,10 @@
 //
 #include "Net2Sim.h"
 #include "NetParser.h"
+
 #include <iostream>
-#include <sstream>
 #include <map>
-#include <algorithm>
 #include <regex>
-#include <codecvt>
 #include <filesystem>
 
 using std::cout;
@@ -113,14 +111,14 @@ int Net2Sim::main(int argc, char* argv[])
         if (classname.empty()) {
             // We did not find the subsheet and did not set a class name.
             // Show all available subsheets and exit.
-            cerr << "Subsheet '" << subsheet << "' not found!" << endl;
-            cerr << "Available subsheets are:" << endl;
+                cerr << "Subsheet '" << subsheet << "' not found!" << endl;
+                cerr << "Available subsheets are:" << endl;
             for (Node & sheet : design->_children) {
                 if (sheet._name == "sheet") {
                     cerr << sheet.get_attr("name") << endl;
                 }
-            }
-            exit(1);
+                }
+                exit(1);
         }
 
         // Generate the output filenames
@@ -384,6 +382,7 @@ int Net2Sim::main(int argc, char* argv[])
                 used_components[i].part == "C"       ||
                 used_components[i].part == "CP"      ||
                 used_components[i].part == "CP1"     ||
+                used_components[i].part == "C_Polarized" ||
                 used_components[i].part == "VSOURCE" ||
                 used_components[i].part == "ISOURCE")
             {

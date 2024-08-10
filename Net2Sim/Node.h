@@ -32,7 +32,7 @@ public:
     vector<Node>   _children;
 
     // Find a sub-Node with a specific name
-    // in all available sub-trees. Returns
+    // in all available subtrees. Returns
     // nullptr if not found, else a pointer
     // to the first matching Node.
     Node * find_Node(const char * name);
