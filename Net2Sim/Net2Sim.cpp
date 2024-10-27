@@ -446,8 +446,9 @@ void Net2Sim::name2var(string & s) {
     std::replace(s.begin(), s.end(), '(', '_');
     std::replace(s.begin(), s.end(), ')', '_');
     std::replace(s.begin(), s.end(), ' ', '_');
-    std::replace(s.begin(), s.end(), '{', '_');
-    std::replace(s.begin(), s.end(), '}', '_');
+    std::erase(s, '{');
+    std::erase(s, '}');
+
     // Remove multiple underscores. The trailing underscore
     // must not be removed, because the Nets could change to
     // buses, which will result in wrong connections!
