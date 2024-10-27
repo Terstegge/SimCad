@@ -13,10 +13,10 @@
 #/////////////////////////////////////////////////
 
 cmake_minimum_required(VERSION 3.16)
-include(.cmake-functions)
+include(.cmake-functions.cmake)
 
 set (CMAKE_CXX_STANDARD 20)
-set (CMAKE_CXX_FLAGS "-O3")
+set (CMAKE_CXX_FLAGS "-Ofast")
 set (CMAKE_CXX_FLAGS "-fno-var-tracking")
 
 project(SimCad CXX)

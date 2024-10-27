@@ -26,21 +26,21 @@ SST39SF040::cmd_state SST39SF040::_state = wait1;
 
 SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(name) {
         // Attach address bus listener
-        A.attach([this](NetSet * usp) {
-            DATA_OUT = _mem[ A ];
+        A.attach([this](NetSet * nset) {
+            if (!U1.on) return;
+            DATA_OUT.set(_mem[ A ], nset);
         });
-    
         // Latch address at start of write cycle
         // and latch data at falling edge
-        WRITE.attach([this](NetSet * usp) {
+        WRITE.attach([this](NetSet * nset) {
             if (WRITE == HIGH) {
                 // Latch address
                 _addr = A;
             }
             if (WRITE == LOW) {
                 // Latch data and process
-                _data    = DATA_IN;
-                DATA_OUT = DATA_IN;
+                _data = DATA_IN;
+                DATA_OUT.set(DATA_IN, nset);
                 run_state_machine(_addr, _data);
             }
         });

@@ -94,7 +94,8 @@ std::ostream& operator <<(std::ostream &os, const Pin &p) {
             os << "NC]";
         } else if (p.isVS()) {
             os << p.U() << " V Source, ";
-            os << p.getNet()->Rw(&p) << " Ω, ";
+            os << p.R() << " Ω, ";
+//            os << p.getNet()->Rw(&p) << " Ω, ";
             os << p.I() << " A]";
         } else {
             os << p.U() << " V, ";

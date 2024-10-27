@@ -1,10 +1,16 @@
 function(net2cpp TARGET NETFILE)
     # Parse argument
-    # cmake_parse_arguments(png_to_cpp "" "BG_COLOR;OUTPUT_FILE" "" ${ARGN} )
+    cmake_parse_arguments(net2cpp "" "SUBSHEET;BASENAME" "" ${ARGN} )
 
     # Paramters are all relative to current CMakeList.txt
-    get_filename_component(NAME_WE   ${NETFILE} NAME_WE)
     get_filename_component(DIRECTORY ${NETFILE} DIRECTORY)
+    if (net2cpp_SUBSHEET)
+        get_filename_component(NAME_WE ${net2cpp_SUBSHEET} NAME_WE)
+        set(SUBSHEET_PARAM -s ${net2cpp_SUBSHEET}/)
+    else()
+        get_filename_component(NAME_WE ${NETFILE} NAME_WE)
+        set(SUBSHEET_PARAM "")
+    endif()
 
     # Convert base name to C++-compatible class name
     string(REPLACE "-" "_" NAME_WE ${NAME_WE})
@@ -27,7 +33,7 @@ function(net2cpp TARGET NETFILE)
     add_custom_command(
         OUTPUT          ${CPPFILE} ${HFILE}
         MAIN_DEPENDENCY ${NETFILE}
-        COMMAND Net2Sim ${NETFILE}
+        COMMAND Net2Sim ${SUBSHEET_PARAM} -n ${NAME_WE} ${NETFILE}
     )
     add_dependencies(${TARGET} ${NET_TARGET})
 

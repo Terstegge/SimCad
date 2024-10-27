@@ -16,11 +16,12 @@
 #include "TestUtils.h"
 #include "_74LS00.h"
 
-auto f_nand = [](bool a, bool b) { return !(a && b); };
 
 TEST(_74xx, LS00)
 {
     _74LS00 ic("74LS00");
+
+    auto f_nand = [](bool a, bool b) { return !(a && b); };
 
     // Power up
     ASSERT_TRUE( TestUtils::test_power_up14(ic.p) );

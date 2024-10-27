@@ -12,6 +12,7 @@
 #include <string>
 #include <thread>
 #include <chrono>
+#include <deque>
 #include <gnuplot-iostream.h>
 
 using namespace std;

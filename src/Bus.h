@@ -34,7 +34,8 @@ public:
     Bus(const std::string & n="") : Narray<Pin, N>(n) { }
     // No assignment, no copy
     Bus<N> & operator = (const Bus<N> & p) = delete;
-    Bus<N>              (const Bus<N> & p) = delete;
+    Bus                 (const Bus<N> & p) = delete;
+
     void operator = (unsigned int val) {
         NetSet net1;
         unsigned int mask = 1;
