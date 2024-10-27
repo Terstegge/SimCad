@@ -35,8 +35,8 @@ public:
     double lower;
     OPAMP(const std::string & name)
         : Named(name), NAME(p),
-          Iplus(p[1]), Iminus(p[2]), OUT(p[3]),
-          Vplus(p[4]), Vminus(p[5]),
+          Iplus(p[1]), Iminus(p[2]), OUT(p[5]),
+          Vplus(p[3]), Vminus(p[4]),
           on(false), calc(false), upper(0), lower(0)
     {
         // Attach power signals

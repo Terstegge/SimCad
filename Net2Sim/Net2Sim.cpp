@@ -446,6 +446,7 @@ void Net2Sim::name2var(string & s) {
     std::replace(s.begin(), s.end(), '(', '_');
     std::replace(s.begin(), s.end(), ')', '_');
     std::replace(s.begin(), s.end(), ' ', '_');
+    std::replace(s.begin(), s.end(), '+', 'p');
     std::erase(s, '{');
     std::erase(s, '}');
 
