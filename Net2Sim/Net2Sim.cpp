@@ -383,6 +383,7 @@ int Net2Sim::main(int argc, char* argv[])
                 used_components[i].part == "CP"      ||
                 used_components[i].part == "CP1"     ||
                 used_components[i].part == "C_Polarized" ||
+                used_components[i].part == "C_Small" ||
                 used_components[i].part == "VSOURCE" ||
                 used_components[i].part == "ISOURCE")
             {
