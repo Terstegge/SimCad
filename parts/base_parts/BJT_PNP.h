@@ -12,8 +12,8 @@
 //
 /////////////////////////////////////////////////
 //
-#ifndef _PARTS_BASE_PARTS_BJT_NPN_H_
-#define _PARTS_BASE_PARTS_BJT_NPN_H_
+#ifndef _PARTS_BASE_PARTS_BJT_PNP_H_
+#define _PARTS_BASE_PARTS_BJT_PNP_H_
 
 #include "Pin.h"
 #include "TwoPole.h"
@@ -25,7 +25,7 @@
 
 #include "DIODE.h"
 
-class BJT_NPN : public Named {
+class BJT_PNP : public Named {
 public:
 
     enum class PinOrder { CBE, EBC };
@@ -35,9 +35,9 @@ public:
     Pin *    E;
     Pin *    C;
 
-    BJT_NPN(const std::string & name, PinOrder order)
+    BJT_PNP(const std::string & name, PinOrder order)
     : Named(name), NAME(p),
-      NAME(_Dbe, Ube_f), NAME(_Pce, this)
+      NAME(_Deb, Ueb_f), NAME(_Pec, this)
     {
         B = &p[2];
         switch(order) {
@@ -51,19 +51,19 @@ public:
                 break;
         }
 
-        _Ice_sat = 0;
+        _Iec_sat = 0;
 
-        // Setup the Basis-Emitter Diode
-        B->connect_to(_Dbe.A);
-        E->connect_to(_Dbe.C);
+        // Set up the Basis-Emitter Diode
+        B->connect_to(_Deb.C);
+        E->connect_to(_Deb.A);
         // Setup Collector-Emitter Resistor
-        C->connect_to(_Pce.p[2]);
-        E->connect_to(_Pce.p[1]);
+        C->connect_to(_Pec.p[1]);
+        E->connect_to(_Pec.p[2]);
 
         // Attach Basis-handler
         B->attach( [this](NetSet * nset) {
-            _Ice_sat  = _Dbe.A.I() * beta;
-            _Pce.update(nset);
+            _Iec_sat  = _Deb.A.I() * beta;
+            _Pec.update(nset);
         });
     }
 
@@ -73,33 +73,33 @@ private:
     class CEpath : public TwoPole {
 
     public:
-        CEpath(const std::string & name, BJT_NPN * owner) : TwoPole(name), o(owner) {
+        CEpath(const std::string & name, BJT_PNP * owner) : TwoPole(name), o(owner) {
         }
     private:
         double Rchar(double U) {
             if (U == 0.0) {
-                return o->Uearly / o->_Ice_sat * (1 + exp(50 * 0.15))  / (1 + 50 * o->Uearly);
+                return o->Uearly / o->_Iec_sat * (1 + exp(50 * 0.15))  / (1 + 50 * o->Uearly);
             } else {
                 return U / Ichar(U);
             }
         }
 
         double Ichar(double U) {
-            return o->_Ice_sat * (U / o->Uearly + 1) / (1 + exp(-50 * (U - 0.15)));
+            return o->_Iec_sat * (U / o->Uearly + 1) / (1 + exp(-50 * (U - 0.15)));
         }
-        BJT_NPN   *o;
+        BJT_PNP   *o;
     };
 
     // Configuration items
-    const double Ube_f  = 0.725;
+    const double Ueb_f  = 0.725;
     const double beta   = 200;
     const double Uearly = 100;
 
-    DIODE   _Dbe;
-    CEpath  _Pce;
+    DIODE   _Deb;
+    CEpath  _Pec;
 
     // Calculated values
-    double _Ice_sat;
+    double _Iec_sat;
 };
 
-#endif // _PARTS_BASE_PARTS_BJT_NPN_H_
+#endif // _PARTS_BASE_PARTS_BJT_PNP_H_
