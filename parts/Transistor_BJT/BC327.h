@@ -12,17 +12,17 @@
 //
 /////////////////////////////////////////////////
 //
-#ifndef _INCLUDE_BC107_H_
-#define _INCLUDE_BC107_H_
+#ifndef _INCLUDE_BC327_H_
+#define _INCLUDE_BC327_H_
 
-#include "BJT_NPN.h"
+#include "BJT_PNP.h"
 
-class BC107 : public BJT_NPN {
+class BC327 : public BJT_PNP {
 public:
 
-    BC107(const std::string & name) : BJT_NPN(name, PinOrder::EBC) {
+    BC327(const std::string & name) : BJT_PNP(name, PinOrder::CBE) {
         // Parameters may be changed here...
     }
 };
 
-#endif // _INCLUDE_BC107_H_
+#endif // _INCLUDE_BC327_H_
