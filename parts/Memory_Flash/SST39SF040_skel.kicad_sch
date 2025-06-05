@@ -2807,7 +2807,7 @@
 			"KIKzCYPBoAjOJgwGgyI4mzAYDIrgbMJgMCjy/wEX/qHeP7UnDAAAAABJRU5ErkJggg=="
 		)
 	)
-	(text "~{OE\n}"
+	(text "~{OE}"
 		(exclude_from_sim no)
 		(at 105.41 189.23 0)
 		(effects
@@ -2818,7 +2818,7 @@
 		)
 		(uuid "45349c72-edff-46cb-a447-1141f8b675c7")
 	)
-	(text "~{CS\n}"
+	(text "~{CS}"
 		(exclude_from_sim no)
 		(at 105.41 166.37 0)
 		(effects
@@ -2829,7 +2829,7 @@
 		)
 		(uuid "88ffbdf4-6723-4607-960a-7dac43ca1ecc")
 	)
-	(text "~{WE\n}"
+	(text "~{WE}"
 		(exclude_from_sim no)
 		(at 105.41 171.45 0)
 		(effects
