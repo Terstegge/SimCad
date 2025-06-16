@@ -940,10 +940,10 @@
 		(uuid "bc88c8b7-09ac-4a78-ba3c-6a2012ebf35a")
 	)
 	(junction
-		(at 223.52 95.25)
+		(at 171.45 95.25)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "d931590b-bff0-482e-bda5-9c92a9c1e51e")
+		(uuid "d25682cb-529f-465b-b876-8f24e9e2a768")
 	)
 	(junction
 		(at 132.08 76.2)
@@ -1035,6 +1035,16 @@
 	)
 	(wire
 		(pts
+			(xy 163.195 99.695) (xy 161.29 99.695)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "17b65e7b-77fe-423c-b7f0-44836f7a6560")
+	)
+	(wire
+		(pts
 			(xy 170.18 69.85) (xy 171.45 69.85)
 		)
 		(stroke
@@ -1042,6 +1052,16 @@
 			(type default)
 		)
 		(uuid "18ddc9d8-448b-4efd-8a0c-5f1522f1d39c")
+	)
+	(wire
+		(pts
+			(xy 213.36 91.44) (xy 213.36 95.25)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1bd81674-064e-43fd-927f-5e65b87eeb1b")
 	)
 	(wire
 		(pts
@@ -1175,13 +1195,13 @@
 	)
 	(wire
 		(pts
-			(xy 223.52 95.25) (xy 236.22 95.25)
+			(xy 170.815 99.695) (xy 171.45 99.695)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "3fc43cbb-ebde-4d54-be95-1ec403191e29")
+		(uuid "407be9cc-b7a7-4e69-b6f3-5f751ca407ef")
 	)
 	(wire
 		(pts
@@ -1285,6 +1305,16 @@
 	)
 	(wire
 		(pts
+			(xy 171.45 95.25) (xy 171.45 99.695)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "68413b0b-0a82-4e3d-9cb3-b06e3b8afa38")
+	)
+	(wire
+		(pts
 			(xy 132.08 76.2) (xy 129.54 76.2)
 		)
 		(stroke
@@ -1315,7 +1345,7 @@
 	)
 	(wire
 		(pts
-			(xy 213.36 95.25) (xy 223.52 95.25)
+			(xy 213.36 95.25) (xy 236.22 95.25)
 		)
 		(stroke
 			(width 0)
@@ -1585,6 +1615,16 @@
 	)
 	(wire
 		(pts
+			(xy 222.25 91.44) (xy 223.52 91.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ce8cc668-b740-4b6a-b42e-cb492c4cbc87")
+	)
+	(wire
+		(pts
 			(xy 190.5 64.77) (xy 190.5 82.55)
 		)
 		(stroke
@@ -1595,7 +1635,7 @@
 	)
 	(wire
 		(pts
-			(xy 223.52 84.455) (xy 223.52 81.28)
+			(xy 223.52 81.28) (xy 223.52 91.44)
 		)
 		(stroke
 			(width 0)
@@ -1675,6 +1715,16 @@
 	)
 	(wire
 		(pts
+			(xy 214.63 91.44) (xy 213.36 91.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e80db1c7-1ae7-4f54-aa0c-2cd3507f5f15")
+	)
+	(wire
+		(pts
 			(xy 152.4 78.74) (xy 148.59 78.74)
 		)
 		(stroke
@@ -1685,16 +1735,6 @@
 	)
 	(wire
 		(pts
-			(xy 223.52 92.075) (xy 223.52 95.25)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f4d7b418-47e9-422e-b930-9cb872e93ab8")
-	)
-	(wire
-		(pts
 			(xy 154.94 110.49) (xy 129.54 110.49)
 		)
 		(stroke
@@ -1702,6 +1742,16 @@
 			(type default)
 		)
 		(uuid "f9de5396-1f58-4e4e-b73f-f8acb709bc43")
+	)
+	(wire
+		(pts
+			(xy 161.29 99.695) (xy 161.29 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fb7b865c-43e5-4c07-9733-e25bdf2fe8b1")
 	)
 	(wire
 		(pts
@@ -2950,15 +3000,15 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 223.52 88.265 0)
+		(at 218.44 91.44 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(uuid "00000000-0000-0000-0000-00006036f953")
-		(property "Reference" "R1"
-			(at 225.425 88.265 0)
+		(property "Reference" "R2"
+			(at 219.71 88.9 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2967,7 +3017,7 @@
 			)
 		)
 		(property "Value" "1M"
-			(at 223.52 89.535 90)
+			(at 219.71 91.44 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2976,7 +3026,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 221.742 88.265 90)
+			(at 218.44 93.218 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2985,7 +3035,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 223.52 88.265 0)
+			(at 218.44 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2994,7 +3044,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 223.52 88.265 0)
+			(at 218.44 91.44 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3010,6 +3060,75 @@
 		)
 		(instances
 			(project ""
+				(path "/bb868019-297e-414b-b01f-2f2880e1c08a"
+					(reference "R2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 167.005 99.695 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "19e061c0-5575-4984-93bb-b49edcc8d421")
+		(property "Reference" "R1"
+			(at 168.275 97.155 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1M"
+			(at 168.275 99.695 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 167.005 101.473 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 167.005 99.695 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 167.005 99.695 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "d6d5c49d-8852-48e7-8f0e-5356cf16e25e")
+		)
+		(pin "1"
+			(uuid "b4d76e91-bae1-41e0-a8a5-b6a05f40c1c2")
+		)
+		(instances
+			(project "J2K2_FF"
 				(path "/bb868019-297e-414b-b01f-2f2880e1c08a"
 					(reference "R1")
 					(unit 1)
