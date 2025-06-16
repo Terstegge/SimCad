@@ -18,13 +18,15 @@
 #include "Named.h"
 #include "Config.h"
 #include <vector>
-using std::vector;
 #include <set>
 #include <memory>
 #include <string>
 #include <iostream>
 #include <functional>
 #include <mutex>
+
+using std::vector;
+
 class Pin;
 class Net;
 
@@ -51,7 +53,7 @@ public:
     // Global counter for the number of Nets
     static int _no_nets;
 
-    Net(const std::string & name) : Named(name),
+    explicit Net(const std::string & name) : Named(name),
           U(_U), R(_Rtot), _U(0.0), _Rtot(INF), _Rload(INF)
     {
         ++_no_nets;
@@ -84,10 +86,10 @@ public:
     inline bool isGND() const { return (_U == SUPPLY_GROUND)  && isVS(); }
     inline bool isVCC() const { return (_U == SUPPLY_VOLTAGE) && isVS(); }
 
-    inline operator bool () const {
-        return isNC() ? true : _U > (SUPPLY_VOLTAGE/2);
+    inline explicit operator bool () const {
+        return isNC() || _U > (SUPPLY_VOLTAGE / 2);
     }
-    inline bool hasLoad() { return _Rload != INF; }
+    inline bool hasLoad() const { return _Rload != INF; }
 
     // Output operator for a Net
     friend class Pin;

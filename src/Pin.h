@@ -73,7 +73,7 @@ private:
 public:
 
     // Pin constructor.
-    Pin(const std::string & name="");
+    explicit Pin(const std::string & name="");
 
     // No assignment, no copy for now...
     Pin & operator = (const Pin & p) = delete;

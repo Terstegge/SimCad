@@ -77,7 +77,7 @@ void Net::update(NetSet * nset) {
                 }
             }
         } else {
-            // No voltage source -> add up load conductivity
+            // No voltage source -> add load conductivity
             Gload += 1 / p->_Rdrv;
         }
     }
@@ -89,20 +89,20 @@ void Net::update(NetSet * nset) {
     // Calculate new voltage of the Net. Either it is driven
     // by a voltage source (taking the voltage of this source),
     // or the voltage is calculated by the resulting Isum() function.
-    double U = 0;
+    double u = 0;
     if (ivsPtr) {
-        U = ivsPtr->_Udrv;
+        u = ivsPtr->_Udrv;
     } else {
         if (Gload != 0.0) {
-            U  = zero( [&](double U) -> double { return Isum(U); } );
+            u = zero( [&](double u) -> double { return Isum(u); } );
         }
     }
 
     // Check if the State of the Net has changed,
     // and update all Pins in the Net in this case
-    if (_U != U || _Rtot != Rtot) {
+    if (_U != u || _Rtot != Rtot) {
         // Set new values
-        _U     = U;
+        _U     = u;
         _Rtot  = Rtot;
         _Rload = Rload;
         // Update all Pins in the Net
@@ -115,7 +115,7 @@ void Net::update(NetSet * nset) {
 // Calculate the current flowing to/from this Net at a
 // specific voltage. According to Kirchhoffs law, the
 // sum of all currents within a single Net has to be zero,
-// so find the zero of this functions gives us the current
+// so find the root of this function gives us the current
 // voltage of this Net.
 // Positive currents flow into this Net, negative
 // currents flow out of the Net. If the second parameter

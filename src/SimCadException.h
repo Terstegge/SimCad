@@ -24,9 +24,9 @@
 #include <string>
 
 // Base class exception
-class SimCadException {
+class SimCadException : public std::exception {
 public:
-    virtual ~SimCadException() { }
+    ~SimCadException() override = default;
     virtual std::ostream & toString(std::ostream & os) const = 0;
     friend std::ostream & operator << (std::ostream & os, const SimCadException & rhs);
 };
@@ -37,7 +37,7 @@ public:
 // with different voltages within the same Net.
 class shortCircuitException : public SimCadException {
 public:
-    shortCircuitException(Net * n) : _net(n) { }
+    explicit shortCircuitException(Net * n) : _net(n) { }
     std::ostream & toString(std::ostream & os) const override;
 private:
     Net * _net;
@@ -49,7 +49,7 @@ private:
 // but the Pin already has an update function.
 class updateInUseException : public SimCadException {
 public:
-    updateInUseException(Pin * p) : _pin(p) { }
+    explicit updateInUseException(Pin * p) : _pin(p) { }
     std::ostream & toString(std::ostream & os) const override;
 private:
     Pin * _pin;

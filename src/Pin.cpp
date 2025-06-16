@@ -35,7 +35,7 @@ void Pin::setDrvVS(double u, NetSet * nset) {
     _Udrv = u;
     _Rdrv = 0;
     _Idrv = nullptr;
-    // Update the Net either within a already running
+    // Update the Net either within an already running
     // update (nset != nullptr) or triggering a new update.
     if (nset) {
         nset->insert(_netPtr);

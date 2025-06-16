@@ -78,7 +78,7 @@ public:
                 p[1]._Rdrv = INF;
                 p[1]._Idrv = nullptr;
                 if (_Isrc != 0.0) {
-                    p[1]._Idrv = [&](double){
+                    p[1]._Idrv = [&](double) {
                         return -_Isrc;
                     };
                 }
@@ -96,8 +96,7 @@ public:
         });
     }
 
-    virtual ~TwoPole() {
-    }
+    virtual ~TwoPole() = default;
 
     // The R(U) characteristic of the TwoPole. Normally this
     // characteristic can be calculated as U / Ichar(U), but
@@ -124,7 +123,7 @@ public:
             NetSet set1, set2;
             p[1].update(&set1);
             p[2].update(&set1);
-            while (set1.size()) {
+            while (!set1.empty()) {
                 set2.clear();
                 for (Net * net : set1) {
                     net->update(&set2);
