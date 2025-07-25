@@ -19,12 +19,13 @@ using namespace std;
 
 #include "SST39SF040.h"
 #include <iostream>
+#include <utility>
 
 using namespace std;
 
 SST39SF040::cmd_state SST39SF040::_state = wait1;
 
-SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(name) {
+SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(std::move(name)) {
         // Attach address bus listener
         A.attach([this](NetSet * nset) {
             if (!U1.on) return;
@@ -41,6 +42,7 @@ SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(name) {
                 // Latch data and process
                 _data = DATA_IN;
                 DATA_OUT.set(DATA_IN, nset);
+                cout << "Addr: " << hex << _addr << " DATA: " << _data << endl;
                 run_state_machine(_addr, _data);
             }
         });
@@ -104,7 +106,7 @@ SST39SF040::SST39SF040(std::string name) : SST39SF040_skel(name) {
             }
             case byte_prgm: {
                 if (!(addr % 1024)) cout << "writing " << addr << " " << data << endl;
-                _mem[ addr ] &= ~data;
+                _mem[ addr ] &= data;
                 _state = wait1;
                 break;
             }
