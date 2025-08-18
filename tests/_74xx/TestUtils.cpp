@@ -36,6 +36,17 @@ bool TestUtils::test_power_up16(Bus<17> & p) {
     return true;
 }
 
+bool TestUtils::test_power_up24(Bus<25> & p) {
+    // Check Pins before power up
+    for (int i = 1; i <= 24; ++i) {
+        if (!p[i].isNC()) return false;
+    }
+    // Power up
+    p[12] = SUPPLY_GROUND;
+    p[24] = SUPPLY_VOLTAGE;
+    return true;
+}
+
 bool TestUtils::test_power_down14(Bus<15> & p, std::initializer_list<Pin *> outputs) {
     // Power down
     p[14] = SUPPLY_GROUND;
@@ -49,6 +60,16 @@ bool TestUtils::test_power_down14(Bus<15> & p, std::initializer_list<Pin *> outp
 bool TestUtils::test_power_down16(Bus<17> & p, std::initializer_list<Pin *> outputs) {
     // Power down
     p[16] = SUPPLY_GROUND;
+    // Check output Pins
+    for(Pin * o : outputs) {
+        if(!o->isNC()) return false;
+    }
+    return true;
+}
+
+bool TestUtils::test_power_down24(Bus<25> & p, std::initializer_list<Pin *> outputs) {
+    // Power down
+    p[24] = SUPPLY_GROUND;
     // Check output Pins
     for(Pin * o : outputs) {
         if(!o->isNC()) return false;

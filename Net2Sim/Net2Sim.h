@@ -53,6 +53,9 @@ public:
     int main(int argc, char* argv[]);
 
 private:
+    // Check for positive integer number
+    static bool is_number(const string & s);
+
     // Convert a string to a valid
     // C++ identifier.
     static void name2var(string & s);

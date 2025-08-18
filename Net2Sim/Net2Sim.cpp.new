@@ -14,10 +14,12 @@
 //
 #include "Net2Sim.h"
 #include "NetParser.h"
-
 #include <iostream>
+#include <sstream>
 #include <map>
+#include <algorithm>
 #include <regex>
+#include <codecvt>
 #include <filesystem>
 
 using std::cout;
@@ -101,8 +103,8 @@ int Net2Sim::main(int argc, char* argv[])
                     // remove the .sch ending and set
                     // the remainder as the class name
                     classname = sheet.find_Node("source")->_value;
-                    size_t pos = classname.find(".");
-                    if (pos != string::npos) classname.erase(pos);
+                    size_t pos = classname.find(".sch");
+                    classname.erase(pos);
                     name2var(classname);
                     break;
                 }
@@ -111,14 +113,14 @@ int Net2Sim::main(int argc, char* argv[])
         if (classname.empty()) {
             // We did not find the subsheet and did not set a class name.
             // Show all available subsheets and exit.
-                cerr << "Subsheet '" << subsheet << "' not found!" << endl;
-                cerr << "Available subsheets are:" << endl;
+            cerr << "Subsheet '" << subsheet << "' not found!" << endl;
+            cerr << "Available subsheets are:" << endl;
             for (Node & sheet : design->_children) {
                 if (sheet._name == "sheet") {
                     cerr << sheet.get_attr("name") << endl;
                 }
-                }
-                exit(1);
+            }
+            exit(1);
         }
 
         // Generate the output filenames
@@ -209,8 +211,6 @@ int Net2Sim::main(int argc, char* argv[])
         // Delete all unneeded nodes in all nets
         Node * nets = tree.find_Node("nets");
         for(auto & net : nets->_children) {
-            string net_name  = net.get_attr("name");
-            bool unconnected = net_name.starts_with("unconnected-");
             for (auto node = net._children.begin(); node != net._children.end();) {
                 if (node->_name != "node") {
                     ++node;
@@ -218,7 +218,7 @@ int Net2Sim::main(int argc, char* argv[])
                 }
                 string ref = node->get_attr("ref");
                 name2var( ref );
-                if((needed_refs.count( ref ) == 0) || unconnected) {
+                if(needed_refs.count( ref ) == 0) {
                     node = net._children.erase(node);
                 } else {
                     ++node;
@@ -243,9 +243,7 @@ int Net2Sim::main(int argc, char* argv[])
             string c = comp.first;
             name2var(c);
             h_ofs << "#include \"" << c << ".h\"";
-            int blanks = 20-c.size();
-            if (blanks < 1) blanks=1;
-            h_ofs << string(blanks, ' ') << "// " << comp.second;
+            h_ofs << string(20-c.size(), ' ') << "// " << comp.second;
             if (comp.second == 1)
                 h_ofs  << " part" << endl;
             else
@@ -277,9 +275,7 @@ int Net2Sim::main(int argc, char* argv[])
                 // Build-in part with template argument
                 line = "    " + ce.part + "<" + ce.part_arg + ">";
             }
-            int blanks = 25-line.size();
-            if (blanks < 1) blanks=1;
-            h_ofs << line << string(blanks, ' ')
+            h_ofs << line << string(25-line.size(), ' ')
                   << ce.ref_base << ce.ref_idx << ";" << endl;
         }
 
@@ -328,29 +324,64 @@ int Net2Sim::main(int argc, char* argv[])
 
         h_ofs << endl << "    // Nets" << endl;
 
-        // Find busses in the sorted nets.
-        // Generate Pins and Buses
+        // Find buses. Index must be continuous and start from 0.
+        // Generate Pins and Buses accordingly
         vector<string> base_names;
-        auto it     = found_nets.begin();
-        auto first  = *it;
-        bool isBus  = false;
-        while (it != found_nets.end()) {
-            it++;
-            if (it == found_nets.end()) break;
-            auto next = *it;
-            if (first.base    == next.base) { //}&&
-                //stoi(first.index)+1 == stoi(next.index)) {
-                isBus         = true;
-                it->isBus     = true;
-                (it-1)->isBus = true;
-                first = next;
-                continue;
+        auto start = found_nets.end();
+        auto last  = found_nets.end();
+        for(auto it=found_nets.begin(); it != found_nets.end(); ++it) {
+            if (start == found_nets.end()) {
+                if (!it->index.empty() && (stoi(it->index) <= 1)) {
+                    // Okay, we found the beginning of a potential bus
+                    start = it;
+                } else {
+                    // No bus start -> generate Pin
+                    define_bus(base_names, it->base, it->index, false);
+                }
+            } else {
+                // We are in a bus. Check base name and index
+                last = it-1;
+                if (last->base == it->base) {
+                    if ((stoi(last->index)+1) != (stoi(it->index))) {
+                        // The index is NOT continuous -> generate no bus
+                        for(auto it2=start; it2 <= it; ++it2) {
+                            define_bus(base_names, it2->base, it2->index, false);
                         }
-            define_bus(base_names, first.base, first.index, isBus);
-            first = next;
-            isBus = false;
+                        start=found_nets.end();
+                    }
+                    // Next item fits to bus -> continue
+                } else {
+                    // Next item does not fit -> check if we have to generate a bus
+                    if (stoi(last->index) > 0) {
+                        // Mark items as bus and generate bus
+                        for(auto it2=start; it2 <= last; ++it2) {
+                            it2->isBus = true;
                         }
-        define_bus(base_names, first.base, first.index, isBus);
+                        define_bus(base_names, last->base, last->index, true);
+                    } else {
+                        define_bus(base_names, last->base, last->index, false);
+                    }
+                    // Reset start pointer
+                    start = found_nets.end();
+                    if (!it->index.empty() && (stoi(it->index) <= 1)) {
+                        // Okay, we found the beginning of a potential bus
+                        start = it;
+                    } else {
+                        // No bus start -> generate Pin
+                        define_bus(base_names, it->base, it->index, false);
+                    }
+                }
+            }
+        }
+        string max_index;
+        if (start != found_nets.end()) {
+            // Mark items as bus and generate bus
+            for(auto it=start; it != found_nets.end(); ++it) {
+                it->isBus = true;
+                max_index = it->index;
+            }
+            define_bus(base_names, last->base, max_index, true);
+        }
 
         // Generate CTOR declaration
         h_ofs << endl << "public:" << endl;
@@ -386,8 +417,6 @@ int Net2Sim::main(int argc, char* argv[])
                 used_components[i].part == "C"       ||
                 used_components[i].part == "CP"      ||
                 used_components[i].part == "CP1"     ||
-                used_components[i].part == "C_Polarized" ||
-                used_components[i].part == "C_Small" ||
                 used_components[i].part == "VSOURCE" ||
                 used_components[i].part == "ISOURCE")
             {
@@ -422,11 +451,7 @@ int Net2Sim::main(int argc, char* argv[])
                     s += name;
                     s += ".connect_to(";
                     s += ref + ".";
-                    if (is_number(pin)) {
-                        s += "p[" + pin + "]";
-                    } else {
-                        s += pin;
-                    }
+                    s += "p[" + pin + "]";
                     s += ");\n";
                     net_output.push_back(s);
                 }
@@ -445,12 +470,6 @@ int Net2Sim::main(int argc, char* argv[])
     return 0;
 }
 
-bool Net2Sim::is_number(const string & s) {
-    for(auto & c : s) {
-        if (!isdigit(c)) return false;
-    }
-    return true;
-}
 
 void Net2Sim::name2var(string & s) {
     s = std::regex_replace(s, std::regex("^\\-(?=[0-9])"), "minus_");
@@ -461,11 +480,6 @@ void Net2Sim::name2var(string & s) {
     std::replace(s.begin(), s.end(), '(', '_');
     std::replace(s.begin(), s.end(), ')', '_');
     std::replace(s.begin(), s.end(), ' ', '_');
-    std::replace(s.begin(), s.end(), '+', 'p');
-    std::replace(s.begin(), s.end(), '\'', 'h');
-    std::erase(s, '{');
-    std::erase(s, '}');
-
     // Remove multiple underscores. The trailing underscore
     // must not be removed, because the Nets could change to
     // buses, which will result in wrong connections!
@@ -498,16 +512,12 @@ void Net2Sim::define_bus(vector<string> & names, const string& base, const strin
         line = "    Bus<";
         line += oss.str();
         line += ">";
-        int blanks = 25-line.size();
-        if (blanks < 1) blanks=1;
-        line += string(blanks, ' ');
+        line += string(25-line.size(), ' ');
         line += base + ";";
         names.push_back(base);
     } else {
         line = "    Pin";
-        int blanks = 25-line.size();
-        if (blanks < 1) blanks=1;
-        line += string(blanks, ' ');
+        line += string(25-line.size(), ' ');
         string name = base;
         if (!index.empty()) name += index;
         line += name;
@@ -519,7 +529,7 @@ void Net2Sim::define_bus(vector<string> & names, const string& base, const strin
 
 
 void Net2Sim::change_to_bus(string & net, vector<net_entry> & found_nets) {
-    for(const auto& entry : found_nets) {
+    for(const auto & entry : found_nets) {
         if (net == (entry.base + entry.index)) {
             if (entry.isBus) {
                 net = entry.base + "[" + entry.index + "]";

@@ -26,9 +26,13 @@ public:
 
     static bool test_power_up16(Bus<17> & pins);
 
+    static bool test_power_up24(Bus<25> & pins);
+
     static bool test_power_down14(Bus<15> & pins, std::initializer_list<Pin *> outputs = {});
 
     static bool test_power_down16(Bus<17> & pins, std::initializer_list<Pin *> outputs = {});
+
+    static bool test_power_down24(Bus<25> & pins, std::initializer_list<Pin *> outputs = {});
 
     static bool test_gate1(Pin & I, Pin & O,
             std::function<bool(bool)> f);
